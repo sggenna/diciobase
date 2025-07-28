@@ -146,10 +146,175 @@ const DicioBase = () => {
     // a gente pode usar web speech api ou arquivos de audio prra simular a pronuncia
   };
 
+  
+   
   return (
-    <div>
-      <h1>DicioBase</h1>
-      <p>Dicionário Brasileiro</p>
+    // Container principal com classes condicionais para modo escuro/claro
+    <div className={`min-h-screen transition-all duration-300 ${
+      darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
+    }`}>
+      
+      
+      <header className={`sticky top-0 z-10 border-b transition-all duration-300 ${
+        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+      }`}>
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <BookOpen className="h-8 w-8" />
+              <h1 className="text-2xl font-bold tracking-tight">DicioBase</h1>
+              <span className="text-sm opacity-60">Dicionário Brasileiro</span>
+            </div>
+      
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={toggleDarkMode}
+                className={`p-2 rounded-lg transition-all duration-200 ${
+                  darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                }`}
+              >
+                {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="grid lg:grid-cols-3 gap-8">
+          
+          {/* coluna de resultados da busca */}
+          <div className="lg:col-span-1">
+            <div className={`sticky top-24 rounded-2xl p-6 shadow-sm border transition-all duration-300 ${
+              darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'
+            }`}>
+              
+              {/* campo de busca */}
+              <div className="relative mb-6">
+                <Search className="absolute left-3 top-3 h-5 w-5 opacity-50" />
+                <input
+                  type="text"
+                  placeholder="Pesquisar palavra..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    darkMode 
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                      : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                  }`}
+                />
+              </div>
+
+              {/* lista de resultados da busca */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-sm uppercase tracking-wide opacity-60">
+                  Resultados ({filteredWords.length})
+                </h3>
+                {filteredWords.map(word => (
+                  <button
+                    key={word.id}
+                    onClick={() => selectWord(word)}
+                    className={`w-full text-left p-3 rounded-lg transition-all duration-200 ${
+                      selectedWord?.id === word.id
+                        ? darkMode 
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-blue-50 text-blue-900 border-blue-200'
+                        : darkMode 
+                          ? 'hover:bg-gray-700 text-gray-300' 
+                          : 'hover:bg-white text-gray-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium">{word.palavra}</div>
+                        <div className="text-sm opacity-60">{word.classe_gramatical}</div>
+                      </div>
+                      <div className="text-xs opacity-40">
+                        {word.significados.length} def.
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* PAINEL de exibição da palavra */}
+          <div className="lg:col-span-2">
+            {selectedWord ? (
+              // Se uma palavra foi selecionada, mostra os detalhes
+              <div className={`rounded-2xl p-8 shadow-sm border transition-all duration-300 ${
+                darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+              }`}>
+                
+                {/* cabeçalho da palavra selecionada */}
+                <div className="flex items-start justify-between mb-8">
+                  <div className="flex-1">
+                    {/* título da palavra e botão de pronúncia */}
+                    <div className="flex items-center space-x-4 mb-4">
+                      <h1 className="text-4xl font-bold">{selectedWord.palavra}</h1>
+                      <button
+                        onClick={() => playPronunciation(selectedWord)}
+                        className={`p-2 rounded-lg transition-all duration-200 ${
+                          darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                        }`}
+                      >
+                        <Volume2 className="h-5 w-5" />
+                      </button>
+                    </div>
+                    
+                    {/* informações básicas da palavra */}
+                    <div className="flex flex-wrap items-center gap-4 text-sm">
+                      <span className={`px-3 py-1 rounded-full ${
+                        darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'
+                      }`}>
+                        {selectedWord.classe_gramatical}
+                      </span>
+                      <span className="opacity-60">{selectedWord.pronuncia}</span>
+                      <span className="opacity-60">Frequência: {selectedWord.frequencia}%</span>
+                    </div>
+                  </div>
+
+                  {/*mostrar/ocultar microestrutura */}
+                  <button
+                    onClick={() => setShowMicrostructure(!showMicrostructure)}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                      showMicrostructure
+                        ? darkMode 
+                          ? 'bg-green-600 text-white' 
+                          : 'bg-green-50 text-green-700 border border-green-200'
+                        : darkMode 
+                          ? 'bg-gray-700 hover:bg-gray-600' 
+                          : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
+                  >
+                    {showMicrostructure ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    <span className="text-sm font-medium">
+                      {showMicrostructure ? 'Ocultar' : 'Microestrutura'}
+                    </span>
+                  </button>
+                </div>
+
+                <p>Detalhes da palavra serão adicionados aqui...</p>
+              </div>
+            ) : (
+              // se nenhuma palavra foi selecionada mostra tela de boas-vindas
+              <div className={`rounded-2xl p-12 text-center shadow-sm border transition-all duration-300 ${
+                darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+              }`}>
+                <BookOpen className="h-16 w-16 mx-auto mb-4 opacity-30" />
+                <h2 className="text-2xl font-bold mb-2">DicioBase</h2>
+                <p className="text-lg opacity-60 mb-4">
+                  Dicionário moderno do português brasileiro
+                </p>
+                <p className="opacity-40">
+                  Selecione uma palavra para ver microestruturas de vários dicionários diferentes!
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
