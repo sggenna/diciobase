@@ -123,6 +123,29 @@ const DicioBase = () => {
     }
   ];
 
+  // funções auxiliares
+  
+  // filtra as palavras baseado no termo de busca (case-insensitive)
+  const filteredWords = sampleWords.filter(word => 
+    word.palavra.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // alternar entre modo escuro e claro
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
+  // quando o usuário seleciona uma palavra
+  const selectWord = (word: Word) => {
+    setSelectedWord(word);                    
+    setShowMicrostructure(false);           
+  };
+
+  const playPronunciation = (word: Word) => {
+    console.log(`Playing pronunciation for: ${word.palavra}`);
+    // a gente pode usar web speech api ou arquivos de audio prra simular a pronuncia
+  };
+
   return (
     <div>
       <h1>DicioBase</h1>
