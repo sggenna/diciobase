@@ -295,7 +295,63 @@ const DicioBase = () => {
                   </button>
                 </div>
 
-                <p>Detalhes da palavra serão adicionados aqui...</p>
+                {showMicrostructure && selectedWord ? (
+                  <div className="mt-8">
+                    <h2 className="text-2xl font-bold mb-4">Microestrutura</h2>
+                    <div className="grid gap-6">
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2">Significados</h3>
+                        <ul className="list-disc pl-5 space-y-2">
+                          {selectedWord.significados.map((significado, index) => (
+                            <li key={index} className="text-lg">
+                              <strong>Definição {significado.numero}:</strong> {significado.definicao}
+                              {significado.exemplo && ` (Exemplo: "${significado.exemplo}")`}
+                              {significado.contexto && ` (Contexto: "${significado.contexto}")`}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2">Expressões</h3>
+                        <ul className="list-disc pl-5 space-y-2">
+                          {selectedWord.expressoes.map((expressao, index) => (
+                            <li key={index} className="text-lg">
+                              <strong>Expressão:</strong> {expressao.expressao}
+                              <br />
+                              <strong>Significado:</strong> {expressao.significado}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2">Sinônimos</h3>
+                        <ul className="list-disc pl-5 space-y-1">
+                          {selectedWord.sinonimos.map((sinonimo, index) => (
+                            <li key={index} className="text-lg">{sinonimo}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2">Antônimos</h3>
+                        <ul className="list-disc pl-5 space-y-1">
+                          {selectedWord.antonimos.map((antonimo, index) => (
+                            <li key={index} className="text-lg">{antonimo}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2">Regiões de Uso</h3>
+                        <ul className="list-disc pl-5 space-y-1">
+                          {selectedWord.regioes_uso.map((regiao, index) => (
+                            <li key={index} className="text-lg">{regiao}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <p>Clique no botão "Microestrutura" para ver os detalhes da palavra.</p>
+                )}
               </div>
             ) : (
               // se nenhuma palavra foi selecionada mostra tela de boas-vindas
