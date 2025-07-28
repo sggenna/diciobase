@@ -295,63 +295,109 @@ const DicioBase = () => {
                   </button>
                 </div>
 
-                {showMicrostructure && selectedWord ? (
-                  <div className="mt-8">
-                    <h2 className="text-2xl font-bold mb-4">Microestrutura</h2>
-                    <div className="grid gap-6">
+                {/* seção de microestrutura */}
+                {showMicrostructure && (
+                  <div className={`mb-8 p-6 rounded-xl border-2 border-dashed transition-all duration-300 ${
+                    darkMode ? 'border-gray-600 bg-gray-750' : 'border-gray-300 bg-gray-50'
+                  }`}>
+                    <h3 className="font-semibold mb-4 text-lg">Microestrutura Completa</h3>
+                    <div className="grid md:grid-cols-2 gap-4 text-sm">
                       <div>
-                        <h3 className="text-xl font-semibold mb-2">Significados</h3>
-                        <ul className="list-disc pl-5 space-y-2">
-                          {selectedWord.significados.map((significado, index) => (
-                            <li key={index} className="text-lg">
-                              <strong>Definição {significado.numero}:</strong> {significado.definicao}
-                              {significado.exemplo && ` (Exemplo: "${significado.exemplo}")`}
-                              {significado.contexto && ` (Contexto: "${significado.contexto}")`}
-                            </li>
-                          ))}
-                        </ul>
+                        <strong>Palavra:</strong> {selectedWord.palavra}<br/>
+                        <strong>Classe:</strong> {selectedWord.classe_gramatical}<br/>
+                        <strong>Pronúncia:</strong> {selectedWord.pronuncia}<br/>
+                        <strong>Plural:</strong> {selectedWord.plural}<br/>
+                        <strong>Origem:</strong> {selectedWord.origem}
                       </div>
                       <div>
-                        <h3 className="text-xl font-semibold mb-2">Expressões</h3>
-                        <ul className="list-disc pl-5 space-y-2">
-                          {selectedWord.expressoes.map((expressao, index) => (
-                            <li key={index} className="text-lg">
-                              <strong>Expressão:</strong> {expressao.expressao}
-                              <br />
-                              <strong>Significado:</strong> {expressao.significado}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-semibold mb-2">Sinônimos</h3>
-                        <ul className="list-disc pl-5 space-y-1">
-                          {selectedWord.sinonimos.map((sinonimo, index) => (
-                            <li key={index} className="text-lg">{sinonimo}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-semibold mb-2">Antônimos</h3>
-                        <ul className="list-disc pl-5 space-y-1">
-                          {selectedWord.antonimos.map((antonimo, index) => (
-                            <li key={index} className="text-lg">{antonimo}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-semibold mb-2">Regiões de Uso</h3>
-                        <ul className="list-disc pl-5 space-y-1">
-                          {selectedWord.regioes_uso.map((regiao, index) => (
-                            <li key={index} className="text-lg">{regiao}</li>
-                          ))}
-                        </ul>
+                        <strong>Nível de uso:</strong> {selectedWord.nivel_uso}<br/>
+                        <strong>Registro:</strong> {selectedWord.registro}<br/>
+                        <strong>Frequência:</strong> {selectedWord.frequencia}%<br/>
+                        <strong>Regiões:</strong> {selectedWord.regioes_uso.join(', ')}
                       </div>
                     </div>
                   </div>
-                ) : (
-                  <p>Clique no botão "Microestrutura" para ver os detalhes da palavra.</p>
                 )}
+
+                {/* seção de significados */}
+                <div className="mb-8">
+                  <h3 className="font-semibold mb-4 text-lg">Significados</h3>
+                  <div className="space-y-6">
+                    {selectedWord.significados.map((sig, index) => (
+                      <div key={index} className={`p-4 rounded-lg ${
+                        darkMode ? 'bg-gray-700' : 'bg-gray-50'
+                      }`}>
+                        <div className="flex items-start space-x-3">
+                          {/* Número do significado */}
+                          <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
+                            darkMode ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {sig.numero}
+                          </span>
+                          <div className="flex-1">
+                            {/* Definição */}
+                            <p className="font-medium mb-2">{sig.definicao}</p>
+                            {/* Exemplo de uso */}
+                            <p className={`italic text-sm mb-2 ${
+                              darkMode ? 'text-gray-300' : 'text-gray-600'
+                            }`}>
+                              "{sig.exemplo}"
+                            </p>
+                            {/* Contexto */}
+                            <span className={`text-xs px-2 py-1 rounded ${
+                              darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'
+                            }`}>
+                              {sig.contexto}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/*expressoes*/}
+                <div className="mb-8">
+                  <h3 className="font-semibold mb-4 text-lg">Expressões</h3>
+                  <div className="space-y-3">
+                    {selectedWord.expressoes.map((expr, index) => (
+                      <div key={index} className={`p-3 rounded-lg ${
+                        darkMode ? 'bg-gray-700' : 'bg-gray-50'
+                      }`}>
+                        <span className="font-medium">{expr.expressao}</span>
+                        <span className="opacity-60 ml-2">— {expr.significado}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* sinonimos e antonimos */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h3 className="font-semibold mb-3">Sinônimos</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedWord.sinonimos.map((sin, index) => (
+                        <span key={index} className={`px-3 py-1 rounded-full text-sm ${
+                          darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
+                        }`}>
+                          {sin}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-3">Antônimos</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedWord.antonimos.map((ant, index) => (
+                        <span key={index} className={`px-3 py-1 rounded-full text-sm ${
+                          darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {ant}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             ) : (
               // se nenhuma palavra foi selecionada mostra tela de boas-vindas
