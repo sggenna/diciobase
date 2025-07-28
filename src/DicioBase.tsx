@@ -35,6 +35,19 @@ interface Word {
 }
 
 const DicioBase = () => {
+  
+  // controlar o modo escuro/claro
+  const [darkMode, setDarkMode] = useState(false);
+  
+  // armazenar o termo de busca digitado pelo usuário
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  //armazenar a palavra selecionada pelo usuário
+  const [selectedWord, setSelectedWord] = useState<Word | null>(null);
+  
+  // controlar se a microestrutura deve ser exibida
+  const [showMicrostructure, setShowMicrostructure] = useState(false);
+
   return (
     <div>
       <h1>DicioBase</h1>
