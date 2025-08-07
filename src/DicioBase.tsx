@@ -11,6 +11,7 @@ interface Toponym {
 }
 
 // interface para detalhes completos de um verbete
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface VerbeteDetail {
   tipodicionario: string;
   dicionario: string;
@@ -86,7 +87,7 @@ const DicioBase = () => {
   // Carregar dados na inicialização
   React.useEffect(() => {
     fetchToponyms();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Filtrar topônimos baseado no termo de busca
   const filteredToponyms = toponyms.filter(toponym => 
