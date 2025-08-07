@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dictionary_demo",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
