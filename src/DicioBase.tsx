@@ -11,7 +11,6 @@ interface Toponym {
 }
 
 // interface para detalhes completos de um verbete
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface VerbeteDetail {
   tipodicionario: string;
   dicionario: string;
@@ -36,21 +35,16 @@ const DicioBase = () => {
   const [showMicrostructure, setShowMicrostructure] = useState(false);
 
   
-  // Estados para dados do banco
+  // estados para dados do banco
   const [toponyms, setToponyms] = useState<Toponym[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // API base URL - use Firebase Functions in production
-  const API_BASE_URL = process.env.NODE_ENV === 'production' 
-    ? 'https://us-central1-diciobase.cloudfunctions.net' // Firebase Functions URL
-    : 'http://localhost:3001';
-
-  // Carregar dados do banco
+  // carregar dados do banco
   const fetchToponyms = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/toponyms`);
+      const response = await fetch('http://localhost:3001/api/toponyms');
       const result = await response.json();
       
       if (result.success) {
@@ -65,7 +59,7 @@ const DicioBase = () => {
     }
   };
 
-  // Buscar topônimos
+  // procurar topônimos
   const searchToponyms = async (query: string) => {
     if (!query.trim()) {
       await fetchToponyms();
@@ -73,7 +67,7 @@ const DicioBase = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/toponyms/search?q=${encodeURIComponent(query)}`);
+      const response = await fetch(`http://localhost:3001/api/toponyms/search?q=${encodeURIComponent(query)}`);
       const result = await response.json();
       
       if (result.success) {
@@ -84,12 +78,12 @@ const DicioBase = () => {
     }
   };
 
-  // Carregar dados na inicialização
+  // carregar dados na inicialização
   React.useEffect(() => {
     fetchToponyms();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Filtrar topônimos baseado no termo de busca
+  // filtrar topônimos baseado no termo de busca
   const filteredToponyms = toponyms.filter(toponym => 
     toponym.lema.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -108,12 +102,12 @@ const DicioBase = () => {
   const playPronunciation = (toponym: Toponym) => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(toponym.lema);
-      utterance.lang = 'pt-BR'; // Portuguese (Brazil)
-      utterance.rate = 0.8; // Slightly slower for clarity
+      utterance.lang = 'pt-BR'; 
+      utterance.rate = 0.8; 
       utterance.pitch = 1.0;
       utterance.volume = 1.0;
       
-      // Try to get a Brazilian Portuguese voice
+      // pronúncia 
       const voices = speechSynthesis.getVoices();
       const brazilianVoice = voices.find(voice => 
         voice.lang.includes('pt-BR') || voice.lang.includes('pt') || voice.name.includes('Brazil')
@@ -133,7 +127,7 @@ const DicioBase = () => {
   
    
   return (
-    // Container principal com classes condicionais para modo escuro/claro
+    // container principal com classes condicionais para modo escuro/claro
     <div className={`min-h-screen transition-all duration-300 ${
       darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
     }`}>
