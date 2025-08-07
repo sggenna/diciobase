@@ -41,9 +41,9 @@ const DicioBase = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // API base URL - in production, use the same domain
+  // API base URL - use Firebase Functions in production
   const API_BASE_URL = process.env.NODE_ENV === 'production' 
-    ? '' // Same domain in production
+    ? 'https://us-central1-diciobase.cloudfunctions.net' // Firebase Functions URL
     : 'http://localhost:3001';
 
   // Carregar dados do banco
