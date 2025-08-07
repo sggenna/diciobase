@@ -2,17 +2,17 @@ const functions = require('firebase-functions');
 const cors = require('cors')({ origin: true });
 const { Pool } = require('pg');
 
-// Database configuration
+// Database configuration - Supabase connection
 const dbConfig = {
-  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'dictionary_db',
-  password: process.env.DB_PASSWORD || 'your_actual_password_here',
-  port: process.env.DB_PORT || 5432,
+  user: 'postgres',
+  host: 'db.pkbozezsifmrdkyancpv.supabase.co',
+  database: 'postgres',
+  password: 'diydVep-3EM5GMV',
+  port: 5432,
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: { rejectUnauthorized: false }, // Required for Supabase
 };
 
 const pool = new Pool(dbConfig);
@@ -51,10 +51,16 @@ exports.test = functions.https.onRequest((req, res) => {
       const isConnected = await testConnection();
       res.json({ 
         success: isConnected, 
-        message: isConnected ? 'Database connected' : 'Database connection failed' 
+        message: isConnected ? 'Database connected' : 'Database connection failed',
+        timestamp: new Date().toISOString()
       });
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      console.error('Test function error:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: error.message,
+        timestamp: new Date().toISOString()
+      });
     }
   });
 });

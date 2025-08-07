@@ -22,8 +22,11 @@ interface VerbeteDetail {
 
 const DicioBase = () => {
   
-  // controlar o modo escuro/claro
-  const [darkMode, setDarkMode] = useState(false);
+  // controlar o modo escuro/claro - salvar preferência no localStorage
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
   
   // armazenar o termo de busca digitado pelo usuário
   const [searchTerm, setSearchTerm] = useState('');
@@ -95,7 +98,9 @@ const DicioBase = () => {
 
   // alternar entre modo escuro e claro
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', JSON.stringify(newDarkMode));
   };
 
   // quando o usuário seleciona um topônimo
