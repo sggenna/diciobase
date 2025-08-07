@@ -9,6 +9,8 @@
     "cra-template-pwa": "2.0.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "firebase-admin": "^13.4.0",
+    "firebase-functions": "^6.4.0",
     "lucide-react": "^0.526.0",
     "pg": "^8.16.3",
     "react": "^19.1.0",
@@ -23,7 +25,9 @@
     "dev": "concurrently \"npm run server\" \"npm run start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "npm run build && firebase deploy",
+    "start:prod": "npm run build && node server.js"
   },
   "eslintConfig": {
     "extends": [

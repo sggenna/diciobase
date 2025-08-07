@@ -1,13 +1,16 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { query, testConnection } = require('./src/database/connection');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the React build directory
+app.use(express.static(path.join(__dirname, 'build')));
 
 
 app.get('/api/test', async (req, res) => {
@@ -130,6 +133,11 @@ app.get('/api/toponyms/:id/details', async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
+});
+
+// Handle React routing, return all requests to React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 app.listen(PORT, () => {

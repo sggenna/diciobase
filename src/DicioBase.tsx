@@ -40,11 +40,16 @@ const DicioBase = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // API base URL - in production, use the same domain
+  const API_BASE_URL = process.env.NODE_ENV === 'production' 
+    ? '' // Same domain in production
+    : 'http://localhost:3001';
+
   // Carregar dados do banco
   const fetchToponyms = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3001/api/toponyms');
+      const response = await fetch(`${API_BASE_URL}/api/toponyms`);
       const result = await response.json();
       
       if (result.success) {
@@ -67,7 +72,7 @@ const DicioBase = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/toponyms/search?q=${encodeURIComponent(query)}`);
+      const response = await fetch(`${API_BASE_URL}/api/toponyms/search?q=${encodeURIComponent(query)}`);
       const result = await response.json();
       
       if (result.success) {
