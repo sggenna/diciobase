@@ -1,4 +1,6 @@
 # DicioBase 📚
+🔗 **[Live Demo](https://diciobase.web.app/)**
+
 <img width="500" height="500" alt="Diciobase-front-page" src="https://github.com/user-attachments/assets/c3a30f06-dc36-4d19-aaf8-c7ea28c3b377" />
 
 <img width="500" height="500" alt="Diciobase-word-page" src="https://github.com/user-attachments/assets/b1691b0d-7881-4dda-a308-59bb58427289" />
