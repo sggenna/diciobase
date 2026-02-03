@@ -1,0 +1,12 @@
+# Deploy only the React app; ignore Firebase functions and other non-app paths
+functions
+.firebase
+.firebaserc
+firebase.json
+dictionary_demo
+*.sql
+server.js
+server-demo.js
+migrate-db.js
+test-db.js
+src/database

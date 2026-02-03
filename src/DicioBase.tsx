@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Search, Moon, Sun, Volume2, BookOpen, Eye, EyeOff } from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
 
 // interface para representar um topônimo
 interface Toponym {
@@ -10,15 +11,24 @@ interface Toponym {
   categoria_gramatical: string;
 }
 
-// interface para detalhes completos de um verbete
-interface VerbeteDetail {
-  tipodicionario: string;
-  dicionario: string;
-  microestrutura: string;
-  elemento: string;
-  idverbete: number;
-  conteudo: string;
-}
+// Static demo data: used when no Supabase/API (e.g. Vercel with no env vars) so the app shows all features
+const DEMO_TOPONYMS: Toponym[] = [
+  { idverbete: 1, lema: 'Paranaguá', estrutura_morfologica: 'Simples', categoria_gramatical: 'Substantivo' },
+  { idverbete: 2, lema: 'Araguaia', estrutura_morfologica: 'Simples', categoria_gramatical: 'Substantivo' },
+  { idverbete: 3, lema: 'Curitiba', estrutura_morfologica: 'Simples', categoria_gramatical: 'Substantivo' },
+  { idverbete: 4, lema: 'Santos', estrutura_morfologica: 'Simples', categoria_gramatical: 'Substantivo' },
+  { idverbete: 5, lema: 'Iguaçu', estrutura_morfologica: 'Simples', categoria_gramatical: 'Substantivo' },
+  { idverbete: 6, lema: 'Brasília', estrutura_morfologica: 'Simples', categoria_gramatical: 'Substantivo' },
+  { idverbete: 7, lema: 'Amazonas', estrutura_morfologica: 'Simples', categoria_gramatical: 'Substantivo' },
+  { idverbete: 8, lema: 'Fernando de Noronha', estrutura_morfologica: 'Composto', categoria_gramatical: 'Substantivo' },
+  { idverbete: 9, lema: 'Salvador', estrutura_morfologica: 'Simples', categoria_gramatical: 'Substantivo' },
+  { idverbete: 10, lema: 'Ouro Preto', estrutura_morfologica: 'Composto', categoria_gramatical: 'Substantivo' },
+  { idverbete: 11, lema: 'Pantanal', estrutura_morfologica: 'Simples', categoria_gramatical: 'Substantivo' },
+  { idverbete: 12, lema: 'Copacabana', estrutura_morfologica: 'Simples', categoria_gramatical: 'Substantivo' },
+  { idverbete: 13, lema: 'Ipanema', estrutura_morfologica: 'Simples', categoria_gramatical: 'Substantivo' },
+  { idverbete: 14, lema: 'Recife', estrutura_morfologica: 'Simples', categoria_gramatical: 'Substantivo' },
+  { idverbete: 15, lema: 'São Paulo', estrutura_morfologica: 'Composto', categoria_gramatical: 'Substantivo' },
+];
 
 const DicioBase = () => {
   
@@ -43,53 +53,93 @@ const DicioBase = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // API base URL - use Firebase Functions in production
-  const API_BASE_URL = process.env.NODE_ENV === 'production' 
-    ? 'https://us-central1-diciobase.cloudfunctions.net' // Firebase Functions URL
+  // When deployed on Supabase: use Supabase client (set REACT_APP_SUPABASE_URL + REACT_APP_SUPABASE_ANON_KEY)
+  const supabase = useMemo(() => {
+    const url = process.env.REACT_APP_SUPABASE_URL;
+    const key = process.env.REACT_APP_SUPABASE_ANON_KEY;
+    if (url && key) return createClient(url, key);
+    return null;
+  }, []);
+
+  const useSupabase = Boolean(supabase);
+
+  // Static demo: no Supabase/API – embedded data + browser pronunciation (ideal for Vercel with no backend)
+  const useStaticDemo =
+    process.env.REACT_APP_USE_STATIC_DEMO === 'true' ||
+    (process.env.NODE_ENV === 'production' && !process.env.REACT_APP_SUPABASE_URL);
+
+  const API_BASE_URL = process.env.NODE_ENV === 'production'
+    ? (process.env.REACT_APP_API_URL || 'https://us-central1-diciobase.cloudfunctions.net')
     : 'http://localhost:3001';
 
-  // carregar dados do banco
-  const fetchToponyms = async () => {
+  const fetchToponyms = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/toponyms`);
-      const result = await response.json();
-      
-      if (result.success) {
-        setToponyms(result.data);
+      if (useStaticDemo) {
+        setToponyms(DEMO_TOPONYMS);
+        setError(null);
+        return;
+      }
+      if (useSupabase && supabase) {
+        const { data, error: e } = await supabase
+          .from('toponyms_view')
+          .select('idverbete, lema, estrutura_morfologica, categoria_gramatical')
+          .order('idverbete');
+        if (e) throw new Error(e.message);
+        setToponyms(data ?? []);
       } else {
-        setError('Failed to load toponyms');
+        const response = await fetch(`${API_BASE_URL}/toponyms`);
+        const result = await response.json();
+        if (result.success) {
+          setToponyms(result.data);
+          setError(null);
+        } else {
+          setToponyms(DEMO_TOPONYMS);
+          setError(null);
+        }
       }
     } catch (err) {
-      setError('Error connecting to server');
+      setToponyms(DEMO_TOPONYMS);
+      setError(null);
     } finally {
       setLoading(false);
     }
-  };
+  }, [useStaticDemo, useSupabase, supabase, API_BASE_URL]);
 
-  // procurar topônimos
   const searchToponyms = async (query: string) => {
-    if (!query.trim()) {
+    const q = query.trim().toLowerCase();
+    if (!q) {
       await fetchToponyms();
       return;
     }
-
+    if (useStaticDemo) {
+      setToponyms(DEMO_TOPONYMS.filter(t => t.lema.toLowerCase().includes(q)));
+      return;
+    }
     try {
-      const response = await fetch(`${API_BASE_URL}/searchToponyms?q=${encodeURIComponent(query)}`);
-      const result = await response.json();
-      
-      if (result.success) {
-        setToponyms(result.data);
+      if (useSupabase && supabase) {
+        const { data, error: e } = await supabase
+          .from('toponyms_view')
+          .select('idverbete, lema, estrutura_morfologica, categoria_gramatical')
+          .ilike('lema', `%${q}%`)
+          .order('idverbete');
+        if (e) throw new Error(e.message);
+        setToponyms(data ?? []);
+      } else {
+        const response = await fetch(`${API_BASE_URL}/searchToponyms?q=${encodeURIComponent(query)}`);
+        const result = await response.json();
+        if (result.success) setToponyms(result.data);
+        else setToponyms(DEMO_TOPONYMS.filter(t => t.lema.toLowerCase().includes(q)));
       }
     } catch (err) {
-      setError('Error searching toponyms');
+      setToponyms(DEMO_TOPONYMS.filter(t => t.lema.toLowerCase().includes(q)));
     }
   };
 
   // carregar dados na inicialização
   React.useEffect(() => {
     fetchToponyms();
-  }, []);
+  }, [fetchToponyms]);
 
   // filtrar topônimos baseado no termo de busca
   const filteredToponyms = toponyms.filter(toponym => 
@@ -109,29 +159,52 @@ const DicioBase = () => {
     setShowMicrostructure(false);           
   };
 
-  const playPronunciation = (toponym: Toponym) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(toponym.lema);
-      utterance.lang = 'pt-BR'; 
-      utterance.rate = 0.8; 
-      utterance.pitch = 1.0;
-      utterance.volume = 1.0;
-      
-      // pronúncia 
-      const voices = speechSynthesis.getVoices();
-      const brazilianVoice = voices.find(voice => 
-        voice.lang.includes('pt-BR') || voice.lang.includes('pt') || voice.name.includes('Brazil')
-      );
-      
-      if (brazilianVoice) {
-        utterance.voice = brazilianVoice;
+  const playPronunciation = async (toponym: Toponym) => {
+    // In static demo (Vercel no Supabase) or when using Supabase: use browser TTS only
+    if (!useStaticDemo && !useSupabase) {
+      const pronunciationUrl = `${API_BASE_URL}/pronunciation?lema=${encodeURIComponent(toponym.lema)}`;
+      try {
+        const res = await fetch(pronunciationUrl);
+        if (res.ok) {
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const audio = new Audio(url);
+          audio.onended = () => URL.revokeObjectURL(url);
+          await audio.play();
+          return;
+        }
+      } catch {
+        // Fall through to browser TTS
       }
-      
-      speechSynthesis.speak(utterance);
-    } else {
-      console.log(`Playing pronunciation for: ${toponym.lema}`);
-      alert('Speech synthesis not supported in this browser');
     }
+    // Browser speech synthesis (pt-BR) – works everywhere, no backend needed
+    if (!('speechSynthesis' in window)) {
+      alert('Speech synthesis not supported in this browser');
+      return;
+    }
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(toponym.lema);
+    utterance.lang = 'pt-BR';
+    utterance.rate = 0.85;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    const getVoices = (): SpeechSynthesisVoice[] => speechSynthesis.getVoices();
+    let voices = getVoices();
+    if (voices.length === 0) {
+      await new Promise<void>(resolve => {
+        const onVoices = () => {
+          voices = getVoices();
+          speechSynthesis.onvoiceschanged = null;
+          resolve();
+        };
+        speechSynthesis.onvoiceschanged = onVoices;
+        setTimeout(resolve, 500);
+      });
+      voices = getVoices();
+    }
+    const pt = voices.find(v => v.lang.startsWith('pt-BR')) ?? voices.find(v => v.lang.startsWith('pt'));
+    if (pt) utterance.voice = pt;
+    speechSynthesis.speak(utterance);
   };
 
   

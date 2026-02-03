@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@supabase/supabase-js": "^2.93.3",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "cors": "^2.8.5",
@@ -23,11 +24,14 @@
   "scripts": {
     "start": "react-scripts start",
     "server": "node server.js",
-    "dev": "concurrently \"npm run server\" \"npm run start\"",
+    "server:demo": "node server-demo.js",
+    "dev": "npx concurrently \"npm run server\" \"npm run start\"",
+    "dev:demo": "npx concurrently \"npm run server:demo\" \"npm run start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "npm run build && firebase deploy",
+    "deploy:vercel": "npx vercel --prod",
     "start:prod": "npm run build && node server.js"
   },
   "eslintConfig": {

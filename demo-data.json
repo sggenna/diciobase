@@ -1,0 +1,19 @@
+{
+  "toponyms": [
+    { "idverbete": 1, "lema": "Paranaguá", "estrutura_morfologica": "Simples", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 2, "lema": "Araguaia", "estrutura_morfologica": "Simples", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 3, "lema": "Curitiba", "estrutura_morfologica": "Simples", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 4, "lema": "Santos", "estrutura_morfologica": "Simples", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 5, "lema": "Iguaçu", "estrutura_morfologica": "Simples", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 6, "lema": "Brasília", "estrutura_morfologica": "Simples", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 7, "lema": "Amazonas", "estrutura_morfologica": "Simples", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 8, "lema": "Fernando de Noronha", "estrutura_morfologica": "Composto", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 9, "lema": "Salvador", "estrutura_morfologica": "Simples", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 10, "lema": "Ouro Preto", "estrutura_morfologica": "Composto", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 11, "lema": "Pantanal", "estrutura_morfologica": "Simples", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 12, "lema": "Copacabana", "estrutura_morfologica": "Simples", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 13, "lema": "Ipanema", "estrutura_morfologica": "Simples", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 14, "lema": "Recife", "estrutura_morfologica": "Simples", "categoria_gramatical": "Substantivo" },
+    { "idverbete": 15, "lema": "São Paulo", "estrutura_morfologica": "Composto", "categoria_gramatical": "Substantivo" }
+  ]
+}
