@@ -65,7 +65,7 @@ export function LandingPage({
       <section className="flex-1 flex flex-col items-center justify-center text-center px-6 py-28"
         style={fadeStyle(heroVis)}>
         <img src={imgLogoHero} alt="DICIOBASE" className="h-20 w-auto mb-8" />
-        <h1 className="font-['Poppins:ExtraBold'] text-[56px] text-[#1c1b19] tracking-[-2px] leading-none max-w-[640px]">
+        <h1 className="font-['Poppins:ExtraBold'] text-[45px] text-[#1c1b19] tracking-[-2px] leading-none max-w-[640px]">
           Todos os dicionários.<br />Uma só busca.
         </h1>
         <p className="mt-5 font-['Poppins:Regular'] text-[18px] text-[#6b6760] max-w-[480px] leading-relaxed">

@@ -34,14 +34,10 @@ type View =
 
 export default function App() {
   const isMobile = useIsMobile();
-  // Start at home — no account required to browse
   const [view, setView] = useState<View>({ type: "home" });
   const [navSearch, setNavSearch] = useState("");
   const [mobileTab, setMobileTab] = useState<MobileTab>("pesquisar");
-  // keep goHome in sync with mobileTab
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // Auth modal state (desktop overlay, works on any page)
   const [authModal, setAuthModal] = useState<"login" | "signup" | null>(null);
   const [postAuthCb, setPostAuthCb] = useState<(() => void) | null>(null);
 
@@ -53,7 +49,6 @@ export default function App() {
     setIsLoggedIn(true);
     setAuthModal(null);
     if (postAuthCb) { postAuthCb(); setPostAuthCb(null); return; }
-    // first time login → onboarding
     setView({ type: "preferences" });
   }
 
@@ -200,8 +195,6 @@ export default function App() {
           <ProfilePage onLogout={() => { setIsLoggedIn(false); goHome(); }} onBack={goHome} />
         )}
       </div>
-
-      {/* Global auth modal overlay (works on any page) */}
       {authModal && (
         <AuthModal
           defaultMode={authModal}
