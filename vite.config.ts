@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 
 const siteConfiguration = {
+  title: 'Diciobase',
   description: 'Explore diverse Portuguese definitions from various Brazilian dictionaries with a user-friendly interface designed for seamless navigation and smooth interactions.',
   robots: {
     index: false,
@@ -92,7 +93,7 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
     return html.replace(`<!-- ${slotName} -->`, content)
   }
 
-  const title = config.title ?? "Figma Make App"
+  const title = config.title ?? "Diciobase"
   const description = config.description ?? ''
   const favicon = config.icons?.icon ?? ''
   const socialImage = config.openGraph?.image ?? ''
