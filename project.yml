@@ -1,0 +1,23 @@
+name: Diciobase
+options:
+  bundleIdPrefix: com.diciobase
+  deploymentTarget:
+    iOS: "16.0"
+
+targets:
+  Diciobase:
+    type: application
+    platform: iOS
+    sources:
+      - path: Diciobase
+    info:
+      properties:
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        CFBundleDisplayName: Diciobase
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.diciobase.app
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
