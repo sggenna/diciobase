@@ -1,0 +1,110 @@
+@font-face {
+  font-family: "Poppins:Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: url("https://static.figma.com/font/Poppins-Regular_6") format("woff2");
+}
+@font-face {
+  font-family: "Poppins:Light";
+  font-style: normal;
+  font-weight: 300;
+  src: url("https://static.figma.com/font/Poppins-Light_6") format("woff2");
+}
+@font-face {
+  font-family: "Poppins:Medium";
+  font-style: normal;
+  font-weight: 500;
+  src: url("https://static.figma.com/font/Poppins-Medium_6") format("woff2");
+}
+@font-face {
+  font-family: "Poppins:SemiBold";
+  font-style: normal;
+  font-weight: 600;
+  src: url("https://static.figma.com/font/Poppins-SemiBold_6") format("woff2");
+}
+@font-face {
+  font-family: "Poppins:Bold";
+  font-style: normal;
+  font-weight: 700;
+  src: url("https://static.figma.com/font/Poppins-Bold_6") format("woff2");
+}
+@font-face {
+  font-family: "Poppins:ExtraBold";
+  font-style: normal;
+  font-weight: 800;
+  src: url("https://static.figma.com/font/Poppins-ExtraBold_4") format("woff2");
+}
+@font-face {
+  font-family: "Poppins:Italic";
+  font-style: italic;
+  font-weight: 400;
+  src: url("https://static.figma.com/font/Poppins-Italic_4") format("woff2");
+}
+
+@import 'tailwindcss';
+
+* {
+  -webkit-font-smoothing: antialiased;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Poppins:Regular", Helvetica, Arial, sans-serif;
+  background: #fff;
+  color: #1c1b19;
+}
+
+/* Hide scrollbar by default, show on hover/scroll */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+*:hover::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.15);
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Smooth focus outline reset */
+button:focus-visible, input:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Override backdrop filter for older Safari */
+@supports not (backdrop-filter: blur(1px)) {
+  nav { background: rgba(255,255,255,0.97) !important; }
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Mobile bottom nav safe area */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .mobile-nav-pad { padding-bottom: calc(90px + env(safe-area-inset-bottom)); }
+}

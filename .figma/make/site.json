@@ -1,0 +1,10 @@
+{
+  "description": "Explore diverse Portuguese definitions from various Brazilian dictionaries with a user-friendly interface designed for seamless navigation and smooth interactions.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
