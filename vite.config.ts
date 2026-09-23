@@ -3,12 +3,18 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 
-import siteConfiguration from './.figma/make/site.json'
-
+const siteConfiguration = {
+  description: 'Explore diverse Portuguese definitions from various Brazilian dictionaries with a user-friendly interface designed for seamless navigation and smooth interactions.',
+  robots: {
+    index: false,
+  },
+  accessibility: {
+    addBypassLinks: false,
+  },
+}
 
 // Vite config — https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  // .figma/make/deploy-preview passes `--mode development` for cached-preview builds.
   const emitSourcemaps = mode === 'development'
 
   return {
