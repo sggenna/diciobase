@@ -7,8 +7,8 @@ import {
   useTransform,
 } from "motion/react"
 import "./SwipeToast.css"
+import { EASE_OUT } from "@/lib/motion"
 
-const EASE_OUT = [0.23, 1, 0.32, 1] as const
 const FLICK = 0.11
 const DEAD_ZONE = 3
 const RESIST_PX = 24

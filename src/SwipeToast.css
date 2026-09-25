@@ -9,7 +9,7 @@
   --st-gap: 10px;
   --st-offset: 32px;
   --st-z: 999999999;
-  --st-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --st-ease-out: var(--ease-out);
 
   display: grid;
   grid-template-rows: 1fr;

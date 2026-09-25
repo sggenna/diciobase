@@ -48,7 +48,7 @@ export function AppNav({
           <form onSubmit={submit} className="flex-1 max-w-[480px]">
             <div className="relative">
               <svg
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[14px] h-[14px] text-[#9e9b94]"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[14px] h-[14px] text-muted"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -64,8 +64,8 @@ export function AppNav({
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}
                 placeholder="Pesquise uma palavra…"
-                className="w-full h-[36px] pl-9 pr-4 rounded-[9px] bg-[#f4f4f4] font-['Poppins:Regular'] text-[13px] text-black placeholder-[#9e9b94] outline-none transition-all duration-200"
-                style={{ boxShadow: focused ? "0 0 0 2px #1c1b19" : "none" }}
+                className="w-full h-[36px] pl-9 pr-4 rounded-sm bg-surface font-['Poppins:Regular'] text-[13px] text-ink placeholder-muted outline-none transition-colors duration-200"
+                style={{ boxShadow: focused ? "var(--ring-ink)" : "none" }}
               />
             </div>
           </form>
@@ -73,7 +73,7 @@ export function AppNav({
         <div className="flex items-center gap-1 ml-auto">
           <button
             onClick={onFavorites}
-            className="h-[34px] px-3.5 rounded-[9px] font-['Poppins:Medium'] text-[13px] text-[#4a4742] hover:bg-[#f4f4f4] hover:text-black transition-all flex items-center gap-1.5"
+            className="h-[34px] px-3.5 rounded-sm font-['Poppins:Medium'] text-[13px] text-body hover:bg-surface hover:text-ink transition-colors flex items-center gap-1.5"
           >
             <svg
               width="15"
@@ -91,11 +91,11 @@ export function AppNav({
           </button>
           <button
             onClick={onProfile}
-            className="w-[34px] h-[34px] rounded-[9px] flex items-center justify-center hover:bg-black transition-colors ml-1"
-            style={{ background: isLoggedIn ? "#1c1b19" : "#e8e4dc" }}
+            className="w-[34px] h-[34px] rounded-sm flex items-center justify-center hover:bg-ink transition-colors ml-1"
+            style={{ background: isLoggedIn ? "var(--color-ink)" : "var(--color-border)" }}
           >
             {isLoggedIn ? (
-              <span className="font-['Poppins:Bold'] text-[13px] text-white">
+              <span className="font-['Poppins:Bold'] text-[13px] text-on-ink">
                 M
               </span>
             ) : (
@@ -104,7 +104,7 @@ export function AppNav({
                 height="16"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#6b6760"
+                stroke="var(--color-muted)"
                 strokeWidth="2"
                 strokeLinecap="round"
               >

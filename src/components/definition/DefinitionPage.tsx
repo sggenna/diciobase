@@ -80,33 +80,18 @@ export function DefinitionPage({
         className="flex-1 flex overflow-hidden"
         style={{ height: "calc(100vh - 64px)", marginTop: 64 }}
       >
-        <aside className="w-[280px] shrink-0 border-r border-black/8 flex flex-col overflow-y-auto hidden md:flex">
-          <div className="px-6 pt-8 pb-5 border-b border-black/8">
-            <div className="flex items-baseline gap-3 flex-wrap">
-              <h1 className="font-['Poppins:ExtraBold'] text-[34px] text-black leading-tight">
-                {wordData.word}
-              </h1>
-              {wordData.gender && (
-                <span className="font-['Poppins:Regular'] text-[12px] text-[#7e7676] border border-[#c8c4bc] px-2 py-0.5 rounded-[4px]">
-                  {wordData.gender}
-                </span>
-              )}
-            </div>
-            <p className="font-['Poppins:Regular'] text-[14px] text-[#7e7676] mt-1">
-              [ {wordData.phonetic} ]
-            </p>
-            <p className="font-['Poppins:Medium'] text-[12px] text-[#9e9b94] uppercase tracking-[0.5px] mt-1">
-              {wordData.partOfSpeech}
-            </p>
-          </div>
+        <aside className="w-[280px] shrink-0 border-r border-black/8 flex flex-col overflow-y-auto">
+          <nav aria-label="Índice da entrada" className="px-6 pt-8 pb-2">
+            {/* Filled by the entry index (Part B) */}
+          </nav>
 
-          <div className="mx-4 mt-6 mb-4 bg-[#f4f4f4] rounded-[16px] p-5 flex flex-col gap-3">
+          <div className="mx-4 mt-4 mb-4 bg-surface rounded-lg p-5 flex flex-col gap-3">
             {wordData.facts.map((f) => (
               <div key={f.label} className="flex flex-col gap-0.5">
-                <span className="font-['Poppins:Regular'] text-[9px] uppercase tracking-[0.6px] text-[#7e7676]">
+                <span className="font-['Poppins:Regular'] text-[9px] uppercase tracking-[0.6px] text-muted">
                   {f.label}
                 </span>
-                <span className="font-['Poppins:SemiBold'] text-[13px] text-[#1c1b19]">
+                <span className="font-['Poppins:SemiBold'] text-[13px] text-ink">
                   {f.value}
                 </span>
               </div>
@@ -117,21 +102,21 @@ export function DefinitionPage({
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="px-8 py-5 border-b border-black/8 flex items-center justify-between gap-4 shrink-0">
             <div className="flex flex-col gap-1">
-              <div className="flex items-baseline gap-3 flex-wrap md:hidden">
-                <span className="font-['Poppins:ExtraBold'] text-[28px] text-black">
+              <div className="flex items-baseline gap-3 flex-wrap">
+                <h1 className="font-['Poppins:ExtraBold'] text-[34px] text-ink leading-tight">
                   {wordData.word}
-                </span>
-                <span className="font-['Poppins:Medium'] text-[12px] text-black uppercase tracking-[0.5px]">
-                  {wordData.partOfSpeech}
-                </span>
+                </h1>
               </div>
-              <div className="flex items-center gap-3 flex-wrap">
-                <span className="font-['Poppins:Regular'] text-[15px] text-[#7e7676] hidden md:inline">
-                  [ {wordData.phonetic} ]
+              <span className="font-['Poppins:Medium'] text-[12px] text-muted uppercase tracking-[0.5px]">
+                {wordData.partOfSpeech}
+              </span>
+              <div className="flex items-center gap-3 flex-wrap mt-1">
+                <span className="font-['Poppins:Regular'] text-[15px] text-muted">
+                  /{wordData.phonetic}/
                 </span>
                 <button
                   onClick={playAudio}
-                  className="flex items-center gap-2 bg-[#f4f4f4] hover:bg-[#ede9e0] px-3 py-1.5 rounded-[8px] transition-all duration-200"
+                  className="flex items-center gap-2 bg-surface hover:bg-surface-hover px-3 py-1.5 rounded-sm transition-colors duration-200"
                 >
                   <img
                     src={imgAudio}
@@ -142,7 +127,7 @@ export function DefinitionPage({
                       transition: "transform 0.2s",
                     }}
                   />
-                  <span className="font-['Poppins:SemiBold'] text-[11px] text-black">
+                  <span className="font-['Poppins:SemiBold'] text-[11px] text-ink">
                     {audioPlaying ? "Reproduzindo…" : "Ouvir pronúncia"}
                   </span>
                 </button>
@@ -151,10 +136,10 @@ export function DefinitionPage({
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={handleSave}
-                className="flex items-center gap-2 px-4 h-[42px] rounded-[12px]"
+                className="flex items-center gap-2 px-4 h-[42px] rounded-md"
                 style={{
-                  background: saved ? "#1c1b19" : "#f4f4f4",
-                  border: saved ? "none" : "1px solid #c8c4bc",
+                  background: saved ? "var(--color-ink)" : "var(--color-surface)",
+                  border: saved ? "none" : "1px solid var(--color-border-strong)",
                   transform: btnPop ? "scale(1.08)" : "scale(1)",
                   transition:
                     "background 0.2s, border-color 0.2s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
@@ -177,7 +162,7 @@ export function DefinitionPage({
                   style={{
                     fontFamily: "'Poppins:SemiBold'",
                     fontSize: 13,
-                    color: saved ? "#fff" : "#1c1b19",
+                    color: saved ? "var(--color-on-ink)" : "var(--color-ink)",
                     whiteSpace: "nowrap",
                     transition: "color 0.2s",
                   }}
@@ -185,7 +170,7 @@ export function DefinitionPage({
                   {saved ? "Salvo ✓" : "Salvar"}
                 </span>
               </button>
-              <button className="flex items-center justify-center w-[42px] h-[42px] rounded-[12px] border border-[#c8c4bc] hover:border-black transition-all duration-200">
+              <button className="flex items-center justify-center w-[42px] h-[42px] rounded-md border border-border-strong hover:border-ink transition-colors duration-200">
                 <img src={imgShare} alt="" className="size-[16px]" />
               </button>
             </div>
@@ -196,9 +181,9 @@ export function DefinitionPage({
                 onClose={() => {}}
                 title="Palavra salva!"
                 description={`"${wordData.word}" adicionada às suas palavras`}
-                background="#1c1b19"
-                color="#f4f4f4"
-                fuseColor="#3D6647"
+                background="var(--color-ink)"
+                color="var(--color-on-ink)"
+                fuseColor="var(--color-accent)"
                 duration={3500}
                 fuse="bottom"
                 icon={
@@ -219,7 +204,7 @@ export function DefinitionPage({
           </div>
 
           <div className="px-8 py-3 border-b border-black/8 flex items-center gap-2 flex-wrap shrink-0">
-            <span className="font-['Poppins:Regular'] text-[11px] text-[#7e7676] uppercase tracking-[0.6px] mr-1">
+            <span className="font-['Poppins:Regular'] text-[11px] text-muted uppercase tracking-[0.6px] mr-1">
               Fonte
             </span>
             {wordData.dicts.map((d) => {
@@ -229,10 +214,10 @@ export function DefinitionPage({
                 <button
                   key={d.id}
                   onClick={() => switchDict(d.id)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[20px] transition-all duration-200 font-['Poppins:SemiBold'] text-[12px]"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors duration-200 font-['Poppins:SemiBold'] text-[12px]"
                   style={{
-                    background: isActive ? c : "#f4f4f4",
-                    color: isActive ? "#fff" : "#4a4742",
+                    background: isActive ? c : "var(--color-surface)",
+                    color: isActive ? "var(--color-on-ink)" : "var(--color-body)",
                   }}
                 >
                   <span

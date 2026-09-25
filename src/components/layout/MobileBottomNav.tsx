@@ -22,7 +22,7 @@ export function MobileBottomNav({
           height="20"
           viewBox="0 0 24 24"
           fill="none"
-          stroke={a ? "white" : "rgba(255,255,255,0.45)"}
+          stroke={a ? "var(--color-on-ink)" : "var(--color-on-ink-muted)"}
           strokeWidth={a ? 2.2 : 1.8}
           strokeLinecap="round"
         >
@@ -39,8 +39,8 @@ export function MobileBottomNav({
           width="20"
           height="20"
           viewBox="0 0 24 24"
-          fill={a ? "white" : "none"}
-          stroke={a ? "white" : "rgba(255,255,255,0.45)"}
+          fill={a ? "var(--color-on-ink)" : "none"}
+          stroke={a ? "var(--color-on-ink)" : "var(--color-on-ink-muted)"}
           strokeWidth={a ? 2 : 1.8}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -58,7 +58,7 @@ export function MobileBottomNav({
           height="20"
           viewBox="0 0 24 24"
           fill="none"
-          stroke={a ? "white" : "rgba(255,255,255,0.45)"}
+          stroke={a ? "var(--color-on-ink)" : "var(--color-on-ink-muted)"}
           strokeWidth={a ? 2.2 : 1.8}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -76,10 +76,10 @@ export function MobileBottomNav({
       style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 20px)" }}
     >
       <nav
-        className="flex items-center gap-1 px-2 py-2 rounded-[100px]"
+        className="flex items-center gap-1 px-2 py-2 rounded-full"
         style={{
-          background: "#1c1b19",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.30), 0 2px 8px rgba(0,0,0,0.18)",
+          background: "var(--color-ink)",
+          boxShadow: "var(--shadow-float)",
         }}
       >
         {tabs.map((tab) => {
@@ -88,7 +88,7 @@ export function MobileBottomNav({
             <button
               key={tab.id}
               onClick={() => onChange(tab.id)}
-              className="flex items-center gap-2 rounded-[100px] transition-all duration-200"
+              className="flex items-center gap-2 rounded-full transition-[padding,background] duration-200"
               style={{
                 padding: isActive ? "10px 18px" : "10px 14px",
                 background: isActive ? "rgba(255,255,255,0.18)" : "transparent",
@@ -109,7 +109,7 @@ export function MobileBottomNav({
                   style={{
                     fontFamily: "'Poppins:SemiBold'",
                     fontSize: 13,
-                    color: "white",
+                    color: "var(--color-on-ink)",
                     letterSpacing: "-0.2px",
                     lineHeight: 1,
                   }}

@@ -30,14 +30,14 @@ export function HomePage({
         <div className="flex items-center gap-5">
           <button
             onClick={onOpenAuth}
-            className="size-8 flex items-center justify-center rounded-full bg-[#f0ede6] hover:bg-[#e0ddd6] transition-colors border border-[#d5d1c9]"
+            className="size-8 flex items-center justify-center rounded-full bg-surface-hover hover:bg-border transition-colors border border-border"
           >
             <svg
               width="16"
               height="16"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#6b6760"
+              stroke="var(--color-muted)"
               strokeWidth="2"
               strokeLinecap="round"
             >
@@ -60,7 +60,7 @@ export function HomePage({
         >
           <img src={imgLogoHero} alt="DICIOBASE" className="h-20 w-auto" />
 
-          <p className="font-['Poppins:Regular'] text-[26px] md:text-[26px] text-black tracking-[-0.72px] text-center leading-tight">
+          <p className="font-['Poppins:Regular'] text-[26px] text-ink tracking-[-0.72px] text-center leading-tight">
             Todos os dicionários em um lugar.
           </p>
 
@@ -80,13 +80,13 @@ export function HomePage({
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}
                 placeholder="Pesquise algo"
-                className="w-full h-[60px] px-7 rounded-[32px] border font-['Poppins:Light'] text-[22px] text-black tracking-[-1.2px] placeholder-[#7e7676] bg-white outline-none transition-all duration-250"
-                style={{ borderColor: focused ? "#000" : "#7e7676" }}
+                className="w-full h-[60px] px-7 rounded-full border font-['Poppins:Light'] text-[22px] text-ink tracking-[-1.2px] placeholder-muted bg-white outline-none transition-colors duration-250"
+                style={{ borderColor: focused ? "var(--color-ink)" : "var(--color-muted)" }}
               />
               {query && (
                 <button
                   type="submit"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-black text-white font-['Poppins:SemiBold'] text-[13px] px-5 py-2.5 rounded-[24px] hover:bg-[#333] transition-all active:scale-95"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-ink text-on-ink font-['Poppins:SemiBold'] text-[13px] px-5 py-2.5 rounded-2xl hover:bg-[#333] transition-[background-color,transform] active:scale-95"
                 >
                   Buscar
                 </button>
@@ -102,7 +102,7 @@ export function HomePage({
                   <button
                     key={s}
                     onClick={() => onSearch(s)}
-                    className="px-4 py-1.5 rounded-[24px] border border-black/20 font-['Poppins:Regular'] text-[13px] text-black hover:border-black hover:bg-black hover:text-white transition-all duration-200 capitalize"
+                    className="px-4 py-1.5 rounded-2xl border border-black/20 font-['Poppins:Regular'] text-[13px] text-ink hover:border-ink hover:bg-ink hover:text-on-ink transition-colors duration-200 capitalize"
                   >
                     {s}
                   </button>

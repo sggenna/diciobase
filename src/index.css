@@ -43,6 +43,77 @@
 
 @import 'tailwindcss';
 
+@theme static {
+  --color-ink: #1c1b19;
+  --color-body: #4a4742;
+  --color-muted: #8c8a82;
+  --color-paper: #ffffff;
+  --color-paper-warm: #fbf9f6;
+  --color-surface: #f4f4f4;
+  --color-surface-hover: #f0ede6;
+  --color-border: #e0ddd6;
+  --color-border-strong: #c8c4bc;
+  --color-rule: #d5d0c6;
+  --color-on-ink: #ffffff;
+  --color-on-ink-muted: rgba(255, 255, 255, 0.42);
+  --color-on-ink-line: rgba(255, 255, 255, 0.08);
+  --color-on-ink-fill: rgba(255, 255, 255, 0.10);
+  --color-accent: #3d6647;
+  --color-accent-tint: rgba(61, 102, 71, 0.10);
+  --color-accent-line: rgba(61, 102, 71, 0.30);
+  --color-danger: #d04030;
+  --color-danger-on-ink: #e05c4b;
+  --color-danger-tint: rgba(208, 64, 48, 0.08);
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.10);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.10);
+  --shadow-float: 0 8px 32px rgba(0, 0, 0, 0.30), 0 2px 8px rgba(0, 0, 0, 0.18);
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+:root {
+  --dur-press: 100ms;
+  --dur-fast: 160ms;
+  --dur-base: 240ms;
+  --dur-slow: 360ms;
+  --press-scale: 0.97;
+  --ring-ink: 0 0 0 2px var(--color-ink);
+  --ring-on-ink: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+@utility press {
+  transition: scale var(--dur-press) var(--ease-out);
+  &:active {
+    scale: var(--press-scale);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
+  .press:active {
+    scale: 1;
+  }
+}
+
 * {
   -webkit-font-smoothing: antialiased;
 }
@@ -53,8 +124,8 @@ html {
 
 body {
   font-family: "Poppins:Regular", Helvetica, Arial, sans-serif;
-  background: #fff;
-  color: #1c1b19;
+  background: var(--color-paper);
+  color: var(--color-ink);
 }
 
 /* Hide scrollbar by default, show on hover/scroll */
@@ -88,7 +159,7 @@ body {
 
 /* Smooth focus outline reset */
 button:focus-visible, input:focus-visible {
-  outline: 2px solid #000;
+  outline: 2px solid var(--color-ink);
   outline-offset: 2px;
 }
 button:focus:not(:focus-visible) {

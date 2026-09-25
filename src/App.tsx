@@ -122,6 +122,7 @@ export default function App() {
             onSearch={(w) => {
               goSearch(w)
             }}
+            onGoHome={goHome}
           />
         )}
 
@@ -191,7 +192,7 @@ export default function App() {
           searchValue={navSearch}
           onSearchChange={setNavSearch}
           isLoggedIn={isLoggedIn}
-          hideSearch={view.type === "home"}
+          hideSearch={view.type === "home" || view.type === "favorites"}
         />
       )}
       <div style={{ paddingTop: showAppNav ? 64 : 0 }}>
@@ -217,7 +218,9 @@ export default function App() {
             />
           </div>
         )}
-        {view.type === "favorites" && <FavoritesPage onSearch={goSearch} />}
+        {view.type === "favorites" && (
+          <FavoritesPage onSearch={goSearch} onGoHome={goHome} />
+        )}
         {view.type === "notfound" && (
           <NotFoundPage
             word={(view as { type: "notfound"; word: string }).word}

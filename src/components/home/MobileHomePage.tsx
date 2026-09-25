@@ -22,7 +22,7 @@ export function MobileHomePage({
 
   return (
     <div
-      className="min-h-[calc(100vh-64px)] bg-[#fbf9f6] flex flex-col px-6 justify-center"
+      className="min-h-[calc(100vh-64px)] bg-paper-warm flex flex-col px-6 justify-center"
       style={{ paddingTop: "env(safe-area-inset-top, 20px)" }}
     >
       {/* Logo */}
@@ -39,7 +39,7 @@ export function MobileHomePage({
 
       {/* Tagline */}
       <p
-        className="font-['Poppins:Regular'] text-[16px] text-[#1c1b19] text-center leading-[1.3] tracking-[-0.32px] mb-8 mt-2"
+        className="font-['Poppins:Regular'] text-[16px] text-ink text-center leading-[1.3] tracking-[-0.32px] mb-8 mt-2"
         style={slideUpStyle(vis, 0.06)}
       >
         Todos os dicionários em um só lugar.
@@ -61,13 +61,15 @@ export function MobileHomePage({
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             placeholder="Pesquise alguma palavra..."
-            className="w-full h-[50px] pl-[44px] pr-5 rounded-[25px] bg-white font-['Poppins:Regular'] text-[14px] text-[#1c1b19] placeholder-[#8c8a82] outline-none transition-all duration-200"
-            style={{ border: `1.5px solid ${focused ? "#1c1b19" : "#c8c4bc"}` }}
+            className="w-full h-[50px] pl-[44px] pr-5 rounded-full bg-white font-['Poppins:Regular'] text-[14px] text-ink placeholder-muted outline-none transition-colors duration-200"
+            style={{
+              border: `1.5px solid ${focused ? "var(--color-ink)" : "var(--color-border-strong)"}`,
+            }}
           />
           {query && (
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black text-white font-['Poppins:SemiBold'] text-[12px] px-4 py-2 rounded-[20px] active:scale-95 transition-transform"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-ink text-on-ink font-['Poppins:SemiBold'] text-[12px] px-4 py-2 rounded-xl active:scale-95 transition-transform"
             >
               Buscar
             </button>
@@ -77,7 +79,7 @@ export function MobileHomePage({
 
       {/* Recents */}
       <div className="flex flex-col gap-3 mt-8" style={slideUpStyle(vis, 0.14)}>
-        <p className="font-['Poppins:SemiBold'] text-[11px] text-[#8c8a82] uppercase tracking-[1px]">
+        <p className="font-['Poppins:SemiBold'] text-[11px] text-muted uppercase tracking-[1px]">
           Pesquisas Recentes
         </p>
         <div className="flex flex-wrap gap-2">
@@ -85,7 +87,7 @@ export function MobileHomePage({
             <button
               key={w}
               onClick={() => onSearch(w.toLowerCase())}
-              className="px-4 py-2 rounded-[20px] bg-white border border-[#efece6] font-['Poppins:Regular'] text-[13px] text-[#1c1b19] active:scale-95 transition-transform"
+              className="px-4 py-2 rounded-xl bg-white border border-border font-['Poppins:Regular'] text-[13px] text-ink active:scale-95 transition-transform"
             >
               {w}
             </button>
@@ -95,7 +97,7 @@ export function MobileHomePage({
 
       {/* Explore suggestions */}
       <div className="flex flex-col gap-3 mt-8" style={slideUpStyle(vis, 0.18)}>
-        <p className="font-['Poppins:SemiBold'] text-[11px] text-[#8c8a82] uppercase tracking-[1px]">
+        <p className="font-['Poppins:SemiBold'] text-[11px] text-muted uppercase tracking-[1px]">
           Experimente
         </p>
         <div className="flex flex-wrap gap-2">
@@ -103,7 +105,7 @@ export function MobileHomePage({
             <button
               key={s}
               onClick={() => onSearch(s)}
-              className="px-4 py-2 rounded-[20px] bg-[#1c1b19] font-['Poppins:Regular'] text-[13px] text-white active:scale-95 transition-transform capitalize"
+              className="px-4 py-2 rounded-xl bg-ink font-['Poppins:Regular'] text-[13px] text-on-ink active:scale-95 transition-transform capitalize"
             >
               {s}
             </button>

@@ -478,15 +478,15 @@ export const SAVED_WORDS = [
     when: "há 2 dias",
   },
   {
-    word: "vellichor",
+    word: "terreno",
     pos: "subst.",
-    snippet: "A atmosfera nostálgica de sebos e livrarias antigas.",
+    snippet: "Extensão de terra; solo, chão.",
     when: "há 3 dias",
   },
   {
-    word: "petrichor",
+    word: "casa",
     pos: "subst.",
-    snippet: "O cheiro característico da terra molhada após a chuva.",
+    snippet: "Edificação destinada à habitação humana.",
     when: "há 5 dias",
   },
   {
@@ -557,14 +557,13 @@ export const RECENT_SEARCHES = [
 
 export const FAV_FILTERS = [
   "Todas",
-  "Adjetivos",
   "Substantivos",
+  "Adjetivos",
   "Verbos",
-  "Recentes",
 ] as const
 
 export type FavFilter = typeof FAV_FILTERS[number]
 
-export const MOB_FAV_FILTERS = ["Todas", "Substantivos", "Adjetivos"] as const
+export const FAV_SORTS = ["Mais recentes", "A-Z"] as const
 
-export type MobFavFilter = typeof MOB_FAV_FILTERS[number]
+export type FavSort = typeof FAV_SORTS[number]

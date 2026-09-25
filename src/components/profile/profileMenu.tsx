@@ -1,3 +1,4 @@
+import { DICT_COLOR } from "@/lib/data"
 import { ProfilePanel } from "@/lib/types"
 
 export const PROFILE_MENU_ROWS = (
@@ -108,7 +109,7 @@ export const PROFILE_MENU_ROWS = (
         height="18"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="#ffffff"
+        stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"
       >
@@ -149,17 +150,22 @@ export const TERMS_SECTIONS = [
 ]
 
 export const DICT_LIST = [
-  { id: "aurelio" as const, name: "Aurélio", tag: "Versão 2026", c: "#3D6647" },
+  {
+    id: "aurelio" as const,
+    name: "Aurélio",
+    tag: "Versão 2026",
+    c: DICT_COLOR.aurelio,
+  },
   {
     id: "houaiss" as const,
     name: "Houaiss",
     tag: "Edição Integral",
-    c: "#24456B",
+    c: DICT_COLOR.houaiss,
   },
   {
     id: "michaelis" as const,
     name: "Michaelis",
     tag: "Dicionário Escolar",
-    c: "#7A6520",
+    c: DICT_COLOR.michaelis,
   },
 ]
