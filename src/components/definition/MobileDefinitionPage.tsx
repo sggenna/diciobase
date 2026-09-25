@@ -201,7 +201,7 @@ export function MobileDefinitionPage({
       <div className="px-5 pb-3 shrink-0">
         <div className="flex gap-2 overflow-x-auto no-scrollbar">
           {wordData.dicts.map((d) => {
-            const c = DICT_COLOR[d.id] ?? "#000"
+            const c = DICT_COLOR[d.id] ?? "var(--color-ink)"
             const isActive = d.id === activeId
             return (
               <button

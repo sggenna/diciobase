@@ -27,12 +27,12 @@ export function TutorialPage({ onFinish }: { onFinish: () => void }) {
         : TutorialMockupSaved
 
   return (
-    <div className="min-h-screen bg-[#fbf9f6] flex flex-col">
+    <div className="min-h-screen bg-paper-warm flex flex-col">
       <nav className="px-10 py-5 flex items-center justify-between shrink-0">
         <img src={imgLogoLight} alt="Diciobase" className="h-9 w-auto" />
         <button
           onClick={onFinish}
-          className="font-['Poppins:Medium'] text-[13px] text-[#8c8a82] hover:text-black transition-colors px-4 py-2 rounded-[8px] hover:bg-black/5"
+          className="font-['Poppins:Medium'] text-[13px] text-muted hover:text-ink transition-colors px-4 py-2 rounded-sm hover:bg-black/5"
         >
           Pular
         </button>
@@ -42,9 +42,9 @@ export function TutorialPage({ onFinish }: { onFinish: () => void }) {
         <div className="flex items-center gap-16 max-w-[1100px] w-full">
           {/* Browser mockup */}
           <div
-            className="flex-1 flex flex-col rounded-[16px] overflow-hidden border border-[#e0ddd6]"
+            className="flex-1 flex flex-col rounded-lg overflow-hidden border border-border"
             style={{
-              boxShadow: "0 20px 60px rgba(0,0,0,0.10)",
+              boxShadow: "var(--shadow-lg)",
               opacity: slideVis ? 1 : 0,
               transform: slideVis
                 ? "translateY(0) scale(1)"
@@ -53,14 +53,14 @@ export function TutorialPage({ onFinish }: { onFinish: () => void }) {
             }}
           >
             {/* Browser chrome */}
-            <div className="bg-[#f0ede6] flex items-center gap-3 px-4 py-3 shrink-0">
+            <div className="bg-surface-hover flex items-center gap-3 px-4 py-3 shrink-0">
               <div className="flex gap-1.5">
-                <div className="size-[10px] rounded-full bg-[#d0ccc4]" />
-                <div className="size-[10px] rounded-full bg-[#d0ccc4]" />
-                <div className="size-[10px] rounded-full bg-[#d0ccc4]" />
+                <div className="size-[10px] rounded-full bg-border-strong" />
+                <div className="size-[10px] rounded-full bg-border-strong" />
+                <div className="size-[10px] rounded-full bg-border-strong" />
               </div>
-              <div className="flex-1 h-[22px] rounded-[6px] bg-white border border-[#e0ddd6] flex items-center px-3">
-                <span className="font-['Poppins:Regular'] text-[10px] text-[#8c8a82]">
+              <div className="flex-1 h-[22px] rounded-sm bg-white border border-border flex items-center px-3">
+                <span className="font-['Poppins:Regular'] text-[10px] text-muted">
                   diciobase.com
                 </span>
               </div>
@@ -87,23 +87,23 @@ export function TutorialPage({ onFinish }: { onFinish: () => void }) {
                 <button
                   key={i}
                   onClick={() => goTo(i)}
-                  className="h-[3px] rounded-full transition-all duration-300"
+                  className="h-[3px] rounded-full transition-[width,background-color] duration-300"
                   style={{
                     width: i === step ? 28 : 10,
-                    background: i === step ? "#1c1b19" : "#d0ccc4",
+                    background: i === step ? "var(--color-ink)" : "var(--color-border-strong)",
                   }}
                 />
               ))}
             </div>
 
             <div className="flex flex-col gap-3">
-              <span className="font-['Poppins:Regular'] text-[11px] uppercase tracking-[1.2px] text-[#8c8a82]">
+              <span className="font-['Poppins:Regular'] text-[11px] uppercase tracking-[1.2px] text-muted">
                 {slide.label} / {String(total).padStart(2, "0")}
               </span>
-              <h2 className="font-['Poppins:ExtraBold'] text-[36px] text-[#1c1b19] leading-tight tracking-[-1.4px]">
+              <h2 className="font-['Poppins:ExtraBold'] text-[36px] text-ink leading-tight tracking-[-1.4px]">
                 {slide.title}
               </h2>
-              <p className="font-['Poppins:Regular'] text-[16px] text-[#7e7676] leading-[1.65]">
+              <p className="font-['Poppins:Regular'] text-[16px] text-muted leading-[1.65]">
                 {slide.body}
               </p>
             </div>
@@ -112,7 +112,7 @@ export function TutorialPage({ onFinish }: { onFinish: () => void }) {
               {step > 0 && (
                 <button
                   onClick={() => goTo(step - 1)}
-                  className="h-[48px] px-6 rounded-[12px] border border-[#c8c4bc] font-['Poppins:SemiBold'] text-[14px] text-[#1c1b19] hover:border-black transition-all"
+                  className="h-[48px] px-6 rounded-md border border-border-strong font-['Poppins:SemiBold'] text-[14px] text-ink hover:border-ink transition-colors"
                 >
                   Anterior
                 </button>
@@ -120,14 +120,14 @@ export function TutorialPage({ onFinish }: { onFinish: () => void }) {
               {step < total - 1 ? (
                 <button
                   onClick={() => goTo(step + 1)}
-                  className="h-[48px] px-8 rounded-[12px] bg-[#1c1b19] font-['Poppins:SemiBold'] text-[14px] text-white hover:bg-black transition-all active:scale-[0.97]"
+                  className="h-[48px] px-8 rounded-md bg-ink font-['Poppins:SemiBold'] text-[14px] text-on-ink hover:bg-[#333] transition-[background-color,transform] active:scale-[0.97]"
                 >
                   Avançar
                 </button>
               ) : (
                 <button
                   onClick={onFinish}
-                  className="h-[48px] px-8 rounded-[12px] bg-[#1c1b19] font-['Poppins:SemiBold'] text-[14px] text-white hover:bg-black transition-all active:scale-[0.97]"
+                  className="h-[48px] px-8 rounded-md bg-ink font-['Poppins:SemiBold'] text-[14px] text-on-ink hover:bg-[#333] transition-[background-color,transform] active:scale-[0.97]"
                 >
                   Começar agora
                 </button>

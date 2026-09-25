@@ -27,7 +27,7 @@ export function MobileTutorialPage({ onFinish }: { onFinish: () => void }) {
 
   return (
     <div
-      className="min-h-screen bg-[#fbf9f6] flex flex-col"
+      className="min-h-screen bg-paper-warm flex flex-col"
       style={{
         paddingTop: "env(safe-area-inset-top, 0px)",
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
@@ -40,17 +40,17 @@ export function MobileTutorialPage({ onFinish }: { onFinish: () => void }) {
             <button
               key={i}
               onClick={() => goTo(i)}
-              className="h-[3px] rounded-full transition-all duration-300"
+              className="h-[3px] rounded-full transition-[width,background-color] duration-300"
               style={{
                 width: i === step ? 24 : 8,
-                background: i === step ? "#1c1b19" : "#c8c4bc",
+                background: i === step ? "var(--color-ink)" : "var(--color-border-strong)",
               }}
             />
           ))}
         </div>
         <button
           onClick={onFinish}
-          className="font-['Poppins:Medium'] text-[13px] text-[#8c8a82]"
+          className="font-['Poppins:Medium'] text-[13px] text-muted"
         >
           Pular
         </button>
@@ -69,8 +69,8 @@ export function MobileTutorialPage({ onFinish }: { onFinish: () => void }) {
       >
         {/* Phone-like frame */}
         <div
-          className="rounded-[20px] overflow-hidden border border-[#e0ddd6]"
-          style={{ height: 300, boxShadow: "0 12px 40px rgba(0,0,0,0.10)" }}
+          className="rounded-xl overflow-hidden border border-border"
+          style={{ height: 300, boxShadow: "var(--shadow-lg)" }}
         >
           <Mockup />
         </div>
@@ -86,13 +86,13 @@ export function MobileTutorialPage({ onFinish }: { onFinish: () => void }) {
         }}
       >
         <div className="flex flex-col gap-2">
-          <span className="font-['Poppins:Regular'] text-[10px] uppercase tracking-[1px] text-[#8c8a82]">
+          <span className="font-['Poppins:Regular'] text-[10px] uppercase tracking-[1px] text-muted">
             {slide.label} / {String(total).padStart(2, "0")}
           </span>
-          <h2 className="font-['Poppins:ExtraBold'] text-[26px] text-[#1c1b19] leading-tight tracking-[-0.52px]">
+          <h2 className="font-['Poppins:ExtraBold'] text-[26px] text-ink leading-tight tracking-[-0.52px]">
             {slide.title}
           </h2>
-          <p className="font-['Poppins:Regular'] text-[14px] text-[#7e7676] leading-[1.65]">
+          <p className="font-['Poppins:Regular'] text-[14px] text-muted leading-[1.65]">
             {slide.body}
           </p>
         </div>
@@ -101,7 +101,7 @@ export function MobileTutorialPage({ onFinish }: { onFinish: () => void }) {
           {step > 0 && (
             <button
               onClick={() => goTo(step - 1)}
-              className="h-[52px] px-5 rounded-[14px] border border-[#c8c4bc] font-['Poppins:SemiBold'] text-[14px] text-[#1c1b19] active:scale-95 transition-transform"
+              className="h-[52px] px-5 rounded-lg border border-border-strong font-['Poppins:SemiBold'] text-[14px] text-ink active:scale-95 transition-transform"
             >
               Anterior
             </button>
@@ -109,14 +109,14 @@ export function MobileTutorialPage({ onFinish }: { onFinish: () => void }) {
           {step < total - 1 ? (
             <button
               onClick={() => goTo(step + 1)}
-              className="flex-1 h-[52px] rounded-[14px] bg-[#1c1b19] font-['Poppins:SemiBold'] text-[15px] text-white active:scale-[0.97] transition-transform"
+              className="flex-1 h-[52px] rounded-lg bg-ink font-['Poppins:SemiBold'] text-[15px] text-white active:scale-[0.97] transition-transform"
             >
               Avançar
             </button>
           ) : (
             <button
               onClick={onFinish}
-              className="flex-1 h-[52px] rounded-[14px] bg-[#1c1b19] font-['Poppins:SemiBold'] text-[15px] text-white active:scale-[0.97] transition-transform"
+              className="flex-1 h-[52px] rounded-lg bg-ink font-['Poppins:SemiBold'] text-[15px] text-white active:scale-[0.97] transition-transform"
             >
               Começar agora
             </button>

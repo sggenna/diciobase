@@ -1,23 +1,23 @@
 export function TutorialMockupDefinition() {
   return (
     <div className="bg-white w-full h-full flex flex-col overflow-hidden">
-      <div className="flex items-center gap-3 px-5 py-3 border-b border-[#f0ede6]">
+      <div className="flex items-center gap-3 px-5 py-3 border-b border-border">
         <div
-          className="bg-[#1c1b19] rounded-[3px]"
+          className="bg-ink rounded-xs"
           style={{ width: 72, height: 13 }}
         />
-        <div className="flex-1 h-[22px] rounded-full bg-[#f4f4f4]" />
+        <div className="flex-1 h-[22px] rounded-full bg-surface" />
       </div>
       <div className="flex flex-1 overflow-hidden">
         <div
-          className="border-r border-[#f0ede6] flex flex-col shrink-0"
+          className="border-r border-border flex flex-col shrink-0"
           style={{ width: "32%" }}
         >
-          <div className="px-4 py-3 border-b border-[#f0ede6]">
-            <div className="font-['Poppins:ExtraBold'] text-[15px] text-[#1c1b19]">
+          <div className="px-4 py-3 border-b border-border">
+            <div className="font-['Poppins:ExtraBold'] text-[15px] text-ink">
               efêmero
             </div>
-            <div className="h-[5px] w-[55px] bg-[#e0ddd6] rounded-full mt-1.5" />
+            <div className="h-[5px] w-[55px] bg-border rounded-full mt-1.5" />
           </div>
           {[
             { name: "Aurélio", c: "#3D6647" },
@@ -26,8 +26,8 @@ export function TutorialMockupDefinition() {
           ].map((d, i) => (
             <div
               key={d.name}
-              className="px-4 py-2.5 border-b border-[#f0ede6]"
-              style={{ background: i === 0 ? "#f4f4f4" : "white" }}
+              className="px-4 py-2.5 border-b border-border"
+              style={{ background: i === 0 ? "var(--color-surface)" : "white" }}
             >
               <div className="flex items-center gap-1.5 mb-1">
                 <div
@@ -38,14 +38,14 @@ export function TutorialMockupDefinition() {
                   style={{
                     fontFamily: "'Poppins:SemiBold'",
                     fontSize: 10,
-                    color: "#1c1b19",
+                    color: "var(--color-ink)",
                   }}
                 >
                   {d.name}
                 </span>
               </div>
               <div
-                className="h-[5px] rounded-full bg-[#e0ddd6]"
+                className="h-[5px] rounded-full bg-border"
                 style={{ width: i === 0 ? "88%" : "65%" }}
               />
             </div>
@@ -67,17 +67,17 @@ export function TutorialMockupDefinition() {
             {[100, 88, 72].map((w, i) => (
               <div
                 key={i}
-                className="h-[5px] rounded-full bg-[#e0ddd6]"
+                className="h-[5px] rounded-full bg-border"
                 style={{ width: `${w}%` }}
               />
             ))}
           </div>
-          <div className="mt-2 h-[5px] w-[45%] rounded-full bg-[#c8c4bc]" />
+          <div className="mt-2 h-[5px] w-[45%] rounded-full bg-border-strong" />
           <div className="flex flex-wrap gap-1.5 mt-1">
             {["fugaz", "transitório", "passageiro"].map((w) => (
               <div
                 key={w}
-                className="px-2 py-0.5 rounded-full border border-[#c8c4bc] text-[9px] font-['Poppins:Regular'] text-[#4a4742]"
+                className="px-2 py-0.5 rounded-full border border-border-strong text-[9px] font-['Poppins:Regular'] text-body"
               >
                 {w}
               </div>

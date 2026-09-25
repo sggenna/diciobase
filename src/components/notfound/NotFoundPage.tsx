@@ -14,15 +14,15 @@ export function NotFoundPage({
       className="min-h-screen flex flex-col items-center justify-center gap-6 px-6"
       style={fadeStyle(vis)}
     >
-      <p className="font-['Poppins:ExtraBold'] text-[48px] text-black">
+      <p className="font-['Poppins:ExtraBold'] text-[48px] text-ink">
         "{word}"
       </p>
-      <p className="font-['Poppins:Regular'] text-[18px] text-[#7e7676]">
+      <p className="font-['Poppins:Regular'] text-[18px] text-muted">
         Palavra não encontrada nos nossos dicionários.
       </p>
       <button
         onClick={onBack}
-        className="bg-black text-white font-['Poppins:SemiBold'] text-[14px] px-6 py-3 rounded-[12px] hover:bg-[#333] transition-all active:scale-95"
+        className="bg-ink text-on-ink font-['Poppins:SemiBold'] text-[14px] px-6 py-3 rounded-md hover:bg-[#333] transition-[background-color,transform] active:scale-95"
       >
         Voltar à busca
       </button>

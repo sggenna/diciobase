@@ -21,7 +21,7 @@ export function MobilePreferencesPage({
 
   return (
     <div
-      className="min-h-screen bg-[#fbf9f6] flex flex-col px-5"
+      className="min-h-screen bg-paper-warm flex flex-col px-5"
       style={{
         paddingTop: "env(safe-area-inset-top, 24px)",
         paddingBottom: "env(safe-area-inset-bottom, 24px)",
@@ -30,7 +30,7 @@ export function MobilePreferencesPage({
       <div className="flex justify-end pt-4 pb-2" style={slideUpStyle(vis, 0)}>
         <button
           onClick={onContinue}
-          className="font-['Poppins:Medium'] text-[13px] text-[#8c8a82]"
+          className="font-['Poppins:Medium'] text-[13px] text-muted"
         >
           Pular
         </button>
@@ -40,10 +40,10 @@ export function MobilePreferencesPage({
         className="flex flex-col gap-2 pt-4 pb-7"
         style={slideUpStyle(vis, 0.06)}
       >
-        <h1 className="font-['Poppins:ExtraBold'] text-[28px] text-[#1c1b19] tracking-[-0.56px] leading-tight">
+        <h1 className="font-['Poppins:ExtraBold'] text-[28px] text-ink tracking-[-0.56px] leading-tight">
           O que te interessa?
         </h1>
-        <p className="font-['Poppins:Regular'] text-[14px] text-[#8c8a82] leading-[1.6]">
+        <p className="font-['Poppins:Regular'] text-[14px] text-muted leading-[1.6]">
           Personalize sua experiência. Escolha quantos quiser.
         </p>
       </div>
@@ -58,11 +58,13 @@ export function MobilePreferencesPage({
             <button
               key={opt}
               onClick={() => toggle(opt)}
-              className="px-4 py-2.5 rounded-[22px] font-['Poppins:Medium'] text-[13px] transition-all duration-200 active:scale-[0.96]"
+              className="px-4 py-2.5 rounded-xl font-['Poppins:Medium'] text-[13px] transition-[background-color,color,border-color,transform] duration-200 active:scale-[0.96]"
               style={{
-                background: on ? "#1c1b19" : "#fff",
-                color: on ? "#fff" : "#1c1b19",
-                border: on ? "1.5px solid #1c1b19" : "1.5px solid #d0ccc4",
+                background: on ? "var(--color-ink)" : "#fff",
+                color: on ? "var(--color-on-ink)" : "var(--color-ink)",
+                border: on
+                  ? "1.5px solid var(--color-ink)"
+                  : "1.5px solid var(--color-border-strong)",
               }}
             >
               {opt}
@@ -73,7 +75,7 @@ export function MobilePreferencesPage({
 
       <button
         onClick={onContinue}
-        className="mt-8 w-full h-[54px] bg-[#1c1b19] rounded-[14px] font-['Poppins:SemiBold'] text-[15px] text-white active:scale-[0.97] transition-transform"
+        className="mt-8 w-full h-[54px] bg-ink rounded-lg font-['Poppins:SemiBold'] text-[15px] text-on-ink active:scale-[0.97] transition-transform"
         style={slideUpStyle(vis, 0.16)}
       >
         Continuar

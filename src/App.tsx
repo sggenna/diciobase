@@ -84,7 +84,7 @@ export default function App() {
       view.type === "favorites" ? "salvos" : mobileTab
 
     return (
-      <div className="relative" style={{ background: "#fbf9f6" }}>
+      <div className="relative" style={{ background: "var(--color-paper-warm)" }}>
         {/* Auth flow */}
         {showAuth && (
           <MobileAuthPage onLogin={() => setView({ type: "preferences" })} />

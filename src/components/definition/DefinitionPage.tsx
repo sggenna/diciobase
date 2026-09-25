@@ -69,7 +69,7 @@ export function DefinitionPage({
 
   const activeEntry =
     wordData.dicts.find((d) => d.id === activeId) ?? wordData.dicts[0]
-  const color = DICT_COLOR[activeId] ?? "#000"
+  const color = DICT_COLOR[activeId] ?? "var(--color-ink)"
 
   return (
     <div
@@ -208,7 +208,7 @@ export function DefinitionPage({
               Fonte
             </span>
             {wordData.dicts.map((d) => {
-              const c = DICT_COLOR[d.id] ?? "#000"
+              const c = DICT_COLOR[d.id] ?? "var(--color-ink)"
               const isActive = d.id === activeId
               return (
                 <button
