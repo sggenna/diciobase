@@ -6,11 +6,12 @@ import { ProfileInput } from "@/components/profile/ProfileInput"
 import { ProfileMenuCard } from "@/components/profile/ProfileMenuCard"
 import { Toggle } from "@/components/profile/Toggle"
 import {
+  DANGER_ZONE_ROWS,
   DICT_LIST,
   PROFILE_MENU_ROWS,
   TERMS_SECTIONS,
 } from "@/components/profile/profileMenu"
-import { P } from "@/components/profile/profileTheme"
+import { MC, P } from "@/components/profile/profileTheme"
 import { slideUpStyle } from "@/lib/animation"
 import { SAVED_WORDS } from "@/lib/data"
 import { useFade, useMobileProfileState } from "@/lib/hooks"
@@ -149,7 +150,7 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
               <button
                 key={item.label}
                 onClick={item.action}
-                className="flex items-center gap-4 px-5 py-4 rounded-[16px] active:scale-[0.98] transition-transform"
+                className="flex items-center gap-4 px-5 py-4 rounded-lg active:scale-[0.98] transition-transform"
                 style={{
                   background: (item as { danger?: boolean }).danger
                     ? P.dangerBg
@@ -197,7 +198,7 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
         <div className="flex flex-col gap-5">
           {s.pwSaved && (
             <div
-              className="px-4 py-3 rounded-[12px]"
+              className="px-4 py-3 rounded-md"
               style={{
                 background: P.successBg,
                 border: `1px solid ${P.successBd}`,
@@ -246,11 +247,36 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
       </SubPage>
     )
 
+  if (s.panel === "delete-account")
+    return (
+      <SubPage title="Excluir Conta">
+        <div className="flex flex-col gap-5">
+          <div
+            className="px-5 py-4 rounded-lg"
+            style={{ background: P.dangerBg, border: `1px solid ${P.danger}30` }}
+          >
+            <span
+              style={{
+                fontFamily: "'Poppins:Regular'",
+                fontSize: 13,
+                color: P.text,
+                lineHeight: 1.6,
+              }}
+            >
+              Esta ação é permanente. Todas as suas palavras salvas e
+              preferências serão perdidas e não poderão ser recuperadas.
+            </span>
+          </div>
+          <ProfileCTA label="Excluir minha conta" danger onClick={onLogout} />
+        </div>
+      </SubPage>
+    )
+
   if (s.panel === "notifications")
     return (
       <SubPage title="Notificações">
         <div
-          className="rounded-[18px] overflow-hidden"
+          className="rounded-lg overflow-hidden"
           style={{ background: P.card, border: `1px solid ${P.border}` }}
         >
           {[
@@ -309,7 +335,7 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
     return (
       <SubPage title="Dicionários Ativos">
         <div
-          className="rounded-[18px] overflow-hidden"
+          className="rounded-lg overflow-hidden"
           style={{ background: P.card, border: `1px solid ${P.border}` }}
         >
           {DICT_LIST.map((d, i) => (
@@ -388,7 +414,7 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
             style={{
               fontFamily: "'Poppins:Regular'",
               fontSize: 10,
-              color: "rgba(255,255,255,0.2)",
+              color: P.sub,
               marginTop: 8,
             }}
           >
@@ -400,15 +426,19 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
 
   // ── Main ─────────────────────────────────────────────────────────────────
   const menuRows = PROFILE_MENU_ROWS(s.setPanel, onLogout)
+  const dangerRows = DANGER_ZONE_ROWS(s.setPanel)
   return (
     <div
       className="min-h-screen flex flex-col overflow-y-auto pb-28"
       style={{ background: P.bg }}
     >
-      {/* Hero section */}
+      {/* Hero section — the black brand moment */}
       <div
         className="relative flex flex-col items-center pb-6"
-        style={{ paddingTop: "max(env(safe-area-inset-top,0px),48px)" }}
+        style={{
+          background: MC.bg,
+          paddingTop: "max(env(safe-area-inset-top,0px),48px)",
+        }}
       >
         {/* Edit avatar button */}
         <div className="relative mb-5">
@@ -416,8 +446,8 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
             <div
               className="w-[120px] h-[120px] rounded-full overflow-hidden"
               style={{
-                border: "3px solid rgba(0,0,0,0.08)",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+                border: `3px solid ${MC.border}`,
+                boxShadow: "var(--shadow-md)",
               }}
             >
               <img
@@ -430,16 +460,16 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
             <div
               className="w-[120px] h-[120px] rounded-full flex items-center justify-center"
               style={{
-                background: P.avatarBg,
-                border: "3px solid rgba(0,0,0,0.08)",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+                background: MC.iconBg,
+                border: `3px solid ${MC.border}`,
+                boxShadow: "var(--shadow-md)",
               }}
             >
               <span
                 style={{
                   fontFamily: "'Poppins:ExtraBold'",
                   fontSize: 42,
-                  color: P.text,
+                  color: MC.text,
                 }}
               >
                 {s.name[0]}
@@ -450,9 +480,9 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
             onClick={() => s.setPanel("edit-avatar")}
             className="absolute bottom-1 right-1 w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform"
             style={{
-              background: "#ffffff",
+              background: "var(--color-paper)",
               border: `1.5px solid ${P.borderMid}`,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.10)",
+              boxShadow: "var(--shadow-sm)",
             }}
           >
             <svg
@@ -474,7 +504,7 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
           style={{
             fontFamily: "'Poppins:Bold'",
             fontSize: 24,
-            color: P.text,
+            color: MC.text,
             letterSpacing: "-0.4px",
             marginBottom: 2,
           }}
@@ -485,11 +515,22 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
           style={{
             fontFamily: "'Poppins:Regular'",
             fontSize: 13,
-            color: P.sub,
+            color: MC.sub,
           }}
         >
           maria@email.com
         </p>
+        <button
+          onClick={() => s.setPanel("edit-name")}
+          className="mt-1 underline-offset-2 hover:underline"
+          style={{
+            fontFamily: "'Poppins:Medium'",
+            fontSize: 12,
+            color: MC.sub,
+          }}
+        >
+          Editar perfil
+        </button>
 
         {/* Stats strip */}
         <div className="flex gap-0 mt-6 w-full px-4">
@@ -502,24 +543,17 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
               key={stat.label}
               className="flex-1 flex flex-col items-center py-3"
               style={{
-                borderLeft: i > 0 ? `1px solid ${P.border}` : undefined,
-                borderTop: `1px solid ${P.border}`,
-                borderBottom: `1px solid ${P.border}`,
-                borderRight: i === 2 ? `1px solid ${P.border}` : undefined,
-                background: P.card,
-                borderRadius:
-                  i === 0
-                    ? "12px 0 0 12px"
-                    : i === 2
-                      ? "0 12px 12px 0"
-                      : undefined,
+                borderLeft: i > 0 ? `1px solid ${MC.border}` : undefined,
+                borderTop: `1px solid ${MC.border}`,
+                borderBottom: `1px solid ${MC.border}`,
+                borderRight: i === 2 ? `1px solid ${MC.border}` : undefined,
               }}
             >
               <span
                 style={{
                   fontFamily: "'Poppins:ExtraBold'",
                   fontSize: 20,
-                  color: P.text,
+                  color: MC.text,
                   lineHeight: 1,
                 }}
               >
@@ -529,7 +563,7 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
                 style={{
                   fontFamily: "'Poppins:Regular'",
                   fontSize: 10,
-                  color: P.sub,
+                  color: MC.sub,
                   marginTop: 3,
                 }}
               >
@@ -541,8 +575,9 @@ export function MobileProfilePage({ onLogout }: { onLogout: () => void }) {
       </div>
 
       {/* Menu */}
-      <div className="px-4 mt-4" style={slideUpStyle(vis, 0.06)}>
+      <div className="px-4 mt-4 flex flex-col gap-4" style={slideUpStyle(vis, 0.06)}>
         <ProfileMenuCard rows={menuRows} />
+        <ProfileMenuCard rows={dangerRows} />
       </div>
     </div>
   )

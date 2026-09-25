@@ -1,6 +1,6 @@
 import type * as React from "react"
 import { Chevron } from "@/components/profile/Chevron"
-import { MC } from "@/components/profile/profileTheme"
+import { P } from "@/components/profile/profileTheme"
 
 export function ProfileMenuCard({
   rows,
@@ -15,26 +15,23 @@ export function ProfileMenuCard({
   }[]
 }) {
   return (
-    <div
-      className="rounded-[22px] overflow-hidden"
-      style={{ background: MC.bg }}
-    >
+    <div className="rounded-xl overflow-hidden" style={{ background: P.card }}>
       {rows.map((row, i) => (
         <button
           key={row.label}
           onClick={row.action}
           className="w-full flex items-center gap-4 px-5 py-4 text-left transition-colors"
-          style={{ borderTop: i > 0 ? `1px solid ${MC.border}` : undefined }}
-          onPointerEnter={(e) => (e.currentTarget.style.background = MC.row)}
+          style={{ borderTop: i > 0 ? `1px solid ${P.border}` : undefined }}
+          onPointerEnter={(e) => (e.currentTarget.style.background = P.cardAlt)}
           onPointerLeave={(e) =>
             (e.currentTarget.style.background = "transparent")
           }
         >
           <div
-            className="shrink-0 w-9 h-9 rounded-[11px] flex items-center justify-center"
+            className="shrink-0 w-9 h-9 rounded-md flex items-center justify-center"
             style={{
-              background: row.danger ? MC.dangerBg : MC.iconBg,
-              color: row.danger ? MC.danger : MC.text,
+              background: row.danger ? P.dangerBg : P.avatarBg,
+              color: row.danger ? P.danger : P.text,
             }}
           >
             {row.icon}
@@ -44,7 +41,7 @@ export function ProfileMenuCard({
               style={{
                 fontFamily: "'Poppins:Medium'",
                 fontSize: 14,
-                color: row.danger ? MC.danger : MC.text,
+                color: row.danger ? P.danger : P.text,
               }}
             >
               {row.label}
@@ -54,7 +51,7 @@ export function ProfileMenuCard({
                 style={{
                   fontFamily: "'Poppins:Regular'",
                   fontSize: 11,
-                  color: MC.sub,
+                  color: P.sub,
                 }}
               >
                 {row.sub}
@@ -64,20 +61,20 @@ export function ProfileMenuCard({
           {row.badge ? (
             <div
               className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center"
-              style={{ background: "#24456B" }}
+              style={{ background: "var(--color-accent)" }}
             >
               <span
                 style={{
                   fontFamily: "'Poppins:Bold'",
                   fontSize: 10,
-                  color: "white",
+                  color: "var(--color-on-ink)",
                 }}
               >
                 {row.badge}
               </span>
             </div>
           ) : !row.danger ? (
-            <Chevron color={MC.sub} />
+            <Chevron color={P.sub} />
           ) : null}
         </button>
       ))}

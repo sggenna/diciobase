@@ -12,12 +12,12 @@ export function ProfileCTA({
   return (
     <button
       onClick={onClick}
-      className="w-full h-[50px] rounded-[16px] transition-all duration-200 active:scale-[0.98]"
+      className="w-full h-[50px] rounded-lg transition-[background-color,color,border-color,transform] duration-200 active:scale-[0.98]"
       style={{
         fontFamily: "'Poppins:SemiBold'",
         fontSize: 15,
         background: danger ? P.dangerBg : P.text,
-        color: danger ? P.danger : "#1c1b19",
+        color: danger ? P.danger : "var(--color-on-ink)",
         border: danger ? `1px solid ${P.danger}30` : "none",
       }}
     >

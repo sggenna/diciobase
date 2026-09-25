@@ -8,11 +8,12 @@ import { ProfileMenuCard } from "@/components/profile/ProfileMenuCard"
 import { ProfileSubHeader } from "@/components/profile/ProfileSubHeader"
 import { Toggle } from "@/components/profile/Toggle"
 import {
+  DANGER_ZONE_ROWS,
   DICT_LIST,
   PROFILE_MENU_ROWS,
   TERMS_SECTIONS,
 } from "@/components/profile/profileMenu"
-import { P } from "@/components/profile/profileTheme"
+import { MC, P } from "@/components/profile/profileTheme"
 import { fadeStyle } from "@/lib/animation"
 import { SAVED_WORDS } from "@/lib/data"
 import { useFade, useMobileProfileState } from "@/lib/hooks"
@@ -55,6 +56,7 @@ export function ProfilePage({
   }
 
   const menuRows = PROFILE_MENU_ROWS(setPanel, onLogout)
+  const dangerRows = DANGER_ZONE_ROWS(setPanel)
 
   return (
     <div
@@ -71,14 +73,14 @@ export function ProfilePage({
         {panel === "main" && (
           <div style={fadeStyle(vis)}>
             <div
-              className="rounded-[28px] flex flex-col items-center gap-2 py-10 mb-5"
-              style={{ background: P.card, border: `1px solid ${P.border}` }}
+              className="rounded-2xl flex flex-col items-center gap-2 py-10 mb-5"
+              style={{ background: MC.bg }}
             >
               <p
                 style={{
                   fontFamily: "'Poppins:ExtraBold'",
                   fontSize: 20,
-                  color: P.text,
+                  color: MC.text,
                   letterSpacing: "-0.4px",
                   marginBottom: 16,
                 }}
@@ -91,15 +93,15 @@ export function ProfilePage({
                   onClick={() => setPanel("edit-avatar")}
                   className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
                   style={{
-                    background: "#ffffff",
+                    background: "var(--color-paper)",
                     border: `1px solid ${P.borderMid}`,
-                    boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+                    boxShadow: "var(--shadow-sm)",
                   }}
                   onPointerEnter={(e) =>
-                    (e.currentTarget.style.background = "#f0ede6")
+                    (e.currentTarget.style.background = "var(--color-surface-hover)")
                   }
                   onPointerLeave={(e) =>
-                    (e.currentTarget.style.background = "#ffffff")
+                    (e.currentTarget.style.background = "var(--color-paper)")
                   }
                 >
                   <svg
@@ -120,7 +122,7 @@ export function ProfilePage({
                 style={{
                   fontFamily: "'Poppins:Bold'",
                   fontSize: 20,
-                  color: P.text,
+                  color: MC.text,
                   marginTop: 8,
                 }}
               >
@@ -130,14 +132,25 @@ export function ProfilePage({
                 style={{
                   fontFamily: "'Poppins:Regular'",
                   fontSize: 13,
-                  color: P.sub,
+                  color: MC.sub,
                 }}
               >
                 maria@email.com
               </p>
+              <button
+                onClick={() => setPanel("edit-name")}
+                className="mt-1 underline-offset-2 hover:underline"
+                style={{
+                  fontFamily: "'Poppins:Medium'",
+                  fontSize: 12,
+                  color: MC.sub,
+                }}
+              >
+                Editar perfil
+              </button>
               <div
                 className="flex gap-6 mt-5 pt-5 w-full justify-center"
-                style={{ borderTop: `1px solid ${P.border}` }}
+                style={{ borderTop: `1px solid ${MC.border}` }}
               >
                 {[
                   {
@@ -151,14 +164,14 @@ export function ProfilePage({
                     key={stat.label}
                     className="flex flex-col items-center gap-0.5 px-5"
                     style={{
-                      borderLeft: i > 0 ? `1px solid ${P.border}` : undefined,
+                      borderLeft: i > 0 ? `1px solid ${MC.border}` : undefined,
                     }}
                   >
                     <span
                       style={{
                         fontFamily: "'Poppins:ExtraBold'",
                         fontSize: 22,
-                        color: P.text,
+                        color: MC.text,
                         lineHeight: 1,
                       }}
                     >
@@ -168,7 +181,7 @@ export function ProfilePage({
                       style={{
                         fontFamily: "'Poppins:Regular'",
                         fontSize: 11,
-                        color: P.sub,
+                        color: MC.sub,
                       }}
                     >
                       {stat.label}
@@ -178,6 +191,37 @@ export function ProfilePage({
               </div>
             </div>
             <ProfileMenuCard rows={menuRows} />
+            <div className="mt-4">
+              <ProfileMenuCard rows={dangerRows} />
+            </div>
+          </div>
+        )}
+
+        {panel === "delete-account" && (
+          <div style={fadeStyle(vis)}>
+            <ProfileSubHeader
+              title="Excluir Conta"
+              onBack={() => setPanel("main")}
+            />
+            <div className="flex flex-col gap-5">
+              <div
+                className="px-5 py-4 rounded-lg"
+                style={{ background: P.dangerBg, border: `1px solid ${P.danger}30` }}
+              >
+                <span
+                  style={{
+                    fontFamily: "'Poppins:Regular'",
+                    fontSize: 13,
+                    color: P.text,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Esta ação é permanente. Todas as suas palavras salvas e
+                  preferências serão perdidas e não poderão ser recuperadas.
+                </span>
+              </div>
+              <ProfileCTA label="Excluir minha conta" danger onClick={onLogout} />
+            </div>
           </div>
         )}
 
@@ -244,7 +288,7 @@ export function ProfilePage({
                   <button
                     key={item.label}
                     onClick={item.action}
-                    className="flex items-center gap-4 px-6 py-4 rounded-[16px] transition-colors text-left"
+                    className="flex items-center gap-4 px-6 py-4 rounded-lg transition-colors text-left"
                     style={{
                       background: (item as { danger?: boolean }).danger
                         ? P.dangerBg
@@ -314,7 +358,7 @@ export function ProfilePage({
             <div className="flex flex-col gap-5">
               {pwSaved && (
                 <div
-                  className="px-5 py-3.5 rounded-[14px]"
+                  className="px-5 py-3.5 rounded-lg"
                   style={{
                     background: P.successBg,
                     border: `1px solid ${P.successBd}`,
@@ -370,7 +414,7 @@ export function ProfilePage({
               onBack={() => setPanel("main")}
             />
             <div
-              className="rounded-[20px] overflow-hidden"
+              className="rounded-xl overflow-hidden"
               style={{ background: P.card, border: `1px solid ${P.border}` }}
             >
               {[
@@ -434,7 +478,7 @@ export function ProfilePage({
               onBack={() => setPanel("main")}
             />
             <div
-              className="rounded-[20px] overflow-hidden"
+              className="rounded-xl overflow-hidden"
               style={{ background: P.card, border: `1px solid ${P.border}` }}
             >
               {DICT_LIST.map((d, i) => (
@@ -518,7 +562,7 @@ export function ProfilePage({
                 style={{
                   fontFamily: "'Poppins:Regular'",
                   fontSize: 11,
-                  color: "rgba(255,255,255,0.2)",
+                  color: P.sub,
                   marginTop: 8,
                 }}
               >

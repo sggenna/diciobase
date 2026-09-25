@@ -1,4 +1,4 @@
-export function Chevron({ color = "rgba(255,255,255,0.25)" }: {
+export function Chevron({ color = "var(--color-muted)" }: {
   color?: string
 } = {}) {
   return (

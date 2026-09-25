@@ -6,25 +6,6 @@ export const PROFILE_MENU_ROWS = (
   onLogout: () => void,
 ) => [
   {
-    label: "Meu Perfil",
-    sub: "Nome e foto de perfil",
-    icon: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      >
-        <circle cx="12" cy="8" r="4" />
-        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-      </svg>
-    ),
-    action: () => setPanel("edit-name"),
-  },
-  {
     label: "Notificações",
     icon: (
       <svg
@@ -119,6 +100,29 @@ export const PROFILE_MENU_ROWS = (
       </svg>
     ),
     action: onLogout,
+  },
+]
+
+export const DANGER_ZONE_ROWS = (setPanel: (p: ProfilePanel) => void) => [
+  {
+    label: "Excluir conta",
+    danger: true,
+    icon: (
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      >
+        <polyline points="3 6 5 6 21 6" />
+        <path d="M19 6l-1 14H6L5 6" />
+        <path d="M10 11v6M14 11v6" />
+      </svg>
+    ),
+    action: () => setPanel("delete-account"),
   },
 ]
 

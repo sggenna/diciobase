@@ -28,7 +28,7 @@ export function ProfileInput({
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full h-[50px] px-4 rounded-[14px] outline-none transition-all duration-200"
+        className="w-full h-[50px] px-4 rounded-lg outline-none transition-colors duration-200"
         style={{
           fontFamily: "'Poppins:Regular'",
           fontSize: 15,
@@ -36,9 +36,7 @@ export function ProfileInput({
           background: P.inputBg,
           border: `1px solid ${P.borderMid}`,
         }}
-        onFocus={(e) =>
-          (e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)")
-        }
+        onFocus={(e) => (e.currentTarget.style.borderColor = P.accent)}
         onBlur={(e) => (e.currentTarget.style.borderColor = P.borderMid)}
       />
     </div>

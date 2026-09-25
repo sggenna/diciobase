@@ -30,6 +30,6 @@ export interface WordData {
 
 export type MobileTab = "pesquisar" | "salvos" | "perfil"
 
-export type ProfilePanel = "main" | "edit-avatar" | "edit-name" | "change-password" | "notifications" | "terms" | "dicts"
+export type ProfilePanel = "main" | "edit-avatar" | "edit-name" | "change-password" | "notifications" | "terms" | "dicts" | "delete-account"
 
 // Dark profile palette tokens
