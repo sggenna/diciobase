@@ -86,7 +86,9 @@ export function DefinitionPage({
           </nav>
 
           <div className="mx-4 mt-4 mb-4 bg-surface rounded-lg p-5 flex flex-col gap-3">
-            {wordData.facts.map((f) => (
+            {wordData.facts
+              .filter((f) => f.label !== "Separação Silábica")
+              .map((f) => (
               <div key={f.label} className="flex flex-col gap-0.5">
                 <span className="font-['Poppins:Regular'] text-[9px] uppercase tracking-[0.6px] text-muted">
                   {f.label}

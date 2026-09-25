@@ -367,7 +367,9 @@ export function MobileDefinitionPage({
                 Sobre a palavra
               </span>
               <div className="grid grid-cols-2 gap-3">
-                {wordData.facts.map((f) => (
+                {wordData.facts
+                  .filter((f) => f.label !== "Separação Silábica")
+                  .map((f) => (
                   <div
                     key={f.label}
                     className="bg-white rounded-md p-3.5 border border-border"
