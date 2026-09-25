@@ -144,7 +144,7 @@ export function MobileDefinitionPage({
             title="Palavra salva!"
             description={`"${wordData.word}" adicionada às suas palavras`}
             background="#1c1b19"
-            color="#b4b4b4"
+            color="#f4f4f4"
             fuseColor="#3D6647"
             duration={3500}
             fuse="bottom"

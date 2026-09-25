@@ -6,7 +6,7 @@ export function TutorialMockupDefinition() {
           className="bg-[#1c1b19] rounded-[3px]"
           style={{ width: 72, height: 13 }}
         />
-        <div className="flex-1 h-[22px] rounded-full bg-[#b4b4b4]" />
+        <div className="flex-1 h-[22px] rounded-full bg-[#f4f4f4]" />
       </div>
       <div className="flex flex-1 overflow-hidden">
         <div
@@ -27,7 +27,7 @@ export function TutorialMockupDefinition() {
             <div
               key={d.name}
               className="px-4 py-2.5 border-b border-[#f0ede6]"
-              style={{ background: i === 0 ? "#b4b4b4" : "white" }}
+              style={{ background: i === 0 ? "#f4f4f4" : "white" }}
             >
               <div className="flex items-center gap-1.5 mb-1">
                 <div

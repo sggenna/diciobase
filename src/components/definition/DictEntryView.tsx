@@ -94,7 +94,7 @@ export function DictEntryView({
       </div>
 
       {entry.notes && entry.notes.length > 0 && (
-        <div className="bg-[#b4b4b4] rounded-[12px] px-5 py-4 flex flex-col gap-1">
+        <div className="bg-[#f4f4f4] rounded-[12px] px-5 py-4 flex flex-col gap-1">
           <span className="font-['Poppins:SemiBold'] text-[10px] uppercase tracking-[0.9px] text-[#7e7676]">
             Notas
           </span>

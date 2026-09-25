@@ -100,7 +100,7 @@ export function DefinitionPage({
             </p>
           </div>
 
-          <div className="mx-4 mt-6 mb-4 bg-[#b4b4b4] rounded-[16px] p-5 flex flex-col gap-3">
+          <div className="mx-4 mt-6 mb-4 bg-[#f4f4f4] rounded-[16px] p-5 flex flex-col gap-3">
             {wordData.facts.map((f) => (
               <div key={f.label} className="flex flex-col gap-0.5">
                 <span className="font-['Poppins:Regular'] text-[9px] uppercase tracking-[0.6px] text-[#7e7676]">
@@ -131,7 +131,7 @@ export function DefinitionPage({
                 </span>
                 <button
                   onClick={playAudio}
-                  className="flex items-center gap-2 bg-[#b4b4b4] hover:bg-[#ede9e0] px-3 py-1.5 rounded-[8px] transition-all duration-200"
+                  className="flex items-center gap-2 bg-[#f4f4f4] hover:bg-[#ede9e0] px-3 py-1.5 rounded-[8px] transition-all duration-200"
                 >
                   <img
                     src={imgAudio}
@@ -153,7 +153,7 @@ export function DefinitionPage({
                 onClick={handleSave}
                 className="flex items-center gap-2 px-4 h-[42px] rounded-[12px]"
                 style={{
-                  background: saved ? "#1c1b19" : "#b4b4b4",
+                  background: saved ? "#1c1b19" : "#f4f4f4",
                   border: saved ? "none" : "1px solid #c8c4bc",
                   transform: btnPop ? "scale(1.08)" : "scale(1)",
                   transition:
@@ -197,7 +197,7 @@ export function DefinitionPage({
                 title="Palavra salva!"
                 description={`"${wordData.word}" adicionada às suas palavras`}
                 background="#1c1b19"
-                color="#b4b4b4"
+                color="#f4f4f4"
                 fuseColor="#3D6647"
                 duration={3500}
                 fuse="bottom"
@@ -231,7 +231,7 @@ export function DefinitionPage({
                   onClick={() => switchDict(d.id)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-[20px] transition-all duration-200 font-['Poppins:SemiBold'] text-[12px]"
                   style={{
-                    background: isActive ? c : "#b4b4b4",
+                    background: isActive ? c : "#f4f4f4",
                     color: isActive ? "#fff" : "#4a4742",
                   }}
                 >

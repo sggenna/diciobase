@@ -11,14 +11,14 @@ export function TutorialMockupSaved() {
           className="bg-[#1c1b19] rounded-[3px]"
           style={{ width: 72, height: 13 }}
         />
-        <div className="flex-1 h-[22px] rounded-full bg-[#b4b4b4]" />
+        <div className="flex-1 h-[22px] rounded-full bg-[#f4f4f4]" />
       </div>
       <div className="px-5 pt-4 pb-2">
         <div className="font-['Poppins:Bold'] text-[16px] text-[#1c1b19]">
           Palavras Favoritas
         </div>
         <div className="h-[5px] w-[160px] rounded-full bg-[#e0ddd6] mt-1.5" />
-        <div className="h-[28px] rounded-[8px] border border-[#e0ddd6] bg-[#b4b4b4] flex items-center px-3 gap-2 mt-3">
+        <div className="h-[28px] rounded-[8px] border border-[#e0ddd6] bg-[#f4f4f4] flex items-center px-3 gap-2 mt-3">
           <div className="size-[8px] rounded-full bg-[#c0bcb4]" />
           <div className="flex-1 h-[5px] rounded-full bg-[#e0ddd6]" />
         </div>
@@ -28,7 +28,7 @@ export function TutorialMockupSaved() {
               key={f}
               className="px-2.5 py-1 rounded-full text-[9px] font-['Poppins:SemiBold']"
               style={{
-                background: i === 0 ? "#1c1b19" : "#b4b4b4",
+                background: i === 0 ? "#1c1b19" : "#f4f4f4",
                 color: i === 0 ? "#fff" : "#4a4742",
               }}
             >

@@ -48,7 +48,7 @@ export function FavoritesPage({ onSearch }: { onSearch: (w: string) => void }) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Buscar palavra salva…"
-              className="h-[40px] pl-9 pr-4 rounded-[10px] bg-[#b4b4b4] font-['Poppins:Regular'] text-[13px] outline-none w-[220px] placeholder-[#9e9b94]"
+              className="h-[40px] pl-9 pr-4 rounded-[10px] bg-[#f4f4f4] font-['Poppins:Regular'] text-[13px] outline-none w-[220px] placeholder-[#9e9b94]"
             />
           </div>
         </div>
@@ -60,7 +60,7 @@ export function FavoritesPage({ onSearch }: { onSearch: (w: string) => void }) {
               onClick={() => setFilter(f)}
               className="px-4 py-1.5 rounded-[20px] font-['Poppins:SemiBold'] text-[13px] transition-all duration-200"
               style={{
-                background: filter === f ? "#000" : "#b4b4b4",
+                background: filter === f ? "#000" : "#f4f4f4",
                 color: filter === f ? "#fff" : "#4a4742",
               }}
             >

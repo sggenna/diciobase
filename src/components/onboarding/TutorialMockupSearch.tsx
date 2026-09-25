@@ -6,7 +6,7 @@ export function TutorialMockupSearch() {
           className="bg-[#1c1b19] rounded-[3px]"
           style={{ width: 72, height: 13 }}
         />
-        <div className="flex-1 h-[26px] rounded-full bg-[#b4b4b4] flex items-center px-3 gap-2">
+        <div className="flex-1 h-[26px] rounded-full bg-[#f4f4f4] flex items-center px-3 gap-2">
           <div className="size-[8px] rounded-full bg-[#c0bcb4]" />
           <div className="flex-1 h-[5px] rounded-full bg-[#e0ddd6]" />
         </div>

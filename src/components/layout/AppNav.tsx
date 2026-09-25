@@ -64,7 +64,7 @@ export function AppNav({
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}
                 placeholder="Pesquise uma palavra…"
-                className="w-full h-[36px] pl-9 pr-4 rounded-[9px] bg-[#b4b4b4] font-['Poppins:Regular'] text-[13px] text-black placeholder-[#9e9b94] outline-none transition-all duration-200"
+                className="w-full h-[36px] pl-9 pr-4 rounded-[9px] bg-[#f4f4f4] font-['Poppins:Regular'] text-[13px] text-black placeholder-[#9e9b94] outline-none transition-all duration-200"
                 style={{ boxShadow: focused ? "0 0 0 2px #1c1b19" : "none" }}
               />
             </div>
@@ -73,7 +73,7 @@ export function AppNav({
         <div className="flex items-center gap-1 ml-auto">
           <button
             onClick={onFavorites}
-            className="h-[34px] px-3.5 rounded-[9px] font-['Poppins:Medium'] text-[13px] text-[#4a4742] hover:bg-[#b4b4b4] hover:text-black transition-all flex items-center gap-1.5"
+            className="h-[34px] px-3.5 rounded-[9px] font-['Poppins:Medium'] text-[13px] text-[#4a4742] hover:bg-[#f4f4f4] hover:text-black transition-all flex items-center gap-1.5"
           >
             <svg
               width="15"

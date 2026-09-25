@@ -6,7 +6,7 @@ export function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) 
       style={{
         width: 44,
         height: 26,
-        background: on ? "#b4b4b4" : "rgba(255,255,255,0.12)",
+        background: on ? "#f4f4f4" : "rgba(255,255,255,0.12)",
       }}
     >
       <div
