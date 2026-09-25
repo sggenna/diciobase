@@ -1,8 +1,20 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { AuthInput } from "@/components/auth/AuthInput"
 import { fadeStyle } from "@/lib/animation"
 import { imgLogoDark } from "@/lib/assets"
 import { useFade } from "@/lib/hooks"
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const MIN_PASSWORD_LENGTH = 8
+const SUBMIT_DELAY_MS = 600
+
+function focusableIn(el: HTMLElement) {
+  return Array.from(
+    el.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    ),
+  ).filter((n) => !n.hasAttribute("disabled"))
+}
 
 export function AuthModal({
   defaultMode,
@@ -14,19 +26,97 @@ export function AuthModal({
   onClose: () => void
 }) {
   const [mode, setMode] = useState<"login" | "signup">(defaultMode)
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string }>({})
+  const [pending, setPending] = useState(false)
   const vis = useFade(mode)
+
+  const modalRef = useRef<HTMLDivElement>(null)
+  const firstFieldRef = useRef<HTMLInputElement>(null)
+  const openerRef = useRef<Element | null>(null)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  useEffect(() => {
+    openerRef.current = document.activeElement
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.body.style.overflow = prevOverflow
+      if (openerRef.current instanceof HTMLElement) openerRef.current.focus()
+      clearTimeout(timerRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    firstFieldRef.current?.focus()
+  }, [mode])
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        onClose()
+        return
+      }
+      if (e.key !== "Tab" || !modalRef.current) return
+      const items = focusableIn(modalRef.current)
+      if (items.length === 0) return
+      const first = items[0]
+      const last = items[items.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
+  }, [onClose])
+
+  function validate() {
+    const next: typeof errors = {}
+    if (mode === "signup" && !name.trim()) next.name = "Informe seu nome"
+    if (!email.trim()) next.email = "Informe seu e-mail"
+    else if (!EMAIL_RE.test(email)) next.email = "Informe um e-mail válido"
+    if (!password) next.password = "Informe sua senha"
+    else if (password.length < MIN_PASSWORD_LENGTH)
+      next.password = `A senha precisa ter pelo menos ${MIN_PASSWORD_LENGTH} caracteres`
+    setErrors(next)
+    return Object.keys(next).length === 0
+  }
+
+  function submit() {
+    if (!validate() || pending) return
+    setPending(true)
+    timerRef.current = setTimeout(() => {
+      setPending(false)
+      onAuth()
+    }, SUBMIT_DELAY_MS)
+  }
+
+  function switchMode(m: "login" | "signup") {
+    setMode(m)
+    setErrors({})
+  }
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-6"
       style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)" }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
       }}
     >
       <div
-        className="relative w-full max-w-[460px] bg-[#0f0e0c] rounded-[32px] p-8 sm:p-10 flex flex-col gap-5 shadow-2xl my-auto"
-        style={fadeStyle(vis)}
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="auth-modal-title"
+        className="relative w-full max-w-[460px] max-h-full overflow-y-auto overscroll-contain bg-ink rounded-3xl p-8 sm:p-10 flex flex-col gap-5"
+        style={{ ...fadeStyle(vis), boxShadow: "var(--shadow-float)" }}
       >
         {/* Close */}
         <button
@@ -51,17 +141,20 @@ export function AuthModal({
         <div className="flex justify-center pt-1">
           <img src={imgLogoDark} alt="DICIOBASE" className="h-8 w-auto" />
         </div>
+        <h2 id="auth-modal-title" className="sr-only">
+          {mode === "login" ? "Entrar" : "Criar conta"}
+        </h2>
 
         {/* Mode tabs */}
         <div className="flex bg-white/10 rounded-full p-1">
           {(["login", "signup"] as const).map((m) => (
             <button
               key={m}
-              onClick={() => setMode(m)}
-              className="flex-1 h-9 rounded-full font-['Poppins:SemiBold'] text-[13px] transition-all duration-200"
+              onClick={() => switchMode(m)}
+              className="flex-1 h-9 rounded-full font-['Poppins:SemiBold'] text-[13px] transition-colors duration-200"
               style={{
                 background: mode === m ? "white" : "transparent",
-                color: mode === m ? "#0f0e0c" : "rgba(255,255,255,0.55)",
+                color: mode === m ? "var(--color-ink)" : "rgba(255,255,255,0.55)",
               }}
             >
               {m === "login" ? "Entrar" : "Criar conta"}
@@ -72,29 +165,63 @@ export function AuthModal({
         {/* Fields */}
         <div className="flex flex-col gap-4">
           {mode === "signup" && (
-            <AuthInput label="Nome" placeholder="Seu nome" />
+            <AuthInput
+              label="Nome"
+              placeholder="Seu nome"
+              value={name}
+              onChange={setName}
+              error={errors.name}
+            />
           )}
-          <AuthInput label="E-mail" placeholder="seu@email.com" />
+          <AuthInput
+            ref={firstFieldRef}
+            label="E-mail"
+            placeholder="seu@email.com"
+            value={email}
+            onChange={setEmail}
+            error={errors.email}
+          />
           <AuthInput
             label="Senha"
             placeholder="••••••••••••"
             type="password"
+            value={password}
+            onChange={setPassword}
             hint={mode === "login" ? "Esqueceu?" : undefined}
+            error={errors.password}
           />
-          {mode === "signup" && (
-            <AuthInput
-              label="Confirme a senha"
-              placeholder="••••••••••••"
-              type="password"
-            />
-          )}
         </div>
 
         {/* CTA */}
         <button
-          onClick={onAuth}
-          className="w-full h-[52px] bg-white rounded-[16px] font-['Poppins:SemiBold'] text-[16px] text-[#0f0e0c] hover:bg-[#f0ede6] transition-all duration-200 active:scale-[0.98]"
+          onClick={submit}
+          disabled={pending}
+          className="w-full h-[52px] bg-white rounded-lg font-['Poppins:SemiBold'] text-[16px] text-ink hover:bg-[color:var(--color-surface-hover)] transition-colors duration-200 active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
         >
+          {pending && (
+            <svg
+              className="animate-spin"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+                stroke="currentColor"
+                strokeOpacity="0.25"
+                strokeWidth="3"
+              />
+              <path
+                d="M21 12a9 9 0 0 0-9-9"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+            </svg>
+          )}
           {mode === "login" ? "Entrar" : "Criar conta gratuita"}
         </button>
 
@@ -149,7 +276,7 @@ export function AuthModal({
           ].map((s) => (
             <button
               key={s.label}
-              className="flex-1 h-11 rounded-[12px] bg-white/10 flex items-center justify-center gap-2 hover:bg-white/20 transition-colors font-['Poppins:Medium'] text-[13px] text-white/80"
+              className="flex-1 h-11 rounded-md bg-white/10 flex items-center justify-center gap-2 hover:bg-white/20 transition-colors font-['Poppins:Medium'] text-[13px] text-white/80"
             >
               {s.icon}
               {s.label}
