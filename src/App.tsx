@@ -1,25 +1,25 @@
-import { useState } from "react";
-import { AuthModal } from "@/components/auth/AuthModal";
-import { MobileAuthPage } from "@/components/auth/MobileAuthPage";
-import { DefinitionPage } from "@/components/definition/DefinitionPage";
-import { MobileDefinitionPage } from "@/components/definition/MobileDefinitionPage";
-import { FavoritesPage } from "@/components/favorites/FavoritesPage";
-import { MobileSavedPage } from "@/components/favorites/MobileSavedPage";
-import { HomePage } from "@/components/home/HomePage";
-import { MobileHomePage } from "@/components/home/MobileHomePage";
-import { AppNav } from "@/components/layout/AppNav";
-import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
-import { MobileNotFoundPage } from "@/components/notfound/MobileNotFoundPage";
-import { NotFoundPage } from "@/components/notfound/NotFoundPage";
-import { MobilePreferencesPage } from "@/components/onboarding/MobilePreferencesPage";
-import { MobileTutorialPage } from "@/components/onboarding/MobileTutorialPage";
-import { PreferencesPage } from "@/components/onboarding/PreferencesPage";
-import { TutorialPage } from "@/components/onboarding/TutorialPage";
-import { MobileProfilePage } from "@/components/profile/MobileProfilePage";
-import { ProfilePage } from "@/components/profile/ProfilePage";
-import { DB } from "@/lib/data";
-import { useIsMobile } from "@/lib/hooks";
-import { MobileTab } from "@/lib/types";
+import { useState } from "react"
+import { AuthModal } from "@/components/auth/AuthModal"
+import { MobileAuthPage } from "@/components/auth/MobileAuthPage"
+import { DefinitionPage } from "@/components/definition/DefinitionPage"
+import { MobileDefinitionPage } from "@/components/definition/MobileDefinitionPage"
+import { FavoritesPage } from "@/components/favorites/FavoritesPage"
+import { MobileSavedPage } from "@/components/favorites/MobileSavedPage"
+import { HomePage } from "@/components/home/HomePage"
+import { MobileHomePage } from "@/components/home/MobileHomePage"
+import { AppNav } from "@/components/layout/AppNav"
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav"
+import { MobileNotFoundPage } from "@/components/notfound/MobileNotFoundPage"
+import { NotFoundPage } from "@/components/notfound/NotFoundPage"
+import { MobilePreferencesPage } from "@/components/onboarding/MobilePreferencesPage"
+import { MobileTutorialPage } from "@/components/onboarding/MobileTutorialPage"
+import { PreferencesPage } from "@/components/onboarding/PreferencesPage"
+import { TutorialPage } from "@/components/onboarding/TutorialPage"
+import { MobileProfilePage } from "@/components/profile/MobileProfilePage"
+import { ProfilePage } from "@/components/profile/ProfilePage"
+import { DB } from "@/lib/data"
+import { useIsMobile } from "@/lib/hooks"
+import { MobileTab } from "@/lib/types"
 
 type View =
   | { type: "login" }
@@ -30,48 +30,58 @@ type View =
   | { type: "definition"; word: string }
   | { type: "favorites" }
   | { type: "notfound"; word: string }
-  | { type: "profile" };
+  | { type: "profile" }
 
 export default function App() {
-  const isMobile = useIsMobile();
-  const [view, setView] = useState<View>({ type: "home" });
-  const [navSearch, setNavSearch] = useState("");
-  const [mobileTab, setMobileTab] = useState<MobileTab>("pesquisar");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authModal, setAuthModal] = useState<"login" | "signup" | null>(null);
-  const [postAuthCb, setPostAuthCb] = useState<(() => void) | null>(null);
+  const isMobile = useIsMobile()
+  const [view, setView] = useState<View>({ type: "home" })
+  const [navSearch, setNavSearch] = useState("")
+  const [mobileTab, setMobileTab] = useState<MobileTab>("pesquisar")
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [authModal, setAuthModal] = useState<"login" | "signup" | null>(null)
+  const [postAuthCb, setPostAuthCb] = useState<(() => void) | null>(null)
 
   function openAuth(then?: () => void) {
-    setPostAuthCb(then ? () => then : null);
-    setAuthModal("login");
+    setPostAuthCb(then ? () => then : null)
+    setAuthModal("login")
   }
   function handleAuth() {
-    setIsLoggedIn(true);
-    setAuthModal(null);
-    if (postAuthCb) { postAuthCb(); setPostAuthCb(null); return; }
-    setView({ type: "preferences" });
+    setIsLoggedIn(true)
+    setAuthModal(null)
+    if (postAuthCb) {
+      postAuthCb()
+      setPostAuthCb(null)
+      return
+    }
+    setView({ type: "preferences" })
   }
 
   function goSearch(word: string) {
-    const key = word.toLowerCase();
-    if (DB[key]) setView({ type: "definition", word: key });
-    else setView({ type: "notfound", word });
+    const key = word.toLowerCase()
+    if (DB[key]) setView({ type: "definition", word: key })
+    else setView({ type: "notfound", word })
   }
 
-  function goHome() { setView({ type: "home" }); setNavSearch(""); setMobileTab("pesquisar"); }
-  function goFav()  { setView({ type: "favorites" }); }
+  function goHome() {
+    setView({ type: "home" })
+    setNavSearch("")
+    setMobileTab("pesquisar")
+  }
+  function goFav() {
+    setView({ type: "favorites" })
+  }
 
   // ── Mobile ───────────────────────────────────────────────────────────────
   if (isMobile) {
-    const showAuth = view.type === "login" || view.type === "signup";
-    const showPrefs = view.type === "preferences";
-    const showTutorial = view.type === "tutorial";
-    const showDefinition = view.type === "definition";
-    const showNotFound = view.type === "notfound";
-    const showBottomNav = !showAuth && !showPrefs && !showTutorial;
+    const showAuth = view.type === "login" || view.type === "signup"
+    const showPrefs = view.type === "preferences"
+    const showTutorial = view.type === "tutorial"
+    const showDefinition = view.type === "definition"
+    const showNotFound = view.type === "notfound"
+    const showBottomNav = !showAuth && !showPrefs && !showTutorial
 
     const activeTab: MobileTab =
-      view.type === "favorites" ? "salvos" : mobileTab;
+      view.type === "favorites" ? "salvos" : mobileTab
 
     return (
       <div className="relative" style={{ background: "#fbf9f6" }}>
@@ -82,7 +92,9 @@ export default function App() {
 
         {/* Preferences */}
         {showPrefs && (
-          <MobilePreferencesPage onContinue={() => setView({ type: "tutorial" })} />
+          <MobilePreferencesPage
+            onContinue={() => setView({ type: "tutorial" })}
+          />
         )}
 
         {/* Tutorial */}
@@ -91,15 +103,26 @@ export default function App() {
         )}
 
         {/* Main app */}
-        {showBottomNav && !showDefinition && !showNotFound && view.type !== "favorites" && (
-          <>
-            {activeTab === "pesquisar" && <MobileHomePage onSearch={goSearch} />}
-            {activeTab === "perfil" && <MobileProfilePage onLogout={goHome} />}
-          </>
-        )}
+        {showBottomNav &&
+          !showDefinition &&
+          !showNotFound &&
+          view.type !== "favorites" && (
+            <>
+              {activeTab === "pesquisar" && (
+                <MobileHomePage onSearch={goSearch} />
+              )}
+              {activeTab === "perfil" && (
+                <MobileProfilePage onLogout={goHome} />
+              )}
+            </>
+          )}
 
         {view.type === "favorites" && showBottomNav && (
-          <MobileSavedPage onSearch={w => { goSearch(w); }} />
+          <MobileSavedPage
+            onSearch={(w) => {
+              goSearch(w)
+            }}
+          />
         )}
 
         {showDefinition && (
@@ -109,8 +132,8 @@ export default function App() {
             isLoggedIn={isLoggedIn}
             onOpenAuth={openAuth}
             onBack={() => {
-              if (history.length > 1) setView({ type: "home" });
-              else setView({ type: "home" });
+              if (history.length > 1) setView({ type: "home" })
+              else setView({ type: "home" })
             }}
           />
         )}
@@ -126,24 +149,33 @@ export default function App() {
         {showBottomNav && (
           <MobileBottomNav
             active={activeTab}
-            onChange={tab => {
-              setMobileTab(tab);
-              if (tab === "salvos") setView({ type: "favorites" });
-              else setView({ type: "home" });
+            onChange={(tab) => {
+              setMobileTab(tab)
+              if (tab === "salvos") setView({ type: "favorites" })
+              else setView({ type: "home" })
             }}
           />
         )}
       </div>
-    );
+    )
   }
 
   // ── Desktop ──────────────────────────────────────────────────────────────
   function goProfile() {
-    if (!isLoggedIn) { openAuth(); return; }
-    setView({ type: "profile" });
+    if (!isLoggedIn) {
+      openAuth()
+      return
+    }
+    setView({ type: "profile" })
   }
 
-  const showAppNav = ["home","definition","favorites","notfound","profile"].includes(view.type);
+  const showAppNav = [
+    "home",
+    "definition",
+    "favorites",
+    "notfound",
+    "profile",
+  ].includes(view.type)
 
   return (
     <>
@@ -152,7 +184,10 @@ export default function App() {
           onHome={goHome}
           onFavorites={goFav}
           onProfile={goProfile}
-          onSearch={word => { setNavSearch(""); goSearch(word); }}
+          onSearch={(word) => {
+            setNavSearch("")
+            goSearch(word)
+          }}
           searchValue={navSearch}
           onSearchChange={setNavSearch}
           isLoggedIn={isLoggedIn}
@@ -178,13 +213,11 @@ export default function App() {
               onSearch={goSearch}
               onBack={goHome}
               isLoggedIn={isLoggedIn}
-              onOpenAuth={then => openAuth(then)}
+              onOpenAuth={(then) => openAuth(then)}
             />
           </div>
         )}
-        {view.type === "favorites" && (
-          <FavoritesPage onSearch={goSearch} />
-        )}
+        {view.type === "favorites" && <FavoritesPage onSearch={goSearch} />}
         {view.type === "notfound" && (
           <NotFoundPage
             word={(view as { type: "notfound"; word: string }).word}
@@ -192,16 +225,25 @@ export default function App() {
           />
         )}
         {view.type === "profile" && (
-          <ProfilePage onLogout={() => { setIsLoggedIn(false); goHome(); }} onBack={goHome} />
+          <ProfilePage
+            onLogout={() => {
+              setIsLoggedIn(false)
+              goHome()
+            }}
+            onBack={goHome}
+          />
         )}
       </div>
       {authModal && (
         <AuthModal
           defaultMode={authModal}
           onAuth={handleAuth}
-          onClose={() => { setAuthModal(null); setPostAuthCb(null); }}
+          onClose={() => {
+            setAuthModal(null)
+            setPostAuthCb(null)
+          }}
         />
       )}
     </>
-  );
+  )
 }

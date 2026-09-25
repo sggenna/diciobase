@@ -1,43 +1,74 @@
-import type * as React from "react";
-import { MobileTab } from "@/lib/types";
+import type * as React from "react"
+import { MobileTab } from "@/lib/types"
 
 export function MobileBottomNav({
-  active, onChange,
+  active,
+  onChange,
 }: {
-  active: MobileTab;
-  onChange: (t: MobileTab) => void;
+  active: MobileTab
+  onChange: (t: MobileTab) => void
 }) {
-  const tabs: { id: MobileTab; label: string; icon: (active: boolean) => React.ReactNode }[] = [
+  const tabs: {
+    id: MobileTab
+    label: string
+    icon: (active: boolean) => React.ReactNode
+  }[] = [
     {
-      id: "pesquisar", label: "Pesquisar",
+      id: "pesquisar",
+      label: "Pesquisar",
       icon: (a) => (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke={a ? "white" : "rgba(255,255,255,0.45)"} strokeWidth={a ? 2.2 : 1.8} strokeLinecap="round">
-          <circle cx="11" cy="11" r="7.5"/><path d="m20.5 20.5-4.8-4.8"/>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke={a ? "white" : "rgba(255,255,255,0.45)"}
+          strokeWidth={a ? 2.2 : 1.8}
+          strokeLinecap="round"
+        >
+          <circle cx="11" cy="11" r="7.5" />
+          <path d="m20.5 20.5-4.8-4.8" />
         </svg>
       ),
     },
     {
-      id: "salvos", label: "Salvos",
+      id: "salvos",
+      label: "Salvos",
       icon: (a) => (
-        <svg width="20" height="20" viewBox="0 0 24 24"
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
           fill={a ? "white" : "none"}
-          stroke={a ? "white" : "rgba(255,255,255,0.45)"} strokeWidth={a ? 2 : 1.8} strokeLinecap="round" strokeLinejoin="round">
-          <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          stroke={a ? "white" : "rgba(255,255,255,0.45)"}
+          strokeWidth={a ? 2 : 1.8}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
         </svg>
       ),
     },
     {
-      id: "perfil", label: "Perfil",
+      id: "perfil",
+      label: "Perfil",
       icon: (a) => (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke={a ? "white" : "rgba(255,255,255,0.45)"} strokeWidth={a ? 2.2 : 1.8} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke={a ? "white" : "rgba(255,255,255,0.45)"}
+          strokeWidth={a ? 2.2 : 1.8}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
         </svg>
       ),
     },
-  ];
+  ]
 
   return (
     <div
@@ -51,8 +82,8 @@ export function MobileBottomNav({
           boxShadow: "0 8px 32px rgba(0,0,0,0.30), 0 2px 8px rgba(0,0,0,0.18)",
         }}
       >
-        {tabs.map(tab => {
-          const isActive = tab.id === active;
+        {tabs.map((tab) => {
+          const isActive = tab.id === active
           return (
             <button
               key={tab.id}
@@ -62,26 +93,34 @@ export function MobileBottomNav({
                 padding: isActive ? "10px 18px" : "10px 14px",
                 background: isActive ? "rgba(255,255,255,0.18)" : "transparent",
               }}
-              onPointerDown={e => { e.currentTarget.style.transform = "scale(0.93)"; }}
-              onPointerUp={e => { e.currentTarget.style.transform = "scale(1)"; }}
-              onPointerLeave={e => { e.currentTarget.style.transform = "scale(1)"; }}
+              onPointerDown={(e) => {
+                e.currentTarget.style.transform = "scale(0.93)"
+              }}
+              onPointerUp={(e) => {
+                e.currentTarget.style.transform = "scale(1)"
+              }}
+              onPointerLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)"
+              }}
             >
               {tab.icon(isActive)}
               {isActive && (
-                <span style={{
-                  fontFamily: "'Poppins:SemiBold'",
-                  fontSize: 13,
-                  color: "white",
-                  letterSpacing: "-0.2px",
-                  lineHeight: 1,
-                }}>
+                <span
+                  style={{
+                    fontFamily: "'Poppins:SemiBold'",
+                    fontSize: 13,
+                    color: "white",
+                    letterSpacing: "-0.2px",
+                    lineHeight: 1,
+                  }}
+                >
                   {tab.label}
                 </span>
               )}
             </button>
-          );
+          )
         })}
       </nav>
     </div>
-  );
+  )
 }

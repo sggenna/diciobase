@@ -1,4 +1,4 @@
-import { imgLogoDark } from "@/lib/assets";
+import { imgLogoDark } from "@/lib/assets"
 
 export function Footer() {
   return (
@@ -10,5 +10,5 @@ export function Footer() {
         </p>
       </div>
     </footer>
-  );
+  )
 }
