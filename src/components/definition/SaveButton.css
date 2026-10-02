@@ -1,0 +1,90 @@
+.save-button {
+  --sb-h: 42px;
+  --sb-radius: var(--radius-md);
+  --sb-bg: var(--color-surface);
+  --sb-bg-saved: var(--color-ink);
+  --sb-border: var(--color-border-strong);
+  --sb-ink: var(--color-ink);
+  --sb-ink-saved: var(--color-on-ink);
+  --sb-pop-scale: 1.32;
+  --sb-pop-rotate: -10deg;
+  --sb-ease: var(--ease-out);
+  --sb-dur: var(--dur-base);
+  --sb-pop-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--sb-h);
+  padding: 0 16px;
+  border-radius: var(--sb-radius);
+  border: 1px solid var(--sb-border);
+  background: var(--sb-bg);
+  color: var(--sb-ink);
+  font-family: "Poppins:SemiBold";
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color var(--sb-dur) var(--sb-ease),
+    border-color var(--sb-dur) var(--sb-ease),
+    color var(--sb-dur) var(--sb-ease),
+    scale var(--dur-press) var(--ease-out);
+}
+
+.save-button:active {
+  scale: var(--press-scale);
+}
+
+.save-button[data-saved] {
+  background: var(--sb-bg-saved);
+  border-color: transparent;
+  color: var(--sb-ink-saved);
+}
+
+.save-button__icon {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  transform-origin: center;
+  transition:
+    fill var(--sb-dur) var(--sb-ease),
+    scale 0.35s var(--sb-pop-ease),
+    rotate 0.35s var(--sb-pop-ease);
+}
+
+.save-button[data-saved] .save-button__icon {
+  fill: currentColor;
+}
+
+.save-button[data-pop] .save-button__icon {
+  scale: var(--sb-pop-scale);
+  rotate: var(--sb-pop-rotate);
+}
+
+.save-button__label {
+  transition: color var(--sb-dur) var(--sb-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .save-button {
+    transition:
+      background-color 0.01ms,
+      border-color 0.01ms,
+      color 0.01ms;
+  }
+  .save-button:active {
+    scale: 1;
+  }
+  .save-button__icon {
+    transition: fill 0.01ms;
+  }
+  .save-button[data-pop] .save-button__icon {
+    scale: 1;
+    rotate: 0deg;
+  }
+}

@@ -1,5 +1,3 @@
-import { fadeStyle } from "@/lib/animation"
-import { useFade } from "@/lib/hooks"
 
 export function NotFoundPage({
   word,
@@ -8,12 +6,8 @@ export function NotFoundPage({
   word: string
   onBack: () => void
 }) {
-  const vis = useFade("notfound-" + word)
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center gap-6 px-6"
-      style={fadeStyle(vis)}
-    >
+    <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6">
       <p className="font-['Poppins:ExtraBold'] text-[48px] text-ink">
         "{word}"
       </p>
@@ -22,7 +16,7 @@ export function NotFoundPage({
       </p>
       <button
         onClick={onBack}
-        className="bg-ink text-on-ink font-['Poppins:SemiBold'] text-[14px] px-6 py-3 rounded-md hover:bg-[#333] transition-[background-color,transform] active:scale-95"
+        className="bg-ink text-on-ink font-['Poppins:SemiBold'] text-[14px] px-6 py-3 rounded-md hover:bg-[#333] transition-[background-color,scale] active:scale-[0.97]"
       >
         Voltar à busca
       </button>

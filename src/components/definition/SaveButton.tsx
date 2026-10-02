@@ -1,0 +1,71 @@
+import { useEffect, useRef, useState } from "react"
+import type * as React from "react"
+import "./SaveButton.css"
+
+const POP_MS = 420
+
+export function SaveButton({
+  saved,
+  onToggle,
+  height = 42,
+  radius = "var(--radius-md)",
+  bg = "var(--color-surface)",
+  border = "var(--color-border-strong)",
+  showLabel = true,
+}: {
+  saved: boolean
+  onToggle: () => void
+  height?: number
+  radius?: string
+  bg?: string
+  border?: string
+  showLabel?: boolean
+}) {
+  const [popping, setPopping] = useState(false)
+  const wasSaved = useRef(saved)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  useEffect(() => {
+    if (saved && !wasSaved.current) {
+      setPopping(true)
+      timerRef.current = setTimeout(() => setPopping(false), POP_MS)
+    }
+    wasSaved.current = saved
+    return () => clearTimeout(timerRef.current)
+  }, [saved])
+
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={saved}
+      aria-label={saved ? "Remover dos salvos" : "Salvar palavra"}
+      className="save-button"
+      data-saved={saved || undefined}
+      data-pop={popping || undefined}
+      style={
+        {
+          "--sb-h": `${height}px`,
+          "--sb-radius": radius,
+          "--sb-bg": bg,
+          "--sb-border": border,
+        } as React.CSSProperties
+      }
+    >
+      <svg
+        className="save-button__icon"
+        width="15"
+        height="15"
+        viewBox="0 0 18 18"
+        aria-hidden="true"
+      >
+        <path d="M13.8112 2.68935C13.5299 2.40804 13.1483 2.25 12.7504 2.25H5.24957C4.8517 2.25 4.47013 2.40804 4.18879 2.68935C3.90745 2.97066 3.7494 3.35219 3.7494 3.75003V15.0002C3.74944 15.1316 3.78398 15.2606 3.84955 15.3744C3.91512 15.4882 4.00944 15.5828 4.12305 15.6487C4.23666 15.7146 4.3656 15.7496 4.49695 15.75C4.6283 15.7504 4.75747 15.7164 4.87153 15.6512L8.25591 13.7177C8.48254 13.5883 8.73901 13.5202 9 13.5202C9.26099 13.5202 9.51746 13.5883 9.74408 13.7177L13.1285 15.6512C13.2425 15.7164 13.3717 15.7504 13.503 15.75C13.6344 15.7496 13.7633 15.7146 13.8769 15.6487C13.9906 15.5828 14.0849 15.4882 14.1504 15.3744C14.216 15.2606 14.2506 15.1316 14.2506 15.0002V3.75003C14.2506 3.35219 14.0925 2.97066 13.8112 2.68935Z" />
+      </svg>
+      {showLabel && (
+        <span className="save-button__label">
+          {saved ? "Salvo ✓" : "Salvar"}
+        </span>
+      )}
+    </button>
+  )
+}

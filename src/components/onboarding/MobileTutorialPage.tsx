@@ -101,7 +101,7 @@ export function MobileTutorialPage({ onFinish }: { onFinish: () => void }) {
           {step > 0 && (
             <button
               onClick={() => goTo(step - 1)}
-              className="h-[52px] px-5 rounded-lg border border-border-strong font-['Poppins:SemiBold'] text-[14px] text-ink active:scale-95 transition-transform"
+              className="h-[52px] px-5 rounded-lg border border-border-strong font-['Poppins:SemiBold'] text-[14px] text-ink active:scale-[0.97] transition-transform"
             >
               Anterior
             </button>

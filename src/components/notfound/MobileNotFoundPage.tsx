@@ -24,7 +24,7 @@ export function MobileNotFoundPage({
       </div>
       <button
         onClick={onBack}
-        className="bg-ink text-on-ink font-['Poppins:SemiBold'] text-[14px] px-6 py-3.5 rounded-lg active:scale-95 transition-transform"
+        className="bg-ink text-on-ink font-['Poppins:SemiBold'] text-[14px] px-6 py-3.5 rounded-lg active:scale-[0.97] transition-transform"
       >
         Voltar à busca
       </button>

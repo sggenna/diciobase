@@ -1,25 +1,31 @@
 import { useState } from "react"
 import type * as React from "react"
-import { imgLogoLight } from "@/lib/assets"
+import { imgLogoHero } from "@/lib/assets"
 
 export function AppNav({
   onHome,
   onFavorites,
   onProfile,
+  onTutorial,
   onSearch,
   searchValue,
   onSearchChange,
   isLoggedIn,
   hideSearch,
+  initial = "M",
+  avatarSrc,
 }: {
   onHome: () => void
   onFavorites: () => void
   onProfile: () => void
+  onTutorial?: () => void
   onSearch: (q: string) => void
   searchValue: string
   onSearchChange: (v: string) => void
   isLoggedIn?: boolean
   hideSearch?: boolean
+  initial?: string
+  avatarSrc?: string
 }) {
   const [focused, setFocused] = useState(false)
   function submit(e: React.FormEvent) {
@@ -31,18 +37,19 @@ export function AppNav({
     <nav
       className="fixed top-0 left-0 right-0 z-50"
       style={{
-        background: "rgba(255,255,255,0.94)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
+        fontFamily: "var(--font-sf)",
+        background: "rgba(255,255,255,0.8)",
+        backdropFilter: "saturate(180%) blur(20px)",
+        WebkitBackdropFilter: "saturate(180%) blur(20px)",
         borderBottom: "1px solid rgba(0,0,0,0.06)",
       }}
     >
-      <div className="max-w-[1400px] mx-auto px-8 h-[60px] flex items-center gap-5">
+      <div className="max-w-[1400px] mx-auto px-8 h-[52px] flex items-center gap-5">
         <button
           onClick={onHome}
-          className="shrink-0 h-8 w-auto transition-opacity hover:opacity-60"
+          className="shrink-0 h-6 w-auto transition-opacity hover:opacity-60"
         >
-          <img src={imgLogoLight} alt="Diciobase" className="h-full w-auto" />
+          <img src={imgLogoHero} alt="Diciobase" className="h-full w-auto" />
         </button>
         {!hideSearch && (
           <form onSubmit={submit} className="flex-1 max-w-[480px]">
@@ -64,16 +71,29 @@ export function AppNav({
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}
                 placeholder="Pesquise uma palavra…"
-                className="w-full h-[36px] pl-9 pr-4 rounded-sm bg-surface font-['Poppins:Regular'] text-[13px] text-ink placeholder-muted outline-none transition-colors duration-200"
-                style={{ boxShadow: focused ? "var(--ring-ink)" : "none" }}
+                className="w-full h-[36px] pl-9 pr-4 rounded-sm bg-surface text-[13px] text-ink placeholder-muted outline-none transition-colors duration-200"
+                style={{
+                  boxShadow: focused
+                    ? "0 0 0 1px rgba(0,0,0,0.14), 0 6px 18px rgba(0,0,0,0.08)"
+                    : "none",
+                  background: focused ? "#fff" : undefined,
+                }}
               />
             </div>
           </form>
         )}
-        <div className="flex items-center gap-1 ml-auto">
+        <div className="flex items-center gap-5 ml-auto">
+          {onTutorial && (
+            <button
+              onClick={onTutorial}
+              className="text-[13px] text-ink hover:opacity-60 transition-opacity hidden sm:inline"
+            >
+              Como funciona
+            </button>
+          )}
           <button
             onClick={onFavorites}
-            className="h-[34px] px-3.5 rounded-sm font-['Poppins:Medium'] text-[13px] text-body hover:bg-surface hover:text-ink transition-colors flex items-center gap-1.5"
+            className="h-[34px] px-1 text-[13px] text-ink hover:opacity-60 transition-opacity flex items-center gap-1.5"
           >
             <svg
               width="15"
@@ -91,25 +111,28 @@ export function AppNav({
           </button>
           <button
             onClick={onProfile}
-            className="w-[34px] h-[34px] rounded-sm flex items-center justify-center hover:bg-ink transition-colors ml-1"
-            style={{ background: isLoggedIn ? "var(--color-ink)" : "var(--color-border)" }}
+            aria-label="Conta"
+            className="w-[30px] h-[30px] rounded-full flex items-center justify-center transition-opacity hover:opacity-60"
+            style={{ background: isLoggedIn ? "var(--color-ink)" : "transparent" }}
           >
             {isLoggedIn ? (
-              <span className="font-['Poppins:Bold'] text-[13px] text-on-ink">
-                M
-              </span>
+              avatarSrc ? (
+                <img src={avatarSrc} alt="" className="size-full rounded-full object-cover" />
+              ) : (
+                <span className="text-[13px] font-semibold text-on-ink">{initial}</span>
+              )
             ) : (
               <svg
-                width="16"
-                height="16"
+                width="17"
+                height="17"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="var(--color-muted)"
-                strokeWidth="2"
+                stroke="var(--color-ink)"
+                strokeWidth="1.6"
                 strokeLinecap="round"
               >
                 <circle cx="12" cy="8" r="4" />
-                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                <path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" />
               </svg>
             )}
           </button>

@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef } from "react"
-import SwipeToast from "@/SwipeToast"
+import { AnimatePresence, motion } from "motion/react"
+import { useToast } from "@/components/ui/Toast"
+import { PronounceButton } from "@/components/definition/PronounceButton"
+import { SaveButton } from "@/components/definition/SaveButton"
 import { slideUpStyle } from "@/lib/animation"
-import { imgAudio, imgBookmark, imgShare } from "@/lib/assets"
+import { imgShare } from "@/lib/assets"
 import { DICT_COLOR } from "@/lib/data"
 import { useFade } from "@/lib/hooks"
+import { dictVariants } from "@/lib/pageMotion"
 import { WordData } from "@/lib/types"
 
 export function MobileDefinitionPage({
@@ -20,30 +24,47 @@ export function MobileDefinitionPage({
   onOpenAuth?: (then?: () => void) => void
 }) {
   const [activeId, setActiveId] = useState(wordData.dicts[0].id)
-  const [contentVis, setContentVis] = useState(true)
+  const [dictDir, setDictDir] = useState(1)
   const [saved, setSaved] = useState(false)
-  const [audioPlaying, setAudioPlaying] = useState(false)
-  const [toastKey, setToastKey] = useState(0)
-  const [btnPop, setBtnPop] = useState(false)
+  const { toast } = useToast()
+
+  function notifySaved(next: boolean) {
+    if (next) {
+      toast({
+        id: `save-${wordData.word}`,
+        title: "Palavra salva",
+        description: `“${wordData.word}” foi adicionada aos seus Salvos.`,
+      })
+    } else {
+      toast({
+        id: `save-${wordData.word}`,
+        title: "Removida dos Salvos",
+        description: `“${wordData.word}” não está mais na sua lista.`,
+        variant: "info",
+        action: {
+          label: "Desfazer",
+          onClick: () => {
+            setSaved(true)
+            notifySaved(true)
+          },
+        },
+      })
+    }
+  }
 
   function handleSaveMobile() {
     if (!isLoggedIn) {
       onOpenAuth?.(() => {
         setSaved(true)
-        setToastKey((k) => k + 1)
-        setBtnPop(true)
-        setTimeout(() => setBtnPop(false), 400)
+        notifySaved(true)
       })
       return
     }
     const next = !saved
     setSaved(next)
-    if (next) {
-      setToastKey((k) => k + 1)
-      setBtnPop(true)
-      setTimeout(() => setBtnPop(false), 400)
-    }
+    notifySaved(next)
   }
+
   const pageVis = useFade(wordData.word)
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -53,17 +74,11 @@ export function MobileDefinitionPage({
 
   function switchDict(id: string) {
     if (id === activeId) return
-    setContentVis(false)
-    setTimeout(() => {
-      setActiveId(id)
-      setContentVis(true)
-      scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" })
-    }, 160)
-  }
-
-  function playAudio() {
-    setAudioPlaying(true)
-    setTimeout(() => setAudioPlaying(false), 1600)
+    const from = wordData.dicts.findIndex((d) => d.id === activeId)
+    const to = wordData.dicts.findIndex((d) => d.id === id)
+    setDictDir(to > from ? 1 : -1)
+    setActiveId(id)
+    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" })
   }
 
   const activeEntry =
@@ -81,7 +96,7 @@ export function MobileDefinitionPage({
       <div className="flex items-center justify-between px-5 py-4 bg-paper-warm shrink-0">
         <button
           onClick={onBack}
-          className="w-[38px] h-[38px] flex items-center justify-center rounded-full bg-white border border-border active:scale-95 transition-transform"
+          className="w-[38px] h-[38px] flex items-center justify-center rounded-full bg-white border border-border active:scale-[0.97] transition-transform"
         >
           <svg
             width="18"
@@ -95,74 +110,18 @@ export function MobileDefinitionPage({
           </svg>
         </button>
         <div className="flex items-center gap-2">
-          <button className="w-[38px] h-[38px] flex items-center justify-center rounded-full bg-white border border-border active:scale-95 transition-transform">
+          <button className="w-[38px] h-[38px] flex items-center justify-center rounded-full bg-white border border-border active:scale-[0.97] transition-transform">
             <img src={imgShare} alt="" style={{ width: 16, height: 16 }} />
           </button>
-          <button
-            onClick={handleSaveMobile}
-            className="flex items-center gap-1.5 px-3.5 h-[38px] rounded-full"
-            style={{
-              background: saved ? "var(--color-ink)" : "#fff",
-              border: saved ? "none" : "1px solid var(--color-border)",
-              transform: btnPop ? "scale(1.1)" : "scale(1)",
-              transition:
-                "background 0.2s, border-color 0.2s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
-            }}
-          >
-            <img
-              src={imgBookmark}
-              alt=""
-              style={{
-                width: 14,
-                height: 14,
-                filter: saved ? "none" : "invert(1)",
-                transform: btnPop
-                  ? "scale(1.4) rotate(-10deg)"
-                  : "scale(1) rotate(0deg)",
-                transition:
-                  "filter 0.2s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1)",
-              }}
-            />
-            <span
-              style={{
-                fontFamily: "'Poppins:SemiBold'",
-                fontSize: 12,
-                color: saved ? "var(--color-on-ink)" : "var(--color-ink)",
-                transition: "color 0.2s",
-              }}
-            >
-              {saved ? "Salvo ✓" : "Salvar"}
-            </span>
-          </button>
-        </div>
-        {toastKey > 0 && (
-          <SwipeToast
-            key={toastKey}
-            open
-            onClose={() => {}}
-            title="Palavra salva!"
-            description={`"${wordData.word}" adicionada às suas palavras`}
-            background="var(--color-ink)"
-            color="var(--color-on-ink)"
-            fuseColor="var(--color-accent)"
-            duration={3500}
-            fuse="bottom"
-            width={320}
-            icon={
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#7dc490"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-              >
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-              </svg>
-            }
+          <SaveButton
+            saved={saved}
+            onToggle={handleSaveMobile}
+            height={38}
+            radius="9999px"
+            bg="#fff"
+            border="var(--color-border)"
           />
-        )}
+        </div>
       </div>
 
       {/* Word header */}
@@ -181,19 +140,11 @@ export function MobileDefinitionPage({
               </span>
             </div>
           </div>
-          <button
-            onClick={playAudio}
-            className="shrink-0 w-[48px] h-[48px] rounded-full bg-ink flex items-center justify-center active:scale-95 transition-transform duration-150"
-            style={{
-              boxShadow: audioPlaying ? "0 0 0 6px rgba(0,0,0,0.12)" : "none",
-            }}
-          >
-            <img
-              src={imgAudio}
-              alt=""
-              style={{ width: 18, height: 18, filter: "invert(1)" }}
-            />
-          </button>
+          <PronounceButton
+            word={wordData.word}
+            variant="circle"
+            height={48}
+          />
         </div>
       </div>
 
@@ -207,7 +158,7 @@ export function MobileDefinitionPage({
               <button
                 key={d.id}
                 onClick={() => switchDict(d.id)}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-['Poppins:SemiBold'] text-[12px] shrink-0 transition-colors duration-200 active:scale-95"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-['Poppins:SemiBold'] text-[12px] shrink-0 transition-[background-color,color,border-color,scale] duration-150 active:scale-[0.97]"
                 style={{
                   background: isActive ? c : "#fff",
                   color: isActive ? "var(--color-on-ink)" : "var(--color-body)",
@@ -229,12 +180,15 @@ export function MobileDefinitionPage({
 
       {/* Scrollable content */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-5 py-5">
-        <div
-          style={{
-            opacity: contentVis ? 1 : 0,
-            transform: contentVis ? "translateY(0)" : "translateY(8px)",
-            transition: "opacity 0.18s ease, transform 0.18s ease",
-          }}
+        <div className="overflow-x-clip">
+        <AnimatePresence mode="wait" initial={false} custom={dictDir}>
+        <motion.div
+          key={activeId}
+          custom={dictDir}
+          variants={dictVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
         >
           {/* Mobile macrostructure: simplified single-column layout */}
           <div className="flex flex-col gap-6">
@@ -332,7 +286,7 @@ export function MobileDefinitionPage({
                     <button
                       key={w}
                       onClick={() => onSearch(w)}
-                      className="px-3.5 py-1.5 rounded-xl bg-white border border-border font-['Poppins:Regular'] text-[13px] text-ink active:scale-95 transition-transform"
+                      className="px-3.5 py-1.5 rounded-xl bg-white border border-border font-['Poppins:Regular'] text-[13px] text-ink active:scale-[0.97] transition-transform"
                     >
                       {w}
                     </button>
@@ -352,7 +306,7 @@ export function MobileDefinitionPage({
                     <button
                       key={w}
                       onClick={() => onSearch(w)}
-                      className="px-3.5 py-1.5 rounded-xl bg-surface font-['Poppins:Regular'] text-[13px] text-ink active:scale-95 transition-transform"
+                      className="px-3.5 py-1.5 rounded-xl bg-surface font-['Poppins:Regular'] text-[13px] text-ink active:scale-[0.97] transition-transform"
                     >
                       {w}
                     </button>
@@ -385,6 +339,8 @@ export function MobileDefinitionPage({
               </div>
             </div>
           </div>
+        </motion.div>
+        </AnimatePresence>
         </div>
       </div>
     </div>

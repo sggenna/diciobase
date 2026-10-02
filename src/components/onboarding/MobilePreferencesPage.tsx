@@ -58,7 +58,7 @@ export function MobilePreferencesPage({
             <button
               key={opt}
               onClick={() => toggle(opt)}
-              className="px-4 py-2.5 rounded-xl font-['Poppins:Medium'] text-[13px] transition-[background-color,color,border-color,transform] duration-200 active:scale-[0.96]"
+              className="px-4 py-2.5 rounded-xl font-['Poppins:Medium'] text-[13px] transition-[background-color,color,border-color,scale] duration-150 active:scale-[0.97]"
               style={{
                 background: on ? "var(--color-ink)" : "#fff",
                 color: on ? "var(--color-on-ink)" : "var(--color-ink)",

@@ -1,19 +1,17 @@
-import { useState } from "react"
+import { lazy, Suspense, useState } from "react"
 import type * as React from "react"
 import { Footer } from "@/components/layout/Footer"
-import { fadeStyle } from "@/lib/animation"
-import { imgHeart, imgLogoHero, imgLogoLight } from "@/lib/assets"
 import { SUGGESTIONS } from "@/lib/data"
-import { useFade } from "@/lib/hooks"
+
+const Globe = lazy(() =>
+  import("@/components/home/Globe").then((m) => ({ default: m.Globe })),
+)
 
 export function HomePage({
   onSearch,
-  onOpenAuth,
 }: {
   onSearch: (word: string) => void
-  onOpenAuth?: () => void
 }) {
-  const vis = useFade("home")
   const [query, setQuery] = useState("")
   const [focused, setFocused] = useState(false)
 
@@ -24,92 +22,122 @@ export function HomePage({
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <nav className="px-10 py-5 flex items-center justify-between">
-        <img src={imgLogoLight} alt="Diciobase" className="h-10 w-auto" />
-        <div className="flex items-center gap-5">
-          <button
-            onClick={onOpenAuth}
-            className="size-8 flex items-center justify-center rounded-full bg-surface-hover hover:bg-border transition-colors border border-border"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="var(--color-muted)"
-              strokeWidth="2"
-              strokeLinecap="round"
-            >
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-            </svg>
-          </button>
-          <img
-            src={imgHeart}
-            alt="Favoritos"
-            className="size-7 object-contain cursor-pointer hover:opacity-60 transition-opacity"
-          />
-        </div>
-      </nav>
-
-      <main className="flex-1 flex flex-col items-center justify-center px-6 py-12 gap-10">
+    <div
+      className="min-h-screen bg-white flex flex-col"
+      style={{ fontFamily: "var(--font-sf)" }}
+    >
+      <main className="flex-1 flex flex-col items-center justify-center px-6 py-16 gap-7 text-center">
         <div
-          className="flex flex-col items-center gap-8 w-full max-w-[680px]"
-          style={fadeStyle(vis)}
+          className="flex flex-col items-center w-full max-w-[680px]"
         >
-          <img src={imgLogoHero} alt="DICIOBASE" className="h-20 w-auto" />
+          <h1
+            className="text-ink"
+            style={{
+              fontSize: 48,
+              fontWeight: 600,
+              lineHeight: 1.08,
+              letterSpacing: "-0.03em",
+            }}
+          >
+            Todos os dicionários.
+            <br />
+            <span className="text-muted">Em um só lugar.</span>
+          </h1>
 
-          <p className="font-['Poppins:Regular'] text-[26px] text-ink tracking-[-0.72px] text-center leading-tight">
-            Todos os dicionários em um lugar.
-          </p>
+          <div
+            className="relative w-full mt-5"
+            style={{ aspectRatio: "720 / 440" }}
+          >
+            <Suspense fallback={null}>
+              <div className="absolute inset-0">
+                <Globe />
+              </div>
+            </Suspense>
 
-          <form onSubmit={submit} className="w-full flex flex-col gap-5">
-            <div
-              className="relative w-full"
-              style={{
-                filter: focused
-                  ? "drop-shadow(0 6px 24px rgba(0,0,0,0.12))"
-                  : "none",
-                transition: "filter 0.3s ease",
-              }}
+            <form
+              onSubmit={submit}
+              className="absolute left-1/2 -translate-x-1/2 w-[75%] max-w-[480px]"
+              style={{ top: "43.6%" }}
             >
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
-                placeholder="Pesquise algo"
-                className="w-full h-[60px] px-7 rounded-full border font-['Poppins:Light'] text-[22px] text-ink tracking-[-1.2px] placeholder-muted bg-white outline-none transition-colors duration-250"
-                style={{ borderColor: focused ? "var(--color-ink)" : "var(--color-muted)" }}
-              />
-              {query && (
+              <div
+                className="relative w-full flex items-center"
+                style={{
+                  height: 56,
+                  borderRadius: 28,
+                  paddingLeft: 20,
+                  paddingRight: 6,
+                  background: "rgba(255,255,255,0.78)",
+                  backdropFilter: "saturate(180%) blur(20px)",
+                  WebkitBackdropFilter: "saturate(180%) blur(20px)",
+                  boxShadow: focused
+                    ? "0 0 0 1px rgba(0,0,0,0.08), 0 14px 36px rgba(0,0,0,0.10)"
+                    : "0 0 0 1px rgba(0,0,0,0.05), 0 10px 30px rgba(0,0,0,0.06)",
+                  transition: "box-shadow 0.3s ease",
+                }}
+              >
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--color-muted)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  className="shrink-0"
+                >
+                  <circle cx="11" cy="11" r="6.5" />
+                  <path d="M20 20l-4-4" />
+                </svg>
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onFocus={() => setFocused(true)}
+                  onBlur={() => setFocused(false)}
+                  placeholder="Pesquise uma palavra"
+                  className="flex-1 h-full ml-3 bg-transparent text-ink placeholder-muted outline-none"
+                  style={{ fontSize: 17, letterSpacing: "-0.02em" }}
+                />
                 <button
                   type="submit"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-ink text-on-ink font-['Poppins:SemiBold'] text-[13px] px-5 py-2.5 rounded-2xl hover:bg-[#333] transition-[background-color,transform] active:scale-95"
+                  aria-label="Buscar"
+                  className="shrink-0 flex items-center justify-center bg-ink text-on-ink transition-[background-color,scale] active:scale-[0.97]"
+                  style={{ width: 44, height: 44, borderRadius: 22 }}
                 >
-                  Buscar
-                </button>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <p className="font-['Poppins:Regular'] text-[15px] text-black/70">
-                Comece com:
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {SUGGESTIONS.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => onSearch(s)}
-                    className="px-4 py-1.5 rounded-2xl border border-black/20 font-['Poppins:Regular'] text-[13px] text-ink hover:border-ink hover:bg-ink hover:text-on-ink transition-colors duration-200 capitalize"
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
-                    {s}
-                  </button>
-                ))}
+                    <path d="M12 19V5" />
+                    <path d="M6 11l6-6 6 6" />
+                  </svg>
+                </button>
               </div>
-            </div>
-          </form>
+            </form>
+          </div>
+
+          <div
+            className="flex items-center justify-center gap-[18px] mt-2"
+            style={{ fontSize: 17, letterSpacing: "-0.02em" }}
+          >
+            <span style={{ color: "var(--color-label-secondary)" }}>
+              Experimente
+            </span>
+            {SUGGESTIONS.map((s) => (
+              <button
+                key={s}
+                onClick={() => onSearch(s)}
+                className="text-ink font-medium hover:opacity-60 transition-opacity capitalize"
+              >
+                {s} ›
+              </button>
+            ))}
+          </div>
         </div>
       </main>
       <Footer />

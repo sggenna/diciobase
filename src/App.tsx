@@ -18,7 +18,10 @@ import { TutorialPage } from "@/components/onboarding/TutorialPage"
 import { MobileProfilePage } from "@/components/profile/MobileProfilePage"
 import { ProfilePage } from "@/components/profile/ProfilePage"
 import { DB } from "@/lib/data"
-import { useIsMobile } from "@/lib/hooks"
+import { PageTransition } from "@/components/ui/PageTransition"
+import { ToastProvider, useToast } from "@/components/ui/Toast"
+import { type PageMotion, type PageSlot, motionBetween } from "@/lib/pageMotion"
+import { useIsMobile, useMobileProfileState } from "@/lib/hooks"
 import { MobileTab } from "@/lib/types"
 
 type View =
@@ -32,14 +35,49 @@ type View =
   | { type: "notfound"; word: string }
   | { type: "profile" }
 
-export default function App() {
+const NAV_HEIGHT = 53
+
+function AppInner() {
   const isMobile = useIsMobile()
+  const { toast } = useToast()
+  const profile = useMobileProfileState()
   const [view, setView] = useState<View>({ type: "home" })
   const [navSearch, setNavSearch] = useState("")
   const [mobileTab, setMobileTab] = useState<MobileTab>("pesquisar")
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [authModal, setAuthModal] = useState<"login" | "signup" | null>(null)
   const [postAuthCb, setPostAuthCb] = useState<(() => void) | null>(null)
+
+  const mobileProfileTab = isMobile && view.type === "home" && mobileTab === "perfil"
+  const pageKey =
+    view.type === "definition" || view.type === "notfound"
+      ? `${view.type}:${view.word}`
+      : mobileProfileTab
+        ? "home:perfil"
+        : view.type
+  const slot: PageSlot = {
+    type: view.type,
+    mobileTab: isMobile ? (view.type === "favorites" ? "salvos" : mobileTab) : undefined,
+  }
+  const [pageNav, setPageNav] = useState<{
+    key: string
+    slot: PageSlot
+    motion: PageMotion
+  }>({ key: pageKey, slot, motion: { kind: "side", dir: 1 } })
+  if (pageNav.key !== pageKey) {
+    const nextSlot: PageSlot = {
+      ...slot,
+      onboarding:
+        view.type === "preferences" ||
+        (view.type === "tutorial" &&
+          (pageNav.slot.type === "preferences" || !!pageNav.slot.onboarding)),
+    }
+    setPageNav({
+      key: pageKey,
+      slot: nextSlot,
+      motion: motionBetween(pageNav.slot, nextSlot, isMobile),
+    })
+  }
 
   function openAuth(then?: () => void) {
     setPostAuthCb(then ? () => then : null)
@@ -53,6 +91,11 @@ export default function App() {
       setPostAuthCb(null)
       return
     }
+    toast({
+      id: "auth",
+      title: "Login realizado",
+      description: "Sua conta está pronta para usar.",
+    })
     setView({ type: "preferences" })
   }
 
@@ -66,6 +109,16 @@ export default function App() {
     setView({ type: "home" })
     setNavSearch("")
     setMobileTab("pesquisar")
+  }
+  function logout() {
+    setIsLoggedIn(false)
+    goHome()
+    toast({
+      id: "auth",
+      title: "Você saiu da conta",
+      description: "Suas palavras salvas ficam guardadas até o próximo acesso.",
+      variant: "info",
+    })
   }
   function goFav() {
     setView({ type: "favorites" })
@@ -85,6 +138,7 @@ export default function App() {
 
     return (
       <div className="relative" style={{ background: "var(--color-paper-warm)" }}>
+        <PageTransition pageKey={pageKey} motion={pageNav.motion}>
         {/* Auth flow */}
         {showAuth && (
           <MobileAuthPage onLogin={() => setView({ type: "preferences" })} />
@@ -112,7 +166,11 @@ export default function App() {
                 <MobileHomePage onSearch={goSearch} />
               )}
               {activeTab === "perfil" && (
-                <MobileProfilePage onLogout={goHome} />
+                <MobileProfilePage
+                  onLogout={logout}
+            state={profile}
+                  onTutorial={() => setView({ type: "tutorial" })}
+                />
               )}
             </>
           )}
@@ -145,6 +203,7 @@ export default function App() {
             onBack={() => setView({ type: "home" })}
           />
         )}
+        </PageTransition>
 
         {/* Bottom nav */}
         {showBottomNav && (
@@ -154,6 +213,17 @@ export default function App() {
               setMobileTab(tab)
               if (tab === "salvos") setView({ type: "favorites" })
               else setView({ type: "home" })
+            }}
+          />
+        )}
+
+        {authModal && (
+          <AuthModal
+            defaultMode={authModal}
+            onAuth={handleAuth}
+            onClose={() => {
+              setAuthModal(null)
+              setPostAuthCb(null)
             }}
           />
         )}
@@ -176,15 +246,19 @@ export default function App() {
     "favorites",
     "notfound",
     "profile",
+    "tutorial",
   ].includes(view.type)
 
   return (
     <>
       {showAppNav && (
         <AppNav
+          initial={profile.name[0]}
+          avatarSrc={profile.avatarSrc}
           onHome={goHome}
           onFavorites={goFav}
           onProfile={goProfile}
+          onTutorial={() => setView({ type: "tutorial" })}
           onSearch={(word) => {
             setNavSearch("")
             goSearch(word)
@@ -192,10 +266,16 @@ export default function App() {
           searchValue={navSearch}
           onSearchChange={setNavSearch}
           isLoggedIn={isLoggedIn}
-          hideSearch={view.type === "home" || view.type === "favorites"}
+          hideSearch={
+            view.type === "home" ||
+            view.type === "favorites" ||
+            view.type === "tutorial" ||
+            view.type === "profile"
+          }
         />
       )}
-      <div style={{ paddingTop: showAppNav ? 64 : 0 }}>
+      <div style={{ paddingTop: showAppNav ? NAV_HEIGHT : 0 }}>
+        <PageTransition pageKey={pageKey} motion={pageNav.motion}>
         {view.type === "preferences" && (
           <PreferencesPage onContinue={() => setView({ type: "tutorial" })} />
         )}
@@ -203,20 +283,17 @@ export default function App() {
           <TutorialPage onFinish={() => setView({ type: "home" })} />
         )}
         {view.type === "home" && (
-          <div style={{ marginTop: -64 }}>
-            <HomePage onSearch={goSearch} onOpenAuth={() => openAuth()} />
+          <div style={{ marginTop: -NAV_HEIGHT }}>
+            <HomePage onSearch={goSearch} />
           </div>
         )}
         {view.type === "definition" && (
-          <div style={{ marginTop: -64 }}>
-            <DefinitionPage
-              wordData={DB[(view as { type: "definition"; word: string }).word]}
-              onSearch={goSearch}
-              onBack={goHome}
-              isLoggedIn={isLoggedIn}
-              onOpenAuth={(then) => openAuth(then)}
-            />
-          </div>
+          <DefinitionPage
+            wordData={DB[(view as { type: "definition"; word: string }).word]}
+            onSearch={goSearch}
+            isLoggedIn={isLoggedIn}
+            onOpenAuth={(then) => openAuth(then)}
+          />
         )}
         {view.type === "favorites" && (
           <FavoritesPage onSearch={goSearch} onGoHome={goHome} />
@@ -229,13 +306,12 @@ export default function App() {
         )}
         {view.type === "profile" && (
           <ProfilePage
-            onLogout={() => {
-              setIsLoggedIn(false)
-              goHome()
-            }}
-            onBack={goHome}
+            onLogout={logout}
+            state={profile}
+            onTutorial={() => setView({ type: "tutorial" })}
           />
         )}
+        </PageTransition>
       </div>
       {authModal && (
         <AuthModal
@@ -248,5 +324,13 @@ export default function App() {
         />
       )}
     </>
+  )
+}
+
+export default function App() {
+  return (
+    <ToastProvider>
+      <AppInner />
+    </ToastProvider>
   )
 }

@@ -37,7 +37,6 @@ export function useMobileProfileState() {
   const [pwCurrent, setPwCurrent] = useState("")
   const [pwNew, setPwNew] = useState("")
   const [pwConfirm, setPwConfirm] = useState("")
-  const [pwSaved, setPwSaved] = useState(false)
   const [nameEdit, setNameEdit] = useState(name)
   return {
     panel,
@@ -56,8 +55,6 @@ export function useMobileProfileState() {
     setPwNew,
     pwConfirm,
     setPwConfirm,
-    pwSaved,
-    setPwSaved,
     nameEdit,
     setNameEdit,
   }

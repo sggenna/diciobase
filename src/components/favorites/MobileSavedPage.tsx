@@ -75,7 +75,7 @@ export function MobileSavedPage({
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className="px-4 py-2 rounded-xl font-['Poppins:SemiBold'] text-[13px] transition-colors duration-200 active:scale-95 shrink-0"
+            className="px-4 py-2 rounded-xl font-['Poppins:SemiBold'] text-[13px] transition-[background-color,color,border-color,scale] duration-150 active:scale-[0.97] shrink-0"
             style={{
               background: filter === f ? "var(--color-ink)" : "#fff",
               color: filter === f ? "var(--color-on-ink)" : "var(--color-body)",
@@ -118,7 +118,7 @@ export function MobileSavedPage({
             </p>
             <button
               onClick={onGoHome}
-              className="px-5 py-2.5 rounded-xl bg-ink text-on-ink font-['Poppins:SemiBold'] text-[13px] active:scale-95 transition-transform"
+              className="px-5 py-2.5 rounded-xl bg-ink text-on-ink font-['Poppins:SemiBold'] text-[13px] active:scale-[0.97] transition-transform"
             >
               Pesquisar palavras
             </button>
@@ -130,7 +130,7 @@ export function MobileSavedPage({
             </p>
             <button
               onClick={() => setFilter("Todas")}
-              className="px-5 py-2.5 rounded-xl border border-border-strong text-ink font-['Poppins:SemiBold'] text-[13px] active:scale-95 transition-transform"
+              className="px-5 py-2.5 rounded-xl border border-border-strong text-ink font-['Poppins:SemiBold'] text-[13px] active:scale-[0.97] transition-transform"
             >
               Ver todas
             </button>

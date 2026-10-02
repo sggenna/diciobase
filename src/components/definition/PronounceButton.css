@@ -1,0 +1,121 @@
+.pronounce-button {
+  --pb-h: 34px;
+  --pb-bg: var(--color-surface);
+  --pb-bg-hover: var(--color-surface-hover);
+  --pb-ink: var(--color-ink);
+  --pb-ease: var(--ease-out);
+  --pb-dur: var(--dur-base);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--pb-h);
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--pb-bg);
+  color: var(--pb-ink);
+  font-family: "Poppins:SemiBold";
+  font-size: 11px;
+  cursor: pointer;
+  transition:
+    background-color var(--pb-dur) var(--pb-ease),
+    scale var(--dur-press) var(--ease-out);
+}
+
+.pronounce-button:hover:not(:disabled) {
+  background: var(--pb-bg-hover);
+}
+
+.pronounce-button:active:not(:disabled) {
+  scale: var(--press-scale);
+}
+
+.pronounce-button--circle {
+  gap: 0;
+  padding: 0;
+  width: var(--pb-h);
+  border-radius: 9999px;
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
+.pronounce-button--circle:hover:not(:disabled) {
+  background: var(--color-ink);
+}
+
+.pronounce-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.pronounce-button__bars {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 15px;
+  height: 14px;
+  flex: none;
+}
+
+.pronounce-button__bar {
+  width: 2px;
+  height: calc(var(--bar-h) * 14px);
+  border-radius: 999px;
+  background: currentColor;
+  transform: scaleY(1);
+  transform-origin: center;
+  transition: transform 0.2s var(--pb-ease);
+}
+
+.pronounce-button[data-state="loading"] .pronounce-button__bar {
+  animation: pb-loading 0.9s var(--bar-delay) ease-in-out infinite;
+}
+
+.pronounce-button[data-state="playing"] .pronounce-button__bar {
+  animation: pb-play 0.7s var(--bar-delay) ease-in-out infinite alternate;
+}
+
+.pronounce-button[data-state="error"] .pronounce-button__bar {
+  transform: scaleY(0.35);
+}
+
+@keyframes pb-loading {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes pb-play {
+  0% {
+    transform: scaleY(0.5);
+  }
+  100% {
+    transform: scaleY(1.35);
+  }
+}
+
+.pronounce-button__label {
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pronounce-button {
+    transition: background-color 0.01ms;
+  }
+  .pronounce-button:active:not(:disabled) {
+    scale: 1;
+  }
+  .pronounce-button__bar {
+    animation: none !important;
+    transition: none;
+  }
+  .pronounce-button[data-state="playing"] .pronounce-button__bar {
+    transform: scaleY(1.1);
+  }
+}

@@ -69,7 +69,7 @@ export function MobileHomePage({
           {query && (
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-ink text-on-ink font-['Poppins:SemiBold'] text-[12px] px-4 py-2 rounded-xl active:scale-95 transition-transform"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-ink text-on-ink font-['Poppins:SemiBold'] text-[12px] px-4 py-2 rounded-xl active:scale-[0.97] transition-transform"
             >
               Buscar
             </button>
@@ -87,7 +87,7 @@ export function MobileHomePage({
             <button
               key={w}
               onClick={() => onSearch(w.toLowerCase())}
-              className="px-4 py-2 rounded-xl bg-white border border-border font-['Poppins:Regular'] text-[13px] text-ink active:scale-95 transition-transform"
+              className="px-4 py-2 rounded-xl bg-white border border-border font-['Poppins:Regular'] text-[13px] text-ink active:scale-[0.97] transition-transform"
             >
               {w}
             </button>
@@ -105,7 +105,7 @@ export function MobileHomePage({
             <button
               key={s}
               onClick={() => onSearch(s)}
-              className="px-4 py-2 rounded-xl bg-ink font-['Poppins:Regular'] text-[13px] text-on-ink active:scale-95 transition-transform capitalize"
+              className="px-4 py-2 rounded-xl bg-ink font-['Poppins:Regular'] text-[13px] text-on-ink active:scale-[0.97] transition-transform capitalize"
             >
               {s}
             </button>

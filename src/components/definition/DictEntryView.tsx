@@ -9,21 +9,19 @@ export function DictEntryView({
 }) {
   return (
     <div className="flex flex-col gap-8">
-      <span className="font-['Poppins:Regular'] text-[12px] text-muted">
-        {entry.tag}
-      </span>
+      <span className="text-[12px] text-muted">{entry.tag}</span>
 
       {entry.etymology && (
         <div className="flex flex-col gap-2">
           <span
             id={`${entry.id}-etimologia`}
             tabIndex={-1}
-            className="font-['Poppins:SemiBold'] text-[10px] uppercase tracking-[0.9px] text-muted outline-none"
+            className="font-semibold text-[10px] uppercase tracking-[0.9px] text-muted outline-none"
           >
             Etimologia
           </span>
           <div className="border-l-2 border-rule pl-4">
-            <p className="font-['Poppins:Italic'] italic text-[14px] text-body leading-[1.6] max-w-[65ch]">
+            <p className="italic text-[14px] text-body leading-[1.6] max-w-[65ch]">
               {entry.etymology}
             </p>
           </div>
@@ -31,7 +29,7 @@ export function DictEntryView({
       )}
 
       <div className="flex flex-col gap-1">
-        <span className="font-['Poppins:SemiBold'] text-[10px] uppercase tracking-[0.9px] text-muted mb-3 block">
+        <span className="font-semibold text-[10px] uppercase tracking-[0.9px] text-muted mb-3 block">
           Definição
         </span>
         <div className="flex flex-col gap-5">
@@ -42,7 +40,7 @@ export function DictEntryView({
               tabIndex={-1}
               className="flex gap-4 outline-none"
             >
-              <span className="font-['Poppins:Bold'] text-[12px] text-muted shrink-0 w-5 pt-[3px]">
+              <span className="font-bold text-[12px] text-muted shrink-0 w-5 pt-[3px]">
                 {sense.num}.
               </span>
               <div className="flex flex-col gap-3 flex-1 min-w-0">
@@ -50,12 +48,12 @@ export function DictEntryView({
                   {sense.labels?.map((l) => (
                     <span
                       key={l}
-                      className="font-['Poppins:SemiBold'] text-[9px] uppercase tracking-[0.6px] border border-border-strong text-muted rounded-xs px-1.5 py-0.5 shrink-0"
+                      className="font-semibold text-[9px] uppercase tracking-[0.6px] border border-border-strong text-muted rounded-xs px-1.5 py-0.5 shrink-0"
                     >
                       {l}
                     </span>
                   ))}
-                  <p className="font-['Poppins:Regular'] text-[15px] text-ink leading-[1.65] max-w-[65ch]">
+                  <p className="text-[15px] text-ink leading-[1.65] max-w-[65ch]">
                     {sense.text}
                   </p>
                 </div>
@@ -63,10 +61,10 @@ export function DictEntryView({
                   <div className="flex flex-col gap-2 pl-4 border-l border-border">
                     {sense.subsenses.map((sub) => (
                       <div key={sub.num} className="flex gap-3">
-                        <span className="font-['Poppins:Medium'] text-[11px] text-muted shrink-0 pt-[2px]">
+                        <span className="font-medium text-[11px] text-muted shrink-0 pt-[2px]">
                           {sub.num}
                         </span>
-                        <p className="font-['Poppins:Regular'] text-[13px] text-body leading-[1.6] max-w-[65ch]">
+                        <p className="text-[13px] text-body leading-[1.6] max-w-[65ch]">
                           {sub.text}
                         </p>
                       </div>
@@ -78,7 +76,7 @@ export function DictEntryView({
                     {sense.examples.map((ex, i) => (
                       <p
                         key={i}
-                        className="font-['Poppins:Italic'] italic text-[13px] text-muted leading-[1.6] max-w-[65ch]"
+                        className="italic text-[13px] text-muted leading-[1.6] max-w-[65ch]"
                       >
                         {ex}
                       </p>
@@ -93,14 +91,11 @@ export function DictEntryView({
 
       {entry.notes && entry.notes.length > 0 && (
         <div className="bg-surface rounded-md px-5 py-4 flex flex-col gap-1">
-          <span className="font-['Poppins:SemiBold'] text-[10px] uppercase tracking-[0.9px] text-muted">
+          <span className="font-semibold text-[10px] uppercase tracking-[0.9px] text-muted">
             Notas
           </span>
           {entry.notes.map((n, i) => (
-            <p
-              key={i}
-              className="font-['Poppins:Regular'] text-[13px] text-body leading-[1.6] max-w-[65ch]"
-            >
+            <p key={i} className="text-[13px] text-body leading-[1.6] max-w-[65ch]">
               {n}
             </p>
           ))}
@@ -113,7 +108,7 @@ export function DictEntryView({
           tabIndex={-1}
           className="flex flex-col gap-3 outline-none"
         >
-          <span className="font-['Poppins:SemiBold'] text-[10px] uppercase tracking-[0.9px] text-muted">
+          <span className="font-semibold text-[10px] uppercase tracking-[0.9px] text-muted">
             Relacionadas
           </span>
           <div className="flex flex-wrap gap-2">
@@ -121,7 +116,7 @@ export function DictEntryView({
               <button
                 key={w}
                 onClick={() => onSearch(w)}
-                className="px-3 py-1.5 rounded-xl border border-black/15 font-['Poppins:Regular'] text-[13px] text-ink hover:border-ink hover:bg-ink hover:text-on-ink transition-colors duration-200"
+                className="px-3 py-1.5 rounded-xl border border-black/15 text-[13px] text-ink hover:border-ink hover:bg-ink hover:text-on-ink transition-colors duration-200"
               >
                 {w}
               </button>
@@ -136,7 +131,7 @@ export function DictEntryView({
           tabIndex={-1}
           className="flex flex-col gap-3 outline-none"
         >
-          <span className="font-['Poppins:SemiBold'] text-[10px] uppercase tracking-[0.9px] text-muted">
+          <span className="font-semibold text-[10px] uppercase tracking-[0.9px] text-muted">
             Sinônimos neste dicionário
           </span>
           <div className="flex flex-wrap gap-2">
@@ -144,7 +139,7 @@ export function DictEntryView({
               <button
                 key={w}
                 onClick={() => onSearch(w)}
-                className="px-3 py-1.5 rounded-xl border border-black/15 font-['Poppins:Regular'] text-[13px] text-body hover:border-ink hover:bg-ink hover:text-on-ink transition-colors duration-200"
+                className="px-3 py-1.5 rounded-xl border border-black/15 text-[13px] text-body hover:border-ink hover:bg-ink hover:text-on-ink transition-colors duration-200"
               >
                 {w}
               </button>

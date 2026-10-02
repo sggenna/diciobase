@@ -1,9 +1,8 @@
 import { useState } from "react"
+import { AnimatePresence, motion } from "motion/react"
+import { useToast } from "@/components/ui/Toast"
 import { Footer } from "@/components/layout/Footer"
-import { fadeStyle } from "@/lib/animation"
-import { imgBookmark } from "@/lib/assets"
 import { FAV_FILTERS, FAV_SORTS, FavFilter, FavSort, SAVED_WORDS } from "@/lib/data"
-import { useFade } from "@/lib/hooks"
 
 export function FavoritesPage({
   onSearch,
@@ -12,14 +11,34 @@ export function FavoritesPage({
   onSearch: (w: string) => void
   onGoHome: () => void
 }) {
-  const vis = useFade("favorites")
   const [words, setWords] = useState(SAVED_WORDS)
   const [filter, setFilter] = useState<FavFilter>("Todas")
   const [sort, setSort] = useState<FavSort>("Mais recentes")
   const [query, setQuery] = useState("")
 
+  const { toast } = useToast()
+
   function removeWord(word: string) {
+    const index = words.findIndex((w) => w.word === word)
+    if (index < 0) return
+    const removed = words[index]
     setWords((ws) => ws.filter((w) => w.word !== word))
+    toast({
+      id: `remove-${word}`,
+      title: "Removida dos Salvos",
+      description: `“${word}” não está mais na sua lista.`,
+      variant: "info",
+      action: {
+        label: "Desfazer",
+        onClick: () =>
+          setWords((ws) => {
+            if (ws.some((w) => w.word === word)) return ws
+            const next = [...ws]
+            next.splice(Math.min(index, next.length), 0, removed)
+            return next
+          }),
+      },
+    })
   }
 
   const filtered = words
@@ -35,34 +54,41 @@ export function FavoritesPage({
     .sort((a, b) => (sort === "A-Z" ? a.word.localeCompare(b.word, "pt-BR") : 0))
 
   return (
-    <div className="min-h-screen bg-white flex flex-col" style={fadeStyle(vis)}>
-      <main className="flex-1 max-w-[900px] mx-auto w-full px-8 py-10 flex flex-col gap-8">
-        <div className="flex items-start justify-between gap-6 flex-wrap">
+    <div
+      className="min-h-screen bg-surface flex flex-col"
+      style={{ fontFamily: "var(--font-sf)" }}
+    >
+      <main className="flex-1 max-w-[900px] mx-auto w-full px-8 pt-10 pb-16 flex flex-col gap-8">
+        <div className="flex items-end justify-between gap-6 flex-wrap">
           <div>
-            <h1 className="font-['Poppins:Bold'] text-[36px] text-ink tracking-[-1.4px]">
-              Salvos
+            <h1
+              className="text-ink"
+              style={{ fontSize: 44, fontWeight: 600, letterSpacing: "-0.03em", lineHeight: 1.05 }}
+            >
+              Salvos.
             </h1>
-            <p className="font-['Poppins:Regular'] text-[15px] text-muted mt-1">
-              Acompanhe as palavras que você mais gosta e estude suas
-              definições.
+            <p className="text-muted mt-2" style={{ fontSize: 17 }}>
+              Acompanhe as palavras que você mais gosta e estude suas definições.
             </p>
           </div>
           <div className="relative">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
+              strokeLinecap="round"
               viewBox="0 0 24 24"
             >
-              <circle cx="11" cy="11" r="8" />
+              <circle cx="11" cy="11" r="7" />
               <path d="m21 21-4.35-4.35" />
             </svg>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar palavra salva…"
-              className="h-[40px] pl-9 pr-4 rounded-sm bg-surface font-['Poppins:Regular'] text-[13px] outline-none w-[220px] placeholder-muted"
+              placeholder="Buscar palavra salva"
+              className="h-[40px] pl-10 pr-4 rounded-full bg-white text-[14px] text-ink outline-none w-[240px] placeholder-muted"
+              style={{ boxShadow: "0 0 0 1px rgba(0,0,0,0.06)" }}
             />
           </div>
         </div>
@@ -73,25 +99,27 @@ export function FavoritesPage({
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className="px-4 py-1.5 rounded-xl font-['Poppins:SemiBold'] text-[13px] transition-colors duration-200"
+                className="px-4 py-1.5 rounded-full text-[14px] font-medium transition-colors duration-200"
                 style={{
-                  background: filter === f ? "var(--color-ink)" : "var(--color-surface)",
-                  color: filter === f ? "var(--color-on-ink)" : "var(--color-body)",
+                  background: filter === f ? "var(--color-ink)" : "#fff",
+                  color: filter === f ? "var(--color-on-ink)" : "var(--color-label-secondary)",
+                  boxShadow: filter === f ? "none" : "0 0 0 1px rgba(0,0,0,0.06)",
                 }}
               >
                 {f}
               </button>
             ))}
           </div>
-          <div className="flex gap-1 rounded-xl bg-surface p-1">
+          <div className="flex gap-1 rounded-full bg-black/[0.05] p-1">
             {FAV_SORTS.map((s) => (
               <button
                 key={s}
                 onClick={() => setSort(s)}
-                className="px-3 py-1 rounded-lg font-['Poppins:Medium'] text-[12px] transition-colors duration-200"
+                className="px-3.5 py-1 rounded-full text-[13px] font-medium transition-colors duration-200"
                 style={{
                   background: sort === s ? "#fff" : "transparent",
                   color: sort === s ? "var(--color-ink)" : "var(--color-muted)",
+                  boxShadow: sort === s ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
                 }}
               >
                 {s}
@@ -100,36 +128,46 @@ export function FavoritesPage({
           </div>
         </div>
 
-        <div className="flex flex-col rounded-lg border border-black/8 overflow-hidden">
+        <div
+          className="relative flex flex-col rounded-2xl bg-white overflow-hidden"
+          style={{ boxShadow: "0 0 0 1px rgba(0,0,0,0.05)" }}
+        >
           {words.length === 0 ? (
             <div className="py-16 text-center flex flex-col items-center gap-4">
-              <p className="font-['Poppins:Regular'] text-[15px] text-muted">
-                Nenhuma palavra salva ainda.
-              </p>
+              <p className="text-[15px] text-muted">Nenhuma palavra salva ainda.</p>
               <button
                 onClick={onGoHome}
-                className="px-5 py-2.5 rounded-xl bg-ink text-on-ink font-['Poppins:SemiBold'] text-[13px] transition-transform active:scale-[0.97]"
+                className="px-5 py-2.5 rounded-full bg-ink text-on-ink text-[14px] font-medium transition-transform active:scale-[0.97]"
               >
                 Pesquisar palavras
               </button>
             </div>
           ) : filtered.length === 0 ? (
             <div className="py-16 text-center flex flex-col items-center gap-4">
-              <p className="font-['Poppins:Regular'] text-[15px] text-muted">
+              <p className="text-[15px] text-muted">
                 Nenhuma palavra encontrada com esse filtro.
               </p>
               <button
                 onClick={() => setFilter("Todas")}
-                className="px-5 py-2.5 rounded-xl border border-black/15 text-ink font-['Poppins:SemiBold'] text-[13px] hover:bg-ink hover:text-on-ink transition-colors"
+                className="px-5 py-2.5 rounded-full text-ink text-[14px] font-medium hover:bg-ink hover:text-on-ink transition-colors"
+                style={{ boxShadow: "0 0 0 1px rgba(0,0,0,0.12)" }}
               >
                 Ver todas
               </button>
             </div>
           ) : (
-            filtered.map((w, i) => (
-              <div
+            <AnimatePresence initial={false} mode="popLayout">
+              {filtered.map((w, i) => (
+              <motion.div
                 key={w.word}
-                className="group relative flex items-center justify-between px-6 py-5 hover:bg-surface-hover transition-colors duration-150"
+                layout="position"
+                exit={{
+                  opacity: 0,
+                  x: 28,
+                  transition: { duration: 0.2, ease: [0.4, 0, 1, 1] },
+                }}
+                transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                className="group relative flex items-center justify-between gap-4 px-6 py-5 hover:bg-surface transition-colors duration-150"
                 style={{
                   borderTop: i > 0 ? "1px solid rgba(0,0,0,0.06)" : undefined,
                 }}
@@ -141,36 +179,49 @@ export function FavoritesPage({
                 />
                 <div className="flex flex-col gap-1 flex-1 min-w-0">
                   <div className="flex items-baseline gap-2">
-                    <span className="font-['Poppins:ExtraBold'] text-[20px] text-ink">
+                    <span className="text-ink font-semibold" style={{ fontSize: 20, letterSpacing: "-0.02em" }}>
                       {w.word}
                     </span>
-                    <span className="font-['Poppins:Regular'] text-[11px] text-muted uppercase tracking-[0.4px]">
+                    <span className="text-muted italic" style={{ fontSize: 13 }}>
                       {w.pos}
                     </span>
                   </div>
-                  <p className="font-['Poppins:Regular'] text-[13px] text-body line-clamp-1">
+                  <p className="text-label-secondary line-clamp-1" style={{ fontSize: 14 }}>
                     {w.snippet}
                   </p>
-                  <p className="font-['Poppins:Regular'] text-[11px] text-muted">
+                  <p className="text-muted" style={{ fontSize: 12 }}>
                     Salvo {w.when}
                   </p>
                 </div>
+                <span className="text-ink font-medium shrink-0" style={{ fontSize: 14 }}>
+                  Ver definição ›
+                </span>
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
                     removeWord(w.word)
                   }}
                   aria-label={`Remover ${w.word} dos salvos`}
-                  className="relative z-10 size-8 shrink-0 ml-4 flex items-center justify-center rounded-sm opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 hover:bg-black/6 transition-opacity"
+                  className="relative z-10 size-8 shrink-0 flex items-center justify-center rounded-full text-muted hover:text-danger hover:bg-danger-tint transition-colors"
                 >
-                  <img
-                    src={imgBookmark}
-                    alt=""
-                    className="size-4 opacity-60 hover:opacity-100 transition-opacity"
-                  />
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M3 6h18" />
+                    <path d="M8 6V4h8v2" />
+                    <path d="M6 6l1 14h10l1-14" />
+                  </svg>
                 </button>
-              </div>
-            ))
+              </motion.div>
+              ))}
+            </AnimatePresence>
           )}
         </div>
       </main>

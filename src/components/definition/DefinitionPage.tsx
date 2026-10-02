@@ -1,52 +1,67 @@
-import { useState, useEffect, useRef } from "react"
-import SwipeToast from "@/SwipeToast"
+import { useState, useEffect } from "react"
+import { AnimatePresence, motion } from "motion/react"
+import { useToast } from "@/components/ui/Toast"
 import { DictEntryView } from "@/components/definition/DictEntryView"
-import { fadeStyle } from "@/lib/animation"
-import { imgAudio, imgBookmark, imgShare } from "@/lib/assets"
+import { PronounceButton } from "@/components/definition/PronounceButton"
+import { SaveButton } from "@/components/definition/SaveButton"
+import { imgShare } from "@/lib/assets"
 import { DICT_COLOR } from "@/lib/data"
-import { useFade } from "@/lib/hooks"
+import { dictVariants } from "@/lib/pageMotion"
 import { WordData } from "@/lib/types"
 
 export function DefinitionPage({
   wordData,
   onSearch,
-  onBack,
   isLoggedIn,
   onOpenAuth,
 }: {
   wordData: WordData
   onSearch: (w: string) => void
-  onBack: () => void
   isLoggedIn?: boolean
   onOpenAuth?: (then?: () => void) => void
 }) {
   const [activeId, setActiveId] = useState(wordData.dicts[0].id)
-  const [contentVis, setContentVis] = useState(true)
+  const [dictDir, setDictDir] = useState(1)
   const [saved, setSaved] = useState(false)
-  const [audioPlaying, setAudioPlaying] = useState(false)
-  const [toastKey, setToastKey] = useState(0)
-  const [btnPop, setBtnPop] = useState(false)
+  const { toast } = useToast()
+
+  function notifySaved(next: boolean) {
+    if (next) {
+      toast({
+        id: `save-${wordData.word}`,
+        title: "Palavra salva",
+        description: `“${wordData.word}” foi adicionada aos seus Salvos.`,
+      })
+    } else {
+      toast({
+        id: `save-${wordData.word}`,
+        title: "Removida dos Salvos",
+        description: `“${wordData.word}” não está mais na sua lista.`,
+        variant: "info",
+        action: {
+          label: "Desfazer",
+          onClick: () => {
+            setSaved(true)
+            notifySaved(true)
+          },
+        },
+      })
+    }
+  }
 
   function handleSave() {
     if (!isLoggedIn) {
       onOpenAuth?.(() => {
         setSaved(true)
-        setToastKey((k) => k + 1)
-        setBtnPop(true)
-        setTimeout(() => setBtnPop(false), 400)
+        notifySaved(true)
       })
       return
     }
     const next = !saved
     setSaved(next)
-    if (next) {
-      setToastKey((k) => k + 1)
-      setBtnPop(true)
-      setTimeout(() => setBtnPop(false), 400)
-    }
+    notifySaved(next)
   }
-  const pageVis = useFade(wordData.word)
-  const contentRef = useRef<HTMLDivElement>(null)
+
 
   useEffect(() => {
     setActiveId(wordData.dicts[0].id)
@@ -54,199 +69,177 @@ export function DefinitionPage({
 
   function switchDict(id: string) {
     if (id === activeId) return
-    setContentVis(false)
-    setTimeout(() => {
-      setActiveId(id)
-      setContentVis(true)
-      contentRef.current?.scrollTo({ top: 0, behavior: "smooth" })
-    }, 160)
-  }
-
-  function playAudio() {
-    setAudioPlaying(true)
-    setTimeout(() => setAudioPlaying(false), 1600)
+    const from = wordData.dicts.findIndex((d) => d.id === activeId)
+    const to = wordData.dicts.findIndex((d) => d.id === id)
+    setDictDir(to > from ? 1 : -1)
+    setActiveId(id)
   }
 
   const activeEntry =
     wordData.dicts.find((d) => d.id === activeId) ?? wordData.dicts[0]
-  const color = DICT_COLOR[activeId] ?? "var(--color-ink)"
+  const facts = wordData.facts.filter((f) => f.label !== "Separação Silábica")
 
   return (
     <div
-      className="min-h-screen bg-white flex flex-col"
-      style={fadeStyle(pageVis)}
+      className="min-h-screen bg-surface"
+      style={{ fontFamily: "var(--font-sf)" }}
     >
-      <main
-        className="flex-1 flex overflow-hidden"
-        style={{ height: "calc(100vh - 64px)", marginTop: 64 }}
+      <div
+        className="max-w-[900px] mx-auto px-8"
+        style={{ paddingTop: 40, paddingBottom: 72 }}
       >
-        <aside className="w-[280px] shrink-0 border-r border-black/8 flex flex-col overflow-y-auto">
-          <nav aria-label="Índice da entrada" className="px-6 pt-8 pb-2">
-            {/* Filled by the entry index (Part B) */}
-          </nav>
-
-          <div className="mx-4 mt-4 mb-4 bg-surface rounded-lg p-5 flex flex-col gap-3">
-            {wordData.facts
-              .filter((f) => f.label !== "Separação Silábica")
-              .map((f) => (
-              <div key={f.label} className="flex flex-col gap-0.5">
-                <span className="font-['Poppins:Regular'] text-[9px] uppercase tracking-[0.6px] text-muted">
-                  {f.label}
-                </span>
-                <span className="font-['Poppins:SemiBold'] text-[13px] text-ink">
-                  {f.value}
-                </span>
-              </div>
-            ))}
-          </div>
-        </aside>
-
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="px-8 py-5 border-b border-black/8 flex items-center justify-between gap-4 shrink-0">
-            <div className="flex flex-col gap-1">
-              <div className="flex items-baseline gap-3 flex-wrap">
-                <h1 className="font-['Poppins:ExtraBold'] text-[34px] text-ink leading-tight">
-                  {wordData.word}
-                </h1>
-              </div>
-              <span className="font-['Poppins:Medium'] text-[12px] text-muted uppercase tracking-[0.5px]">
-                {wordData.partOfSpeech}
-              </span>
-              <div className="flex items-center gap-3 flex-wrap mt-1">
-                <span className="font-['Poppins:Regular'] text-[15px] text-muted">
-                  /{wordData.phonetic}/
-                </span>
-                <button
-                  onClick={playAudio}
-                  className="flex items-center gap-2 bg-surface hover:bg-surface-hover px-3 py-1.5 rounded-sm transition-colors duration-200"
-                >
-                  <img
-                    src={imgAudio}
-                    alt=""
-                    className="size-[13px]"
-                    style={{
-                      transform: audioPlaying ? "scale(1.25)" : "scale(1)",
-                      transition: "transform 0.2s",
-                    }}
-                  />
-                  <span className="font-['Poppins:SemiBold'] text-[11px] text-ink">
-                    {audioPlaying ? "Reproduzindo…" : "Ouvir pronúncia"}
-                  </span>
-                </button>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={handleSave}
-                className="flex items-center gap-2 px-4 h-[42px] rounded-md"
-                style={{
-                  background: saved ? "var(--color-ink)" : "var(--color-surface)",
-                  border: saved ? "none" : "1px solid var(--color-border-strong)",
-                  transform: btnPop ? "scale(1.08)" : "scale(1)",
-                  transition:
-                    "background 0.2s, border-color 0.2s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
-                }}
-              >
-                <img
-                  src={imgBookmark}
-                  alt=""
-                  className="size-[15px]"
-                  style={{
-                    filter: saved ? "none" : "invert(1)",
-                    transform: btnPop
-                      ? "scale(1.35) rotate(-10deg)"
-                      : "scale(1) rotate(0deg)",
-                    transition:
-                      "filter 0.2s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1)",
-                  }}
-                />
-                <span
-                  style={{
-                    fontFamily: "'Poppins:SemiBold'",
-                    fontSize: 13,
-                    color: saved ? "var(--color-on-ink)" : "var(--color-ink)",
-                    whiteSpace: "nowrap",
-                    transition: "color 0.2s",
-                  }}
-                >
-                  {saved ? "Salvo ✓" : "Salvar"}
-                </span>
-              </button>
-              <button className="flex items-center justify-center w-[42px] h-[42px] rounded-md border border-border-strong hover:border-ink transition-colors duration-200">
-                <img src={imgShare} alt="" className="size-[16px]" />
-              </button>
-            </div>
-            {toastKey > 0 && (
-              <SwipeToast
-                key={toastKey}
-                open
-                onClose={() => {}}
-                title="Palavra salva!"
-                description={`"${wordData.word}" adicionada às suas palavras`}
-                background="var(--color-ink)"
-                color="var(--color-on-ink)"
-                fuseColor="var(--color-accent)"
-                duration={3500}
-                fuse="bottom"
-                icon={
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#7dc490"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                  >
-                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                  </svg>
-                }
-              />
-            )}
-          </div>
-
-          <div className="px-8 py-3 border-b border-black/8 flex items-center gap-2 flex-wrap shrink-0">
-            <span className="font-['Poppins:Regular'] text-[11px] text-muted uppercase tracking-[0.6px] mr-1">
-              Fonte
+        <div className="relative flex items-start justify-between gap-6 mb-10">
+          <div>
+            <span className="text-muted" style={{ fontSize: 15 }}>
+              {wordData.partOfSpeech}
             </span>
-            {wordData.dicts.map((d) => {
-              const c = DICT_COLOR[d.id] ?? "var(--color-ink)"
-              const isActive = d.id === activeId
-              return (
-                <button
-                  key={d.id}
-                  onClick={() => switchDict(d.id)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors duration-200 font-['Poppins:SemiBold'] text-[12px]"
-                  style={{
-                    background: isActive ? c : "var(--color-surface)",
-                    color: isActive ? "var(--color-on-ink)" : "var(--color-body)",
-                  }}
-                >
-                  <span
-                    className="size-1.5 rounded-full inline-block shrink-0"
-                    style={{
-                      background: isActive ? "rgba(255,255,255,0.6)" : c,
-                    }}
-                  />
-                  {d.shortName}
-                </button>
-              )
-            })}
-          </div>
-
-          <div ref={contentRef} className="flex-1 overflow-y-auto px-8 py-8">
-            <div
+            <h1
+              className="text-ink"
               style={{
-                opacity: contentVis ? 1 : 0,
-                transform: contentVis ? "translateY(0)" : "translateY(8px)",
-                transition: "opacity 0.18s ease, transform 0.18s ease",
+                fontSize: 56,
+                fontWeight: 600,
+                letterSpacing: "-0.02em",
+                lineHeight: 1.05,
+                marginTop: 4,
               }}
             >
-              <DictEntryView entry={activeEntry} onSearch={onSearch} />
+              {wordData.word}
+            </h1>
+            <div className="flex items-center gap-3 mt-3">
+              <span className="text-muted" style={{ fontSize: 15 }}>
+                {wordData.phonetic}
+              </span>
+              <PronounceButton word={wordData.word} />
             </div>
           </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <SaveButton
+              saved={saved}
+              onToggle={handleSave}
+              showLabel={false}
+              height={44}
+              radius="9999px"
+            />
+            <button
+              className="flex items-center justify-center rounded-full border border-border-strong hover:border-ink transition-colors duration-200"
+              style={{ width: 44, height: 44 }}
+            >
+              <img src={imgShare} alt="" className="size-[16px]" />
+            </button>
+          </div>
         </div>
-      </main>
+
+        <div
+          className="grid gap-12"
+          style={{ gridTemplateColumns: "1fr 220px" }}
+        >
+          <div className="min-w-0 scroll-mt-24">
+            <div
+              role="tablist"
+              aria-label="Fonte do dicionário"
+              className="flex gap-7 border-b border-border mb-8"
+            >
+              {wordData.dicts.map((d) => {
+                const c = DICT_COLOR[d.id] ?? "var(--color-ink)"
+                const isActive = d.id === activeId
+                return (
+                  <button
+                    key={d.id}
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => switchDict(d.id)}
+                    className="relative flex items-center gap-2 pb-3 transition-colors duration-200"
+                    style={{
+                      fontSize: 15,
+                      fontWeight: isActive ? 600 : 500,
+                      color: isActive ? "var(--color-ink)" : "var(--color-muted)",
+                    }}
+                  >
+                    <span
+                      className="size-1.5 rounded-full"
+                      style={{ background: c }}
+                    />
+                    {d.shortName}
+                    {isActive && (
+                      <motion.span
+                        layoutId="dict-underline"
+                        className="absolute left-0 right-0 -bottom-px h-[2px] rounded-full"
+                        style={{ background: c }}
+                        transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+                      />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="overflow-x-clip">
+              <AnimatePresence mode="wait" initial={false} custom={dictDir}>
+                <motion.div
+                  key={activeId}
+                  custom={dictDir}
+                  variants={dictVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                >
+                  <DictEntryView entry={activeEntry} onSearch={onSearch} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+
+          <aside>
+            <h2
+              className="text-muted uppercase mb-4"
+              style={{ fontSize: 13, letterSpacing: "0.04em" }}
+            >
+              Sobre a palavra
+            </h2>
+            <dl className="border-t border-border-strong">
+              {facts.map((f) => (
+                <div
+                  key={f.label}
+                  className="flex flex-col gap-0.5 py-3 border-b border-border"
+                >
+                  <dt className="text-muted" style={{ fontSize: 12 }}>
+                    {f.label}
+                  </dt>
+                  <dd
+                    className="text-ink font-semibold"
+                    style={{ fontSize: 15 }}
+                  >
+                    {f.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </aside>
+        </div>
+
+        {wordData.synonyms.length > 0 && (
+          <div className="mt-10 pt-8 border-t border-border">
+            <h2
+              className="text-muted uppercase mb-4"
+              style={{ fontSize: 13, letterSpacing: "0.04em" }}
+            >
+              Sinônimos
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {wordData.synonyms.map((w) => (
+                <button
+                  key={w}
+                  onClick={() => onSearch(w)}
+                  className="rounded-full bg-surface text-ink hover:bg-ink hover:text-on-ink transition-colors duration-200"
+                  style={{ fontSize: 14, padding: "8px 16px" }}
+                >
+                  {w}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

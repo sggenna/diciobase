@@ -1,12 +1,9 @@
 import { useState } from "react"
-import { fadeStyle } from "@/lib/animation"
 import { imgLogoLight } from "@/lib/assets"
 import { PREF_OPTIONS } from "@/lib/data"
-import { useFade } from "@/lib/hooks"
 
 export function PreferencesPage({ onContinue }: { onContinue: () => void }) {
   const [selected, setSelected] = useState<Set<string>>(new Set())
-  const vis = useFade("prefs")
 
   function toggle(opt: string) {
     setSelected((s) => {
@@ -31,7 +28,6 @@ export function PreferencesPage({ onContinue }: { onContinue: () => void }) {
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         <div
           className="w-full max-w-[560px] flex flex-col gap-8"
-          style={fadeStyle(vis)}
         >
           <div className="flex flex-col gap-2">
             <h1 className="font-['Poppins:ExtraBold'] text-[38px] text-ink tracking-[-1.5px] leading-tight">
@@ -49,7 +45,7 @@ export function PreferencesPage({ onContinue }: { onContinue: () => void }) {
                 <button
                   key={opt}
                   onClick={() => toggle(opt)}
-                  className="px-5 py-2.5 rounded-2xl font-['Poppins:Medium'] text-[14px] transition-[background-color,color,border-color,transform] duration-200 active:scale-[0.97]"
+                  className="px-5 py-2.5 rounded-2xl font-['Poppins:Medium'] text-[14px] transition-[background-color,color,border-color,scale] duration-150 active:scale-[0.97]"
                   style={{
                     background: on ? "var(--color-ink)" : "#fff",
                     color: on ? "var(--color-on-ink)" : "var(--color-ink)",
@@ -66,7 +62,7 @@ export function PreferencesPage({ onContinue }: { onContinue: () => void }) {
 
           <button
             onClick={onContinue}
-            className="w-full h-[52px] bg-ink rounded-lg font-['Poppins:SemiBold'] text-[15px] text-on-ink hover:bg-[#333] transition-[background-color,transform] active:scale-[0.98]"
+            className="w-full h-[52px] bg-ink rounded-lg font-['Poppins:SemiBold'] text-[15px] text-on-ink hover:bg-[#333] transition-[background-color,scale] active:scale-[0.97]"
           >
             Continuar
           </button>

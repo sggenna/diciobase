@@ -470,6 +470,46 @@ export const DB: Record<string, WordData> = {
 
 export const SUGGESTIONS = ["terreno", "casa", "carro"]
 
+export const GLOBE_WORDS = [
+  "efêmero",
+  "terreno",
+  "casa",
+  "carro",
+  "resiliência",
+  "nostalgia",
+  "saudade",
+  "melancolia",
+  "merencória",
+  "sussurro",
+  "apricidade",
+  "fugaz",
+  "passageiro",
+  "breve",
+  "transitório",
+  "efemeridade",
+  "solo",
+  "chão",
+  "campo",
+  "área",
+  "gleba",
+  "terra",
+  "território",
+  "terraço",
+  "lar",
+  "moradia",
+  "residência",
+  "habitação",
+  "domicílio",
+  "casarão",
+  "casebre",
+  "automóvel",
+  "veículo",
+  "viatura",
+  "máquina",
+  "carroça",
+  "carruagem",
+]
+
 export const SAVED_WORDS = [
   {
     word: "merencória",

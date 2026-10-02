@@ -196,7 +196,7 @@ export function AuthModal({
         <button
           onClick={submit}
           disabled={pending}
-          className="w-full h-[52px] bg-white rounded-lg font-['Poppins:SemiBold'] text-[16px] text-ink hover:bg-[color:var(--color-surface-hover)] transition-colors duration-200 active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
+          className="w-full h-[52px] bg-white rounded-lg font-['Poppins:SemiBold'] text-[16px] text-ink hover:bg-[color:var(--color-surface-hover)] transition-[background-color,scale] duration-150 active:scale-[0.97] disabled:opacity-70 flex items-center justify-center gap-2"
         >
           {pending && (
             <svg
