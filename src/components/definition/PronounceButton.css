@@ -15,7 +15,8 @@
   border: none;
   background: var(--pb-bg);
   color: var(--pb-ink);
-  font-family: "Poppins:SemiBold";
+  font-family: var(--font-sf);
+  font-weight: 600;
   font-size: 11px;
   cursor: pointer;
   transition:

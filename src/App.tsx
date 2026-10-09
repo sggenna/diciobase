@@ -1,21 +1,14 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { AnimatePresence } from "motion/react"
 import { AuthModal } from "@/components/auth/AuthModal"
-import { MobileAuthPage } from "@/components/auth/MobileAuthPage"
 import { DefinitionPage } from "@/components/definition/DefinitionPage"
-import { MobileDefinitionPage } from "@/components/definition/MobileDefinitionPage"
 import { FavoritesPage } from "@/components/favorites/FavoritesPage"
-import { MobileSavedPage } from "@/components/favorites/MobileSavedPage"
 import { HomePage } from "@/components/home/HomePage"
-import { MobileHomePage } from "@/components/home/MobileHomePage"
 import { AppNav } from "@/components/layout/AppNav"
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav"
-import { MobileNotFoundPage } from "@/components/notfound/MobileNotFoundPage"
 import { NotFoundPage } from "@/components/notfound/NotFoundPage"
-import { MobilePreferencesPage } from "@/components/onboarding/MobilePreferencesPage"
-import { MobileTutorialPage } from "@/components/onboarding/MobileTutorialPage"
 import { PreferencesPage } from "@/components/onboarding/PreferencesPage"
 import { TutorialPage } from "@/components/onboarding/TutorialPage"
-import { MobileProfilePage } from "@/components/profile/MobileProfilePage"
 import { ProfilePage } from "@/components/profile/ProfilePage"
 import { DB } from "@/lib/data"
 import { PageTransition } from "@/components/ui/PageTransition"
@@ -43,22 +36,15 @@ function AppInner() {
   const profile = useMobileProfileState()
   const [view, setView] = useState<View>({ type: "home" })
   const [navSearch, setNavSearch] = useState("")
-  const [mobileTab, setMobileTab] = useState<MobileTab>("pesquisar")
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [authModal, setAuthModal] = useState<"login" | "signup" | null>(null)
   const [postAuthCb, setPostAuthCb] = useState<(() => void) | null>(null)
 
-  const mobileProfileTab = isMobile && view.type === "home" && mobileTab === "perfil"
   const pageKey =
     view.type === "definition" || view.type === "notfound"
       ? `${view.type}:${view.word}`
-      : mobileProfileTab
-        ? "home:perfil"
-        : view.type
-  const slot: PageSlot = {
-    type: view.type,
-    mobileTab: isMobile ? (view.type === "favorites" ? "salvos" : mobileTab) : undefined,
-  }
+      : view.type
+  const slot: PageSlot = { type: view.type }
   const [pageNav, setPageNav] = useState<{
     key: string
     slot: PageSlot
@@ -108,7 +94,6 @@ function AppInner() {
   function goHome() {
     setView({ type: "home" })
     setNavSearch("")
-    setMobileTab("pesquisar")
   }
   function logout() {
     setIsLoggedIn(false)
@@ -124,114 +109,6 @@ function AppInner() {
     setView({ type: "favorites" })
   }
 
-  // ── Mobile ───────────────────────────────────────────────────────────────
-  if (isMobile) {
-    const showAuth = view.type === "login" || view.type === "signup"
-    const showPrefs = view.type === "preferences"
-    const showTutorial = view.type === "tutorial"
-    const showDefinition = view.type === "definition"
-    const showNotFound = view.type === "notfound"
-    const showBottomNav = !showAuth && !showPrefs && !showTutorial
-
-    const activeTab: MobileTab =
-      view.type === "favorites" ? "salvos" : mobileTab
-
-    return (
-      <div className="relative" style={{ background: "var(--color-paper-warm)" }}>
-        <PageTransition pageKey={pageKey} motion={pageNav.motion}>
-        {/* Auth flow */}
-        {showAuth && (
-          <MobileAuthPage onLogin={() => setView({ type: "preferences" })} />
-        )}
-
-        {/* Preferences */}
-        {showPrefs && (
-          <MobilePreferencesPage
-            onContinue={() => setView({ type: "tutorial" })}
-          />
-        )}
-
-        {/* Tutorial */}
-        {showTutorial && (
-          <MobileTutorialPage onFinish={() => setView({ type: "home" })} />
-        )}
-
-        {/* Main app */}
-        {showBottomNav &&
-          !showDefinition &&
-          !showNotFound &&
-          view.type !== "favorites" && (
-            <>
-              {activeTab === "pesquisar" && (
-                <MobileHomePage onSearch={goSearch} />
-              )}
-              {activeTab === "perfil" && (
-                <MobileProfilePage
-                  onLogout={logout}
-            state={profile}
-                  onTutorial={() => setView({ type: "tutorial" })}
-                />
-              )}
-            </>
-          )}
-
-        {view.type === "favorites" && showBottomNav && (
-          <MobileSavedPage
-            onSearch={(w) => {
-              goSearch(w)
-            }}
-            onGoHome={goHome}
-          />
-        )}
-
-        {showDefinition && (
-          <MobileDefinitionPage
-            wordData={DB[(view as { type: "definition"; word: string }).word]}
-            onSearch={goSearch}
-            isLoggedIn={isLoggedIn}
-            onOpenAuth={openAuth}
-            onBack={() => {
-              if (history.length > 1) setView({ type: "home" })
-              else setView({ type: "home" })
-            }}
-          />
-        )}
-
-        {showNotFound && (
-          <MobileNotFoundPage
-            word={(view as { type: "notfound"; word: string }).word}
-            onBack={() => setView({ type: "home" })}
-          />
-        )}
-        </PageTransition>
-
-        {/* Bottom nav */}
-        {showBottomNav && (
-          <MobileBottomNav
-            active={activeTab}
-            onChange={(tab) => {
-              setMobileTab(tab)
-              if (tab === "salvos") setView({ type: "favorites" })
-              else setView({ type: "home" })
-            }}
-          />
-        )}
-
-        {authModal && (
-          <AuthModal
-            defaultMode={authModal}
-            onAuth={handleAuth}
-            onClose={() => {
-              setAuthModal(null)
-              setPostAuthCb(null)
-            }}
-          />
-        )}
-      </div>
-    )
-  }
-
-  // ── Desktop ──────────────────────────────────────────────────────────────
   function goProfile() {
     if (!isLoggedIn) {
       openAuth()
@@ -240,14 +117,16 @@ function AppInner() {
     setView({ type: "profile" })
   }
 
-  const showAppNav = [
-    "home",
-    "definition",
-    "favorites",
-    "notfound",
-    "profile",
-    "tutorial",
-  ].includes(view.type)
+  const inMainApp = ["home", "definition", "favorites", "notfound", "profile"].includes(
+    view.type,
+  )
+  const showAppNav = !isMobile && (inMainApp || view.type === "tutorial")
+  const showBottomNav = isMobile && inMainApp
+  useEffect(() => {
+    document.documentElement.dataset.tabbar = showBottomNav ? "1" : ""
+  }, [showBottomNav])
+  const activeTab: MobileTab =
+    view.type === "favorites" ? "salvos" : view.type === "profile" ? "perfil" : "pesquisar"
 
   return (
     <>
@@ -276,53 +155,66 @@ function AppInner() {
       )}
       <div style={{ paddingTop: showAppNav ? NAV_HEIGHT : 0 }}>
         <PageTransition pageKey={pageKey} motion={pageNav.motion}>
-        {view.type === "preferences" && (
-          <PreferencesPage onContinue={() => setView({ type: "tutorial" })} />
-        )}
-        {view.type === "tutorial" && (
-          <TutorialPage onFinish={() => setView({ type: "home" })} />
-        )}
-        {view.type === "home" && (
-          <div style={{ marginTop: -NAV_HEIGHT }}>
-            <HomePage onSearch={goSearch} />
-          </div>
-        )}
-        {view.type === "definition" && (
-          <DefinitionPage
-            wordData={DB[(view as { type: "definition"; word: string }).word]}
-            onSearch={goSearch}
-            isLoggedIn={isLoggedIn}
-            onOpenAuth={(then) => openAuth(then)}
-          />
-        )}
-        {view.type === "favorites" && (
-          <FavoritesPage onSearch={goSearch} onGoHome={goHome} />
-        )}
-        {view.type === "notfound" && (
-          <NotFoundPage
-            word={(view as { type: "notfound"; word: string }).word}
-            onBack={goHome}
-          />
-        )}
-        {view.type === "profile" && (
-          <ProfilePage
-            onLogout={logout}
-            state={profile}
-            onTutorial={() => setView({ type: "tutorial" })}
-          />
-        )}
+          {view.type === "preferences" && (
+            <PreferencesPage onContinue={() => setView({ type: "tutorial" })} />
+          )}
+          {view.type === "tutorial" && (
+            <TutorialPage onFinish={() => setView({ type: "home" })} />
+          )}
+          {view.type === "home" && (
+            <div style={{ marginTop: showAppNav ? -NAV_HEIGHT : 0 }}>
+              <HomePage onSearch={goSearch} />
+            </div>
+          )}
+          {view.type === "definition" && (
+            <DefinitionPage
+              wordData={DB[view.word]}
+              onSearch={goSearch}
+              onBack={goHome}
+              isLoggedIn={isLoggedIn}
+              onOpenAuth={(then) => openAuth(then)}
+            />
+          )}
+          {view.type === "favorites" && (
+            <FavoritesPage onSearch={goSearch} onGoHome={goHome} />
+          )}
+          {view.type === "notfound" && (
+            <NotFoundPage word={view.word} onBack={goHome} />
+          )}
+          {view.type === "profile" && (
+            <ProfilePage
+              onLogout={logout}
+              state={profile}
+              onTutorial={() => setView({ type: "tutorial" })}
+            />
+          )}
         </PageTransition>
       </div>
-      {authModal && (
-        <AuthModal
-          defaultMode={authModal}
-          onAuth={handleAuth}
-          onClose={() => {
-            setAuthModal(null)
-            setPostAuthCb(null)
+
+      {showBottomNav && (
+        <MobileBottomNav
+          active={activeTab}
+          onChange={(tab) => {
+            if (tab === "salvos") goFav()
+            else if (tab === "perfil") goProfile()
+            else goHome()
           }}
         />
       )}
+
+      <AnimatePresence>
+        {authModal && (
+          <AuthModal
+            key="auth"
+            defaultMode={authModal}
+            onAuth={handleAuth}
+            onClose={() => {
+              setAuthModal(null)
+              setPostAuthCb(null)
+            }}
+          />
+        )}
+      </AnimatePresence>
     </>
   )
 }

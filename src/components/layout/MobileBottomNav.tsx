@@ -1,5 +1,34 @@
 import type * as React from "react"
+import { motion } from "motion/react"
 import { MobileTab } from "@/lib/types"
+
+const tabs: { id: MobileTab; label: string; icon: React.ReactNode }[] = [
+  {
+    id: "pesquisar",
+    label: "Pesquisar",
+    icon: (
+      <>
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20.5 20.5-4.8-4.8" />
+      </>
+    ),
+  },
+  {
+    id: "salvos",
+    label: "Salvos",
+    icon: <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />,
+  },
+  {
+    id: "perfil",
+    label: "Perfil",
+    icon: (
+      <>
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" />
+      </>
+    ),
+  },
+]
 
 export function MobileBottomNav({
   active,
@@ -8,119 +37,58 @@ export function MobileBottomNav({
   active: MobileTab
   onChange: (t: MobileTab) => void
 }) {
-  const tabs: {
-    id: MobileTab
-    label: string
-    icon: (active: boolean) => React.ReactNode
-  }[] = [
-    {
-      id: "pesquisar",
-      label: "Pesquisar",
-      icon: (a) => (
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke={a ? "var(--color-on-ink)" : "var(--color-on-ink-muted)"}
-          strokeWidth={a ? 2.2 : 1.8}
-          strokeLinecap="round"
-        >
-          <circle cx="11" cy="11" r="7.5" />
-          <path d="m20.5 20.5-4.8-4.8" />
-        </svg>
-      ),
-    },
-    {
-      id: "salvos",
-      label: "Salvos",
-      icon: (a) => (
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill={a ? "var(--color-on-ink)" : "none"}
-          stroke={a ? "var(--color-on-ink)" : "var(--color-on-ink-muted)"}
-          strokeWidth={a ? 2 : 1.8}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-        </svg>
-      ),
-    },
-    {
-      id: "perfil",
-      label: "Perfil",
-      icon: (a) => (
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke={a ? "var(--color-on-ink)" : "var(--color-on-ink-muted)"}
-          strokeWidth={a ? 2.2 : 1.8}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-          <circle cx="12" cy="7" r="4" />
-        </svg>
-      ),
-    },
-  ]
-
   return (
-    <div
-      className="fixed left-0 right-0 z-50 flex justify-center"
-      style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 20px)" }}
+    <nav
+      aria-label="Navegação"
+      className="fixed left-0 right-0 bottom-0 z-50 flex px-3"
+      style={{
+        fontFamily: "var(--font-sf)",
+        height: "calc(64px + env(safe-area-inset-bottom, 0px))",
+        paddingBottom: "env(safe-area-inset-bottom, 0px)",
+        background: "rgba(249,249,251,0.88)",
+        backdropFilter: "saturate(180%) blur(20px)",
+        WebkitBackdropFilter: "saturate(180%) blur(20px)",
+        borderTop: "1px solid rgba(0,0,0,0.08)",
+      }}
     >
-      <nav
-        className="flex items-center gap-1 px-2 py-2 rounded-full"
-        style={{
-          background: "var(--color-ink)",
-          boxShadow: "var(--shadow-float)",
-        }}
-      >
-        {tabs.map((tab) => {
-          const isActive = tab.id === active
-          return (
-            <button
-              key={tab.id}
-              onClick={() => onChange(tab.id)}
-              className="flex items-center gap-2 rounded-full transition-[padding,background] duration-200"
-              style={{
-                padding: isActive ? "10px 18px" : "10px 14px",
-                background: isActive ? "rgba(255,255,255,0.18)" : "transparent",
-              }}
-              onPointerDown={(e) => {
-                e.currentTarget.style.transform = "scale(0.93)"
-              }}
-              onPointerUp={(e) => {
-                e.currentTarget.style.transform = "scale(1)"
-              }}
-              onPointerLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)"
-              }}
+      {tabs.map((tab) => {
+        const isActive = tab.id === active
+        return (
+          <button
+            key={tab.id}
+            onClick={() => onChange(tab.id)}
+            aria-current={isActive ? "page" : undefined}
+            className="relative flex-1 flex flex-col items-center justify-center gap-[3px] pt-1 transition-[color,scale] duration-200 active:scale-[0.94]"
+            style={{
+              color: isActive ? "var(--color-ink)" : "#8e8e93",
+              fontSize: 10,
+              fontWeight: 500,
+            }}
+          >
+            {isActive && (
+              <motion.span
+                layoutId="tab-dot"
+                className="absolute top-0 h-[2px] w-8 rounded-full bg-ink"
+                transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+              />
+            )}
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill={isActive && tab.id === "salvos" ? "currentColor" : "none"}
+              stroke="currentColor"
+              strokeWidth={isActive ? 2 : 1.7}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
             >
-              {tab.icon(isActive)}
-              {isActive && (
-                <span
-                  style={{
-                    fontFamily: "'Poppins:SemiBold'",
-                    fontSize: 13,
-                    color: "var(--color-on-ink)",
-                    letterSpacing: "-0.2px",
-                    lineHeight: 1,
-                  }}
-                >
-                  {tab.label}
-                </span>
-              )}
-            </button>
-          )
-        })}
-      </nav>
-    </div>
+              {tab.icon}
+            </svg>
+            {tab.label}
+          </button>
+        )
+      })}
+    </nav>
   )
 }

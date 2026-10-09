@@ -248,7 +248,7 @@ function SubPage({
         data-panel-heading
         tabIndex={-1}
         className="text-ink mt-5 mb-8 outline-none"
-        style={{ fontSize: 44, fontWeight: 600, letterSpacing: "-0.03em", lineHeight: 1.05 }}
+        style={{ fontSize: "clamp(32px, 9vw, 44px)", fontWeight: 600, letterSpacing: "-0.03em", lineHeight: 1.05 }}
       >
         {title}
       </h1>
@@ -277,12 +277,10 @@ export function ProfilePage({
   state: s,
   onLogout,
   onTutorial,
-  compact,
 }: {
   state: ReturnType<typeof useMobileProfileState>
   onLogout: () => void
   onTutorial: () => void
-  compact?: boolean
 }) {
   const { panel, setPanel, name, avatarSrc, setAvatarSrc } = s
   const { toast } = useToast()
@@ -353,7 +351,6 @@ export function ProfilePage({
     })
   }
 
-  const avatarSize = compact ? 88 : 104
   const activeDicts = Object.values(s.dictToggles).filter(Boolean).length
 
   const avatar = (size: number, font: number) =>
@@ -373,14 +370,21 @@ export function ProfilePage({
       </div>
     )
 
-  const stats = (
+  const fluidAvatar = avatarSrc ? (
+    <img src={avatarSrc} alt="" className="size-full rounded-full object-cover" />
+  ) : (
     <div
-      className={
-        compact
-          ? "grid grid-cols-3"
-          : "self-stretch grid grid-cols-3 mt-7 pt-6"
-      }
-      style={compact ? undefined : { borderTop: "1px solid #e8e8ed" }}
+      className="size-full rounded-full bg-ink text-on-ink flex items-center justify-center font-semibold text-[34px] md:text-[40px]"
+      style={{ letterSpacing: "-0.02em" }}
+    >
+      {name[0]}
+    </div>
+  )
+
+  const renderStats = (className: string, desktopBorder?: boolean) => (
+    <div
+      className={className}
+      style={desktopBorder ? { borderTop: "1px solid #e8e8ed" } : undefined}
     >
       {[
         { value: String(SAVED_WORDS.length), label: "Palavras salvas" },
@@ -393,8 +397,8 @@ export function ProfilePage({
           style={{ borderLeft: i > 0 ? "1px solid #e8e8ed" : undefined }}
         >
           <span
-            className="text-ink font-semibold"
-            style={{ fontSize: compact ? 20 : 24, letterSpacing: "-0.03em" }}
+            className="text-ink font-semibold text-[20px] md:text-[24px]"
+            style={{ letterSpacing: "-0.03em" }}
           >
             {stat.value}
           </span>
@@ -411,13 +415,7 @@ export function ProfilePage({
       className="min-h-screen bg-surface"
       style={{ fontFamily: "var(--font-sf)" }}
     >
-      <main
-        className={
-          compact
-            ? "px-4 pt-14 pb-28"
-            : "max-w-[980px] mx-auto px-8 pt-10 pb-20"
-        }
-      >
+      <main className="max-w-[980px] mx-auto px-4 md:px-8 pt-14 md:pt-10 pb-28 md:pb-20">
         <AnimatePresence mode="wait" initial={false} custom={dir}>
           <motion.div
             key={panel}
@@ -440,39 +438,24 @@ export function ProfilePage({
             <h1
               data-panel-heading
               tabIndex={-1}
-              className="text-ink outline-none"
-              style={
-                compact
-                  ? { fontSize: 34, fontWeight: 700, letterSpacing: "-0.02em", marginLeft: 4 }
-                  : { fontSize: 56, fontWeight: 600, lineHeight: 1.05, letterSpacing: "-0.03em" }
-              }
+              className="text-ink outline-none ml-1 md:ml-0 text-[34px] font-bold tracking-[-0.02em] md:text-[56px] md:font-semibold md:leading-[1.05] md:tracking-[-0.03em]"
             >
-              {compact ? "Perfil" : "Perfil."}
+              Perfil<span className="hidden md:inline">.</span>
             </h1>
 
-            <div
-              className={compact ? "flex flex-col gap-[22px] mt-5" : "grid gap-6 mt-9 items-start"}
-              style={compact ? undefined : { gridTemplateColumns: "360px minmax(0,1fr)" }}
-            >
-              <section
-                className={
-                  compact
-                    ? "flex flex-col items-center text-center"
-                    : "rounded-[18px] bg-white flex flex-col items-center text-center px-7 pt-9 pb-7"
-                }
-              >
-                <div className="relative" style={{ width: avatarSize, height: avatarSize }}>
-                  {avatar(avatarSize, compact ? 34 : 40)}
+            <div className="flex flex-col gap-[22px] mt-5 md:mt-9 md:grid md:gap-6 md:items-start md:grid-cols-[360px_minmax(0,1fr)]">
+              <section className="flex flex-col items-center text-center md:rounded-[18px] md:bg-white md:px-7 md:pt-9 md:pb-7">
+                <div className="relative size-[88px] md:size-[104px]">
+                  {fluidAvatar}
                   <button
                     onClick={() => setPanel("edit-avatar")}
                     aria-label="Alterar foto"
-                    className="absolute flex items-center justify-center rounded-full text-ink transition-colors hover:bg-[#dcdce1]"
+                    className="absolute flex items-center justify-center rounded-full text-ink transition-colors hover:bg-[#dcdce1] border-[3px] border-surface md:border-white"
                     style={{
                       right: -2,
                       bottom: -2,
                       width: 32,
                       height: 32,
-                      border: `3px solid ${compact ? "#f5f5f7" : "#fff"}`,
                       background: "#e8e8ed",
                     }}
                   >
@@ -483,13 +466,7 @@ export function ProfilePage({
                   </button>
                 </div>
                 <h2
-                  className="text-ink"
-                  style={{
-                    fontSize: compact ? 22 : 28,
-                    fontWeight: 600,
-                    letterSpacing: compact ? "-0.02em" : "-0.025em",
-                    marginTop: compact ? 14 : 20,
-                  }}
+                  className="text-ink mt-3.5 md:mt-5 text-[22px] md:text-[28px] font-semibold tracking-[-0.02em]"
                 >
                   {name}
                 </h2>
@@ -501,15 +478,17 @@ export function ProfilePage({
                     s.setNameEdit(name)
                     setPanel("edit-name")
                   }}
-                  className="h-9 px-[18px] rounded-full text-ink font-medium transition-[background-color,scale] hover:bg-[#dcdce1] active:scale-[0.97]"
-                  style={{ fontSize: 14, background: "#e8e8ed", marginTop: compact ? 12 : 18 }}
+                  className="mt-3 md:mt-[18px] h-9 px-[18px] rounded-full text-ink font-medium transition-[background-color,scale] hover:bg-[#dcdce1] active:scale-[0.97]"
+                  style={{ fontSize: 14, background: "#e8e8ed" }}
                 >
                   Editar perfil
                 </button>
-                {!compact && stats}
+                {renderStats("hidden md:grid self-stretch grid-cols-3 mt-7 pt-6", true)}
               </section>
 
-              {compact && <div className="rounded-[18px] bg-white py-4">{stats}</div>}
+              <div className="md:hidden rounded-[18px] bg-white py-4">
+                {renderStats("grid grid-cols-3")}
+              </div>
 
               <section className="flex flex-col gap-6">
                 <div>

@@ -12,11 +12,13 @@ import { WordData } from "@/lib/types"
 export function DefinitionPage({
   wordData,
   onSearch,
+  onBack,
   isLoggedIn,
   onOpenAuth,
 }: {
   wordData: WordData
   onSearch: (w: string) => void
+  onBack: () => void
   isLoggedIn?: boolean
   onOpenAuth?: (then?: () => void) => void
 }) {
@@ -84,11 +86,18 @@ export function DefinitionPage({
       className="min-h-screen bg-surface"
       style={{ fontFamily: "var(--font-sf)" }}
     >
-      <div
-        className="max-w-[900px] mx-auto px-8"
-        style={{ paddingTop: 40, paddingBottom: 72 }}
-      >
-        <div className="relative flex items-start justify-between gap-6 mb-10">
+      <div className="max-w-[900px] mx-auto px-5 md:px-8 pt-5 md:pt-10 pb-28 md:pb-[72px]">
+        <button
+          onClick={onBack}
+          className="md:hidden flex items-center gap-0.5 -ml-1 mb-4 h-9 pr-3 text-ink active:opacity-60 transition-opacity"
+          style={{ fontSize: 16 }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 6l-6 6 6 6" />
+          </svg>
+          Voltar
+        </button>
+        <div className="relative flex items-start justify-between gap-4 md:gap-6 mb-8 md:mb-10">
           <div>
             <span className="text-muted" style={{ fontSize: 15 }}>
               {wordData.partOfSpeech}
@@ -96,7 +105,7 @@ export function DefinitionPage({
             <h1
               className="text-ink"
               style={{
-                fontSize: 56,
+                fontSize: "clamp(40px, 12vw, 56px)",
                 fontWeight: 600,
                 letterSpacing: "-0.02em",
                 lineHeight: 1.05,
@@ -129,15 +138,12 @@ export function DefinitionPage({
           </div>
         </div>
 
-        <div
-          className="grid gap-12"
-          style={{ gridTemplateColumns: "1fr 220px" }}
-        >
+        <div className="grid gap-10 md:gap-12 md:grid-cols-[1fr_220px]">
           <div className="min-w-0 scroll-mt-24">
             <div
               role="tablist"
               aria-label="Fonte do dicionário"
-              className="flex gap-7 border-b border-border mb-8"
+              className="flex gap-6 md:gap-7 border-b border-border mb-6 md:mb-8 overflow-x-auto no-scrollbar"
             >
               {wordData.dicts.map((d) => {
                 const c = DICT_COLOR[d.id] ?? "var(--color-ink)"
@@ -148,7 +154,7 @@ export function DefinitionPage({
                     role="tab"
                     aria-selected={isActive}
                     onClick={() => switchDict(d.id)}
-                    className="relative flex items-center gap-2 pb-3 transition-colors duration-200"
+                    className="relative shrink-0 flex items-center gap-2 pb-3 transition-colors duration-200"
                     style={{
                       fontSize: 15,
                       fontWeight: isActive ? 600 : 500,
@@ -218,7 +224,7 @@ export function DefinitionPage({
         </div>
 
         {wordData.synonyms.length > 0 && (
-          <div className="mt-10 pt-8 border-t border-border">
+          <div className="mt-8 md:mt-10 pt-8 border-t border-border">
             <h2
               className="text-muted uppercase mb-4"
               style={{ fontSize: 13, letterSpacing: "0.04em" }}

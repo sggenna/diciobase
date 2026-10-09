@@ -1,4 +1,3 @@
-
 export function NotFoundPage({
   word,
   onBack,
@@ -7,22 +6,30 @@ export function NotFoundPage({
   onBack: () => void
 }) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6">
-      <p className="font-['Poppins:ExtraBold'] text-[48px] text-ink">
-        "{word}"
+    <div
+      className="min-h-screen md:min-h-[calc(100vh-53px)] flex flex-col items-center justify-center gap-4 px-6 pb-24 md:pb-0 text-center bg-white"
+      style={{ fontFamily: "var(--font-sf)" }}
+    >
+      <p
+        className="text-ink break-words max-w-full"
+        style={{
+          fontSize: "clamp(34px, 10vw, 56px)",
+          fontWeight: 600,
+          letterSpacing: "-0.03em",
+          lineHeight: 1.05,
+        }}
+      >
+        “{word}”
       </p>
-      <p className="font-['Poppins:Regular'] text-[18px] text-muted">
+      <p className="text-muted" style={{ fontSize: "clamp(16px, 4.2vw, 19px)" }}>
         Palavra não encontrada nos nossos dicionários.
       </p>
       <button
         onClick={onBack}
-        className="bg-ink text-on-ink font-['Poppins:SemiBold'] text-[14px] px-6 py-3 rounded-md hover:bg-[#333] transition-[background-color,scale] active:scale-[0.97]"
+        className="mt-3 h-[48px] px-7 rounded-full bg-ink text-on-ink text-[16px] font-medium hover:bg-[#333] transition-[background-color,scale] active:scale-[0.97]"
       >
         Voltar à busca
       </button>
     </div>
   )
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// MOBILE APP

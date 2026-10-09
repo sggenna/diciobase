@@ -549,33 +549,6 @@ export const SAVED_WORDS = [
   },
 ]
 
-export const TUTORIAL_SLIDES = [
-  {
-    id: "search",
-    label: "01",
-    title: "Pesquise em segundos",
-    body: "Uma busca retorna resultados indexados de múltiplas fontes lexicográficas ao mesmo tempo.",
-    mockup: "search" as const,
-    accent: "#3D6647",
-  },
-  {
-    id: "compare",
-    label: "02",
-    title: "Compare definições",
-    body: "Escolha o dicionário e veja como cada um descreve a mesma palavra com nuances diferentes.",
-    mockup: "definition" as const,
-    accent: "#24456B",
-  },
-  {
-    id: "save",
-    label: "03",
-    title: "Salve o que importa",
-    body: "Crie sua biblioteca pessoal e acesse suas palavras favoritas quando quiser.",
-    mockup: "saved" as const,
-    accent: "#7A6520",
-  },
-]
-
 export const PREF_OPTIONS = [
   "Vocabulário cotidiano",
   "Literatura & Poesia",
@@ -585,14 +558,6 @@ export const PREF_OPTIONS = [
   "Curiosidades etimológicas",
   "Expressões idiomáticas",
   "Arcaísmos",
-]
-
-export const RECENT_SEARCHES = [
-  "Efêmero",
-  "Resiliência",
-  "Nostalgia",
-  "Saudade",
-  "Melancolia",
 ]
 
 export const FAV_FILTERS = [

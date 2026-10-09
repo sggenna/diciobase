@@ -28,7 +28,7 @@ export const AuthInput = forwardRef<
       <div className="flex items-center justify-between">
         <label
           htmlFor={id}
-          className="font-['Poppins:Medium'] text-[15px] text-white"
+          className="text-[14px] font-medium text-ink"
         >
           {label}
         </label>
@@ -36,7 +36,7 @@ export const AuthInput = forwardRef<
           <button
             type="button"
             onClick={hintAction}
-            className="font-['Poppins:Regular'] text-[13px] text-white/60 underline hover:text-white/90 transition-colors"
+            className="text-[13px] text-label-secondary underline underline-offset-2 hover:text-ink transition-colors"
           >
             {hint}
           </button>
@@ -54,15 +54,13 @@ export const AuthInput = forwardRef<
           onBlur={() => setFocused(false)}
           aria-invalid={!!error}
           aria-describedby={error ? errorId : undefined}
-          className="w-full h-[52px] px-5 rounded-lg bg-[color:var(--color-on-ink-fill)] font-['Poppins:Regular'] text-[15px] text-white placeholder-[color:var(--color-on-ink-muted)] outline-none transition-colors duration-200"
+          className="w-full h-[52px] px-4 rounded-xl bg-surface text-[17px] text-ink placeholder-muted outline-none transition-shadow duration-200"
           style={{
-            border: `1px solid ${
-              error
-                ? "var(--color-danger-on-ink)"
-                : focused
-                  ? "rgba(255,255,255,0.4)"
-                  : "var(--color-on-ink-line)"
-            }`,
+            boxShadow: error
+              ? "0 0 0 2px var(--color-danger)"
+              : focused
+                ? "0 0 0 2px var(--color-ink)"
+                : "0 0 0 1px rgba(0,0,0,0.06)",
           }}
         />
         {isPassword && (
@@ -70,7 +68,7 @@ export const AuthInput = forwardRef<
             type="button"
             onClick={() => setShowPwd((s) => !s)}
             aria-label={showPwd ? "Ocultar senha" : "Mostrar senha"}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-ink transition-colors"
           >
             {showPwd ? (
               <svg
@@ -103,8 +101,9 @@ export const AuthInput = forwardRef<
       {error && (
         <span
           id={errorId}
-          className="font-['Poppins:Regular'] text-[12px]"
-          style={{ color: "var(--color-danger-on-ink)" }}
+          role="alert"
+          className="text-[13px]"
+          style={{ color: "var(--color-danger)" }}
         >
           {error}
         </span>

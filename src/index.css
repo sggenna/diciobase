@@ -181,3 +181,11 @@ button:focus:not(:focus-visible) {
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .mobile-nav-pad { padding-bottom: calc(90px + env(safe-area-inset-bottom)); }
 }
+
+/* Toasts clear the mobile tab bar only while it is on screen. */
+.toast-region { bottom: max(24px, env(safe-area-inset-bottom)); }
+@media (max-width: 767px) {
+  html[data-tabbar="1"] .toast-region {
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+}

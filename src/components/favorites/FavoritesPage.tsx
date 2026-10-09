@@ -58,20 +58,20 @@ export function FavoritesPage({
       className="min-h-screen bg-surface flex flex-col"
       style={{ fontFamily: "var(--font-sf)" }}
     >
-      <main className="flex-1 max-w-[900px] mx-auto w-full px-8 pt-10 pb-16 flex flex-col gap-8">
-        <div className="flex items-end justify-between gap-6 flex-wrap">
+      <main className="flex-1 max-w-[900px] mx-auto w-full px-5 md:px-8 pt-6 md:pt-10 pb-28 md:pb-16 flex flex-col gap-6 md:gap-8">
+        <div className="flex items-end justify-between gap-4 md:gap-6 flex-wrap">
           <div>
             <h1
               className="text-ink"
-              style={{ fontSize: 44, fontWeight: 600, letterSpacing: "-0.03em", lineHeight: 1.05 }}
+              style={{ fontSize: "clamp(34px, 10vw, 44px)", fontWeight: 600, letterSpacing: "-0.03em", lineHeight: 1.05 }}
             >
               Salvos.
             </h1>
-            <p className="text-muted mt-2" style={{ fontSize: 17 }}>
+            <p className="text-muted mt-2" style={{ fontSize: "clamp(15px, 4vw, 17px)" }}>
               Acompanhe as palavras que você mais gosta e estude suas definições.
             </p>
           </div>
-          <div className="relative">
+          <div className="relative w-full sm:w-auto">
             <svg
               className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted"
               fill="none"
@@ -87,19 +87,19 @@ export function FavoritesPage({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Buscar palavra salva"
-              className="h-[40px] pl-10 pr-4 rounded-full bg-white text-[14px] text-ink outline-none w-[240px] placeholder-muted"
+              className="h-[40px] pl-10 pr-4 rounded-full bg-white text-[14px] text-ink outline-none w-full sm:w-[240px] placeholder-muted"
               style={{ boxShadow: "0 0 0 1px rgba(0,0,0,0.06)" }}
             />
           </div>
         </div>
 
         <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-5 px-5 md:mx-0 md:px-0 md:flex-wrap max-w-[100vw] md:max-w-none">
             {FAV_FILTERS.map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className="px-4 py-1.5 rounded-full text-[14px] font-medium transition-colors duration-200"
+                className="shrink-0 px-4 py-1.5 rounded-full text-[14px] font-medium transition-colors duration-200"
                 style={{
                   background: filter === f ? "var(--color-ink)" : "#fff",
                   color: filter === f ? "var(--color-on-ink)" : "var(--color-label-secondary)",
@@ -167,7 +167,7 @@ export function FavoritesPage({
                   transition: { duration: 0.2, ease: [0.4, 0, 1, 1] },
                 }}
                 transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-                className="group relative flex items-center justify-between gap-4 px-6 py-5 hover:bg-surface transition-colors duration-150"
+                className="group relative flex items-center justify-between gap-3 md:gap-4 px-4 md:px-6 py-4 md:py-5 hover:bg-surface transition-colors duration-150"
                 style={{
                   borderTop: i > 0 ? "1px solid rgba(0,0,0,0.06)" : undefined,
                 }}
@@ -193,7 +193,7 @@ export function FavoritesPage({
                     Salvo {w.when}
                   </p>
                 </div>
-                <span className="text-ink font-medium shrink-0" style={{ fontSize: 14 }}>
+                <span className="hidden sm:inline text-ink font-medium shrink-0" style={{ fontSize: 14 }}>
                   Ver definição ›
                 </span>
                 <button

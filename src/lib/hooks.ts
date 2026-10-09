@@ -12,18 +12,6 @@ export function useIsMobile() {
   return mobile
 }
 
-export function useFade(dep: unknown) {
-  const [vis, setVis] = useState(false)
-  useEffect(() => {
-    setVis(false)
-    const t = requestAnimationFrame(() =>
-      requestAnimationFrame(() => setVis(true)),
-    )
-    return () => cancelAnimationFrame(t)
-  }, [dep])
-  return vis
-}
-
 export function useMobileProfileState() {
   const [panel, setPanel] = useState<ProfilePanel>("main")
   const [name, setName] = useState("Maria Silva")

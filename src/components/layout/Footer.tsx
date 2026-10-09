@@ -1,13 +1,18 @@
-import { imgLogoDark } from "@/lib/assets"
-
 export function Footer() {
   return (
-    <footer className="bg-ink px-10 py-10">
-      <div className="max-w-[1400px] mx-auto flex items-center justify-between">
-        <img src={imgLogoDark} alt="Diciobase" className="h-[30px] w-auto" />
-        <p className="font-['Poppins:Regular'] text-[13px] text-white/70 tracking-[-0.26px]">
-          © 2026 Diciobase. Todos os direitos reservados.
-        </p>
+    <footer
+      className="hidden md:block shrink-0 mt-auto px-6 md:px-8"
+      style={{ fontFamily: "var(--font-sf)" }}
+    >
+      <div
+        className="max-w-[980px] mx-auto flex justify-center md:justify-end pt-5 pb-7"
+        style={{
+          borderTop: "1px solid #d2d2d7",
+          fontSize: 12,
+          color: "var(--color-label-secondary)",
+        }}
+      >
+        © 2026 Diciobase. Todos os direitos reservados.
       </div>
     </footer>
   )

@@ -68,7 +68,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {children}
       <section
         aria-label="Notificações"
-        className="fixed left-0 right-0 bottom-6 max-md:bottom-[104px] z-[100] flex flex-col items-center gap-2 px-4 pointer-events-none"
+        className="toast-region fixed left-0 right-0 z-[100] flex flex-col items-center gap-2 px-4 pointer-events-none"
       >
         <AnimatePresence initial={false} mode="popLayout">
           {items.map((t) => (

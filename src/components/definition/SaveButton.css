@@ -21,7 +21,8 @@
   border: 1px solid var(--sb-border);
   background: var(--sb-bg);
   color: var(--sb-ink);
-  font-family: "Poppins:SemiBold";
+  font-family: var(--font-sf);
+  font-weight: 600;
   font-size: 13px;
   cursor: pointer;
   white-space: nowrap;

@@ -16,7 +16,6 @@ export interface PageMotion {
 
 export interface PageSlot {
   type: string
-  mobileTab?: "pesquisar" | "salvos" | "perfil"
   onboarding?: boolean
 }
 
@@ -32,7 +31,7 @@ const DESKTOP_ORDER: Record<string, number> = {
 
 function mobileOrder(s: PageSlot) {
   if (s.type === "favorites") return 1
-  if (s.type === "home" && s.mobileTab === "perfil") return 2
+  if (s.type === "profile") return 2
   return 0
 }
 
@@ -60,7 +59,7 @@ export function motionBetween(
     return { kind: "arrive", dir: 0 }
   }
 
-  if (fromWord && to.type === "home" && to.mobileTab !== "perfil") {
+  if (fromWord && to.type === "home") {
     return { kind: "pop", dir: -1 }
   }
 

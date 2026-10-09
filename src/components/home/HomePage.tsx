@@ -26,14 +26,14 @@ export function HomePage({
       className="min-h-screen bg-white flex flex-col"
       style={{ fontFamily: "var(--font-sf)" }}
     >
-      <main className="flex-1 flex flex-col items-center justify-center px-6 py-16 gap-7 text-center">
+      <main className="flex-1 flex flex-col items-center justify-center px-5 md:px-6 pt-12 pb-28 md:py-16 gap-7 text-center">
         <div
           className="flex flex-col items-center w-full max-w-[680px]"
         >
           <h1
             className="text-ink"
             style={{
-              fontSize: 48,
+              fontSize: "clamp(34px, 9.5vw, 48px)",
               fontWeight: 600,
               lineHeight: 1.08,
               letterSpacing: "-0.03em",
@@ -45,8 +45,7 @@ export function HomePage({
           </h1>
 
           <div
-            className="relative w-full mt-5"
-            style={{ aspectRatio: "720 / 440" }}
+            className="relative w-full mt-5 aspect-square md:aspect-[720/440]"
           >
             <Suspense fallback={null}>
               <div className="absolute inset-0">
@@ -56,7 +55,7 @@ export function HomePage({
 
             <form
               onSubmit={submit}
-              className="absolute left-1/2 -translate-x-1/2 w-[75%] max-w-[480px]"
+              className="absolute left-1/2 -translate-x-1/2 w-[94%] md:w-[75%] max-w-[480px]"
               style={{ top: "43.6%" }}
             >
               <div
@@ -122,7 +121,7 @@ export function HomePage({
           </div>
 
           <div
-            className="flex items-center justify-center gap-[18px] mt-2"
+            className="flex flex-wrap items-center justify-center gap-x-[18px] gap-y-2 mt-2"
             style={{ fontSize: 17, letterSpacing: "-0.02em" }}
           >
             <span style={{ color: "var(--color-label-secondary)" }}>
