@@ -25,7 +25,7 @@ export function TutorialPage({ onFinish }: { onFinish: () => void }) {
 
   return (
     <div
-      className="min-h-screen bg-white flex flex-col"
+      className="min-h-dvh bg-white flex flex-col"
       style={{ fontFamily: "var(--font-sf)" }}
     >
       <main className="flex-1 w-full max-w-[980px] mx-auto px-5 md:px-8 pt-8 md:pt-12 pb-12 md:pb-16 flex flex-col items-center text-center">
@@ -33,7 +33,7 @@ export function TutorialPage({ onFinish }: { onFinish: () => void }) {
           className="text-ink"
           style={{ fontSize: "clamp(32px, 9vw, 48px)", fontWeight: 600, letterSpacing: "-0.03em", lineHeight: 1.08 }}
         >
-          Como funciona o Diciobase.
+          Como funciona o Diciobase
         </h1>
         <p className="text-muted mt-3 max-w-[520px]" style={{ fontSize: "clamp(15px, 4vw, 17px)" }}>
           Um guia rápido de {total} etapas para transformar sua experiência com
@@ -57,7 +57,7 @@ export function TutorialPage({ onFinish }: { onFinish: () => void }) {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 w-full mt-8 md:mt-10 text-left">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 w-full mt-6 md:mt-10 text-left">
           {STEPS.map((s, i) => {
             const active = i === step
             return (
@@ -65,7 +65,9 @@ export function TutorialPage({ onFinish }: { onFinish: () => void }) {
                 key={s.title}
                 onClick={() => setStep(i)}
                 aria-current={active ? "step" : undefined}
-                className="flex flex-col gap-3 rounded-2xl p-5 text-left transition-[background-color,box-shadow,translate] duration-300 lg:min-h-[220px]"
+                className={`flex-col gap-3 rounded-lg p-5 text-left transition-[background-color,box-shadow,translate] duration-300 lg:min-h-[220px] sm:flex ${
+                  active ? "flex max-sm:animate-[step-in_320ms_var(--ease-out)]" : "hidden"
+                }`}
                 style={{
                   background: active ? "#fff" : "transparent",
                   boxShadow: active
@@ -112,7 +114,7 @@ export function TutorialPage({ onFinish }: { onFinish: () => void }) {
           <button
             onClick={() => setStep((s) => Math.max(0, s - 1))}
             disabled={step === 0}
-            className="h-[44px] px-6 rounded-full bg-black/[0.06] text-ink text-[15px] font-medium transition-[opacity,scale] active:scale-[0.97] disabled:opacity-0 disabled:pointer-events-none"
+            className="h-12 px-6 rounded-full bg-black/[0.06] text-ink text-[15px] font-medium transition-[opacity,scale] active:scale-[0.97] disabled:opacity-0 disabled:pointer-events-none"
           >
             Anterior
           </button>
@@ -127,7 +129,7 @@ export function TutorialPage({ onFinish }: { onFinish: () => void }) {
               onClick={() =>
                 step < total - 1 ? setStep(step + 1) : onFinish()
               }
-              className="h-[44px] px-7 rounded-full bg-ink text-on-ink text-[15px] font-medium hover:bg-[#333] transition-[background-color,scale] active:scale-[0.97]"
+              className="h-12 px-8 rounded-full bg-ink text-on-ink text-[15px] font-medium hover:bg-ink-hover transition-[background-color,scale] active:scale-[0.97]"
             >
               {step < total - 1 ? "Avançar" : "Começar agora"}
             </button>

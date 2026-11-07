@@ -44,15 +44,24 @@
 @import 'tailwindcss';
 
 @theme static {
-  --color-ink: #1d1d1f;
+  --color-ink: #1a1a1a;
+  --color-meta: #4a4a4a;
   --color-body: #4a4742;
-  --color-muted: #86868b;
-  --color-label-secondary: #6e6e73;
+  /* Secondary text meets WCAG AA (>= 4.5:1) on white and on --color-surface. */
+  --color-muted: #6e6e73;
+  --color-label-secondary: #515154;
+  /* Decorative structure only (hairlines, inactive diagram parts): never for text. */
+  --color-hairline: #e8e8e8;
+  --color-faint: #c7c7cc;
+  --color-ink-hover: #333336;
+  /* Border of a focused text field: quiet, but still 3:1 on white. */
+  --color-field-focus: #8e8e93;
   --color-paper: #ffffff;
   --color-paper-warm: #fbf9f6;
   --color-surface: #f5f5f7;
+  --color-wash: #f7f7f7;
   --color-surface-hover: #f0ede6;
-  --color-border: #e0ddd6;
+  --color-border: #e8e8e8;
   --color-border-strong: #c8c4bc;
   --color-rule: #d5d0c6;
   --color-on-ink: #ffffff;
@@ -62,10 +71,15 @@
   --color-accent: #3d6647;
   --color-accent-tint: rgba(61, 102, 71, 0.10);
   --color-accent-line: rgba(61, 102, 71, 0.30);
-  --color-danger: #d04030;
+  --color-danger: #c13a2b;
   --color-danger-on-ink: #e05c4b;
   --color-danger-tint: rgba(208, 64, 48, 0.08);
 
+  /* Radius scale, one role per step (nested surfaces: outer = inner + padding):
+       xs 4  tags, skeleton bars       sm 8   small controls, menu items, icon tiles
+       md 12 tab tops                  lg 16  inputs, cards, popovers, menus, toasts
+       2xl 24 dialogs, sheets, large empty states        full  buttons, chips, pills
+     xl and 3xl are kept for reference only: don't use them. */
   --radius-xs: 4px;
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -83,6 +97,9 @@
 }
 
 :root {
+  /* Apple's two voices. New York is the dictionary: words, definitions, examples, etymology.
+     San Francisco is everything around it: headlines, paragraphs, interface and the logo. */
+  --font-serif: ui-serif, "New York", "Iowan Old Style", "Charter", "Source Serif 4", Georgia, serif;
   --font-sf: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --dur-press: 100ms;
   --dur-fast: 160ms;
@@ -121,7 +138,30 @@
 }
 
 html {
+  -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
+}
+
+/* Headings balance their lines; short copy avoids a lone word on the last line. */
+h1, h2, h3 { text-wrap: balance; }
+p, li, figcaption { text-wrap: pretty; }
+
+/* Small icon buttons keep their look but get a 40px target. Pair with a positioned class (relative/absolute). */
+@utility hit-area {
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: max(100%, 40px);
+    height: max(100%, 40px);
+    translate: -50% -50%;
+  }
+}
+
+/* A neutral inset edge so photos don't blur into the surface behind them. */
+@utility img-edge {
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+  outline-offset: -1px;
 }
 
 body {
@@ -139,8 +179,8 @@ body {
 }
 ::-webkit-scrollbar-thumb {
   background: transparent;
-  border-radius: 3px;
-  transition: background 0.2s;
+  border-radius: 9999px;
+  transition: background-color 0.2s;
 }
 *:hover::-webkit-scrollbar-thumb {
   background: rgba(0,0,0,0.15);
@@ -159,14 +199,25 @@ body {
   overflow: hidden;
 }
 
-/* Smooth focus outline reset */
-button:focus-visible {
-  outline: 2px solid var(--color-ink);
+/* One keyboard focus ring everywhere, in the active dictionary's color on an entry. */
+:focus-visible {
+  outline: 2px solid var(--focus-color, var(--color-ink));
   outline-offset: 2px;
 }
-button:focus:not(:focus-visible) {
+/* Text fields say focus by darkening their border, so they never wear the ring. */
+input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"]):focus-visible,
+textarea:focus-visible {
   outline: none;
 }
+.dict-scope { --focus-color: var(--dict-accent); }
+:focus:not(:focus-visible),
+[tabindex="-1"]:focus-visible {
+  outline: none;
+}
+
+/* Selected text takes the active dictionary's color. */
+::selection { background: rgba(26, 26, 26, 0.12); }
+.dict-scope ::selection { background: color-mix(in srgb, var(--dict-accent) 20%, #ffffff); }
 
 /* Override backdrop filter for older Safari */
 @supports not (backdrop-filter: blur(1px)) {
@@ -182,10 +233,587 @@ button:focus:not(:focus-visible) {
   .mobile-nav-pad { padding-bottom: calc(90px + env(safe-area-inset-bottom)); }
 }
 
+@keyframes step-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Search pill: a touch more present on hover, so it reads as the thing to use. */
+.search-pill:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Tip highlight: a soft halo that breathes instead of a hard outline. */
+@keyframes tip-halo {
+  0%, 100% {
+    box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.95), 0 0 0 5px rgba(29, 29, 31, 0.08);
+  }
+  50% {
+    box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.95), 0 0 0 11px rgba(29, 29, 31, 0.03);
+  }
+}
+
 /* Toasts clear the mobile tab bar only while it is on screen. */
 .toast-region { bottom: max(24px, env(safe-area-inset-bottom)); }
+/* On wide screens toasts sit in the bottom-right margin, clear of the reading column. */
+@media (min-width: 768px) {
+  .toast-region { left: auto; right: 24px; align-items: flex-end; }
+}
 @media (max-width: 767px) {
   html[data-tabbar="1"] .toast-region {
     bottom: calc(76px + env(safe-area-inset-bottom, 0px));
   }
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*  Word page: dictionary accent, entry microstructure, sequence strip.        */
+/* -------------------------------------------------------------------------- */
+
+/* Registered so the accent can transition (~300ms) when the tab changes. */
+@property --dict-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #35593e;
+}
+.dict-scope {
+  transition: --dict-accent 300ms var(--ease-out);
+}
+
+/* Entry parts. Annotation is light: a 2px rule in the left margin for blocks,
+   an underline for inline parts, a tiny label. Nothing is filled, and nothing
+   changes size between Leitura and Estrutura. */
+:root {
+  --c-cabeca: #4d4d4d;
+  --c-acepcoes: #2f6396;
+  --c-classe: #7a5f17;
+  --c-etimologia: #96531f;
+  --c-exemplos: #4f7a3a;
+  --c-rubricas: #a2465e;
+  --c-remissoes: #4f6c49;
+  --c-notas: #5f5f64;
+  /* Same hues, darkened until label text passes AA on white. */
+  --k-cabeca: #4d4d4d;
+  --k-classe: #7a5f17;
+  --k-etimologia: #96531f;
+  --k-exemplos: #4f7a3a;
+  --k-rubricas: #a2465e;
+  --k-remissoes: #4f6c49;
+  --k-notas: #5f5f64;
+}
+
+.part {
+  position: relative;
+  /* Clears the nav and the sticky dictionary tabs. */
+  scroll-margin-top: 118px;
+  outline: none;
+}
+[data-part="cabeca"] { --part-color: var(--c-cabeca); }
+[data-part="classe"] { --part-color: var(--c-classe); }
+[data-part="etimologia"] { --part-color: var(--c-etimologia); }
+[data-part="acepcoes"] { --part-color: var(--c-acepcoes); }
+[data-part="exemplos"] { --part-color: var(--c-exemplos); }
+[data-part="rubricas"] { --part-color: var(--c-rubricas); }
+[data-part="remissoes"] { --part-color: var(--c-remissoes); }
+[data-part="notas"] { --part-color: var(--c-notas); }
+
+/*
+ * Estrutura: black text on white, color only in the margin. The rule and the
+ * labels are overlays, always mounted, so toggling them animates and can never
+ * move a line of text. In: 240ms, 24ms between blocks. Out: 160ms, all at once.
+ */
+.part__rule {
+  position: absolute;
+  left: var(--rule-x, -16px);
+  top: 0;
+  bottom: var(--rule-bottom, 0);
+  width: 2px;
+  background: var(--part-color);
+  transform: scaleY(0);
+  transform-origin: top;
+  pointer-events: none;
+  transition: transform 160ms ease-in, width 160ms var(--ease-out);
+}
+.part[data-mode="estrutura"] > .part__rule {
+  transform: scaleY(1);
+  transition: transform 240ms cubic-bezier(0.25, 0.8, 0.25, 1) calc(var(--part-i, 0) * 24ms), width 160ms var(--ease-out);
+}
+.part[data-hot] > .part__rule { width: 4px; }
+
+.part__labels {
+  position: absolute;
+  right: calc(100% + 24px);
+  top: var(--label-top, 5px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 0;
+  translate: -12px 0;
+  will-change: translate, opacity;
+  transition: opacity 160ms ease-in, translate 160ms ease-in;
+}
+.part[data-mode="estrutura"] > .part__labels {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity 240ms cubic-bezier(0.25, 0.8, 0.25, 1) calc(var(--part-i, 0) * 24ms),
+    translate 240ms cubic-bezier(0.25, 0.8, 0.25, 1) calc(var(--part-i, 0) * 24ms);
+}
+.part__label {
+  font-family: var(--font-sf);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.06em;
+  font-variant-caps: all-small-caps;
+  color: var(--part-color);
+}
+/* An example is indented under its sense; its rule still lines up with the sense's, and its label with the others. */
+.part[data-part="exemplos"] { --rule-x: -48px; }
+.part[data-part="exemplos"] > .part__labels { right: calc(100% + 56px); }
+
+/* No margin to hang labels in: they sit in the gap above their block, still without moving the text. */
+@media (max-width: 1279px) {
+  .part { --rule-x: -12px; }
+  .part[data-part="exemplos"] { --rule-x: -44px; }
+  .part[data-part="exemplos"] > .part__labels { right: auto; }
+  .part__labels {
+    right: auto;
+    left: 0;
+    top: auto;
+    bottom: calc(100% + 2px);
+    flex-direction: row;
+    gap: 8px;
+  }
+  .part[data-part="classe"] > .part__labels { left: 100%; bottom: auto; top: 4px; padding-left: 12px; }
+}
+.part[data-mode="estrutura"]:focus-visible > .part__rule { width: 4px; }
+
+/* The dictionary's marker of use, inline at the start of the definition. It takes its part's color in Estrutura. */
+.rubric {
+  font-family: var(--font-sf);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.06em;
+  font-variant-caps: all-small-caps;
+  color: var(--color-muted);
+  transition: color 200ms var(--ease-out);
+}
+[data-mode="estrutura"] .rubric { color: var(--c-rubricas); }
+
+/* The "i" next to a label waits for that label to be pointed at, so an expert's page stays quiet.
+   Touch screens, keyboard focus and an open tip always show it. */
+@media (hover: hover) {
+  .info-host .info-i { opacity: 0; }
+  .info-host:hover .info-i,
+  .info-host:focus-within .info-i,
+  .info-i[aria-expanded="true"] { opacity: 1; }
+}
+
+/* One label style for everything in the side column. */
+.sec-label {
+  font-family: var(--font-sf);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.06em;
+  font-variant-caps: all-small-caps;
+  color: var(--color-muted);
+  transition: color 200ms var(--ease-out);
+}
+[data-mode="estrutura"] > .sec-label,
+[data-mode="estrutura"] > * > .sec-label { color: var(--part-color); }
+
+/* The strip: one track, the parts in this dictionary's order. Estrutura only, where it is also the legend. */
+.seq-row { position: relative; height: 72px; }
+.seq-nav {
+  position: absolute;
+  inset: 16px 0 auto;
+  height: 40px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease-out;
+}
+.seq-nav[data-on] { opacity: 1; pointer-events: auto; }
+.seq {
+  display: flex;
+  align-items: stretch;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--color-hairline);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ffffff;
+}
+.seq > li { position: relative; flex: 1 1 0; min-width: 0; display: flex; }
+.seq > li + li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='38' fill='none'%3E%3Cpath d='M0 0l8 19-8 19' stroke='%23e8e8e8'/%3E%3C/svg%3E") no-repeat center / 8px 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+.seq-chip {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 4px 0 12px;
+  font-family: var(--font-sf);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-ink);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 160ms var(--ease-out);
+}
+.seq-chip:hover,
+.seq-chip[data-current] { background: var(--color-wash, #f7f7f7); }
+.seq-chip:focus-visible { outline-offset: -2px; }
+.seq-chip__swatch { flex: none; width: 2px; height: 12px; background: var(--chip-dot); }
+.seq-chip__n { color: var(--color-muted); }
+.seq-order {
+  position: absolute;
+  right: calc(100% + 24px);
+  top: 12px;
+  font-family: var(--font-sf);
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+@media (max-width: 1279px) { .seq-order { display: none; } }
+@media (max-width: 639px) {
+  .seq-nav { overflow-x: auto; scrollbar-width: none; }
+  .seq { width: max-content; min-width: 100%; }
+  .seq > li { flex: none; }
+  .seq-chip { padding: 0 12px 0 16px; }
+  .part[data-part="exemplos"] { --rule-x: -36px; }
+}
+
+/* Home hero: entries orbit the headline and search. Motion is transform, opacity and filter only. */
+.home-hero {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+.home-hero__center {
+  position: relative;
+  z-index: 20;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 52px 24px 3vh;
+  text-align: center;
+  pointer-events: none;
+}
+.home-hero__center > * { pointer-events: auto; }
+
+.hero-title {
+  width: fit-content;
+  margin: 0;
+  font-weight: 700;
+  /* Never louder than the headword it leads to (72px on a word's page). */
+  font-size: clamp(36px, min(5vw, 7vh), 72px);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  color: var(--color-ink);
+}
+.hero-title__line {
+  display: inline-block;
+  white-space: nowrap;
+  transition: transform 700ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+.hero-rot {
+  position: relative;
+  display: inline-block;
+  height: 1.08em;
+  /* clip, not hidden: hidden would move this box's baseline to its bottom edge, off the line's. */
+  overflow: clip;
+  vertical-align: baseline;
+  text-align: left;
+}
+/* The words inside are out of flow, so this gives the box the same first baseline they have. */
+.hero-rot::before { content: "\200b"; }
+.hero-rot__word {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  transition: transform 800ms cubic-bezier(0.65, 0, 0.35, 1), opacity 800ms ease, filter 800ms ease;
+}
+.hero-rot__word.is-in { transform: translateY(0); opacity: 1; filter: none; }
+.hero-rot__word.is-below { transform: translateY(70%); opacity: 0; filter: blur(8px); transition: none; }
+.hero-rot__word.is-above { transform: translateY(-70%); opacity: 0; filter: blur(8px); }
+.hero-rot__measure {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  white-space: nowrap;
+}
+.hero-dot { color: var(--color-faint); font-weight: 400; margin: 0 -0.015em 0 0.02em; }
+
+.wordmark-dot { color: var(--color-muted); margin: 0 0.015em 0 0.025em; }
+
+.hero-search {
+  position: relative;
+  width: min(640px, 100%);
+  margin-top: clamp(28px, 4.4vh, 44px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--color-hairline);
+}
+.hero-search__field {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  height: 62px;
+  padding: 0 16px 0 22px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid var(--color-hairline);
+  transition: border-color 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+}
+/* The hero's input sits inside its pill, so the pill's border shows focus. */
+.hero-search__field:has(input:focus-visible) {
+  border-color: var(--color-field-focus);
+}
+.hero-search__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.28em;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 18px;
+  color: var(--color-ink);
+}
+.hero-search__placeholder em { font-style: normal; color: var(--color-muted); }
+.hero-orb {
+  flex: none;
+  width: 62px;
+  height: 62px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid var(--color-hairline);
+  transition: border-color 200ms var(--ease-out), scale 200ms var(--ease-out);
+}
+.hero-orb:hover { border-color: var(--color-ink); }
+.hero-orb:active { scale: 0.96; }
+.hero-orb__dots { position: relative; display: block; width: 22px; height: 22px; animation: hero-spin 14s linear infinite; }
+.hero-orb__dots i { position: absolute; width: 7px; height: 7px; border-radius: 50%; }
+@keyframes hero-spin { to { transform: rotate(360deg); } }
+
+.hero-chips {
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Examples are set like a book: the opening quote hangs outside the text edge. */
+.ex-hang { text-indent: -0.467em; }
+
+.word-preview {
+  position: fixed;
+  z-index: 70;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.07), 0 12px 32px -8px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+.word-preview__word { font-family: var(--font-serif); font-size: 17px; line-height: 22px; font-weight: 500; color: var(--color-ink); }
+.word-preview__def {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  margin-top: 4px;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-meta);
+}
+.word-preview__src { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-family: var(--font-sf); font-size: 12px; line-height: 16px; color: var(--color-muted); }
+
+/* The citation: a capsule that opens to the reference and folds away to a line. */
+.cite-capsule {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  width: min(360px, calc(100vw - 48px));
+  overflow: hidden;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.07), 0 12px 32px -8px rgba(0, 0, 0, 0.2);
+  font-family: var(--font-sf);
+  transform-origin: top right;
+}
+.cite-capsule__summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+.cite-capsule__glyph { width: 14px; font-family: var(--font-serif); font-size: 20px; line-height: 20px; color: var(--dict-accent); }
+.cite-capsule__details { padding: 0 16px 8px; }
+.cite-capsule__entry { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 0 8px; border-top: 1px solid var(--color-hairline); }
+.cite-capsule__entry b { font-family: var(--font-serif); font-size: 19px; line-height: 24px; font-weight: 500; color: var(--color-ink); overflow-wrap: anywhere; }
+.cite-capsule__entry span { display: inline-flex; flex: none; align-items: center; gap: 6px; font-size: 12px; line-height: 16px; color: var(--color-muted); }
+.cite-capsule__sources { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 12px; }
+.cite-capsule__sources button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--color-hairline);
+  font-size: 13px;
+  color: var(--color-muted);
+  transition: border-color 160ms var(--ease-out), color 160ms var(--ease-out), scale 160ms var(--ease-out);
+}
+.cite-capsule__sources button::before { content: ""; position: absolute; inset: -4px 0; }
+.cite-capsule__sources button:hover { color: var(--color-ink); }
+.cite-capsule__sources button:active { scale: 0.97; }
+.cite-capsule__sources button[aria-checked="true"] { border-color: var(--color-ink); color: var(--color-ink); font-weight: 500; }
+.cite-capsule__text { font-size: 13px; line-height: 20px; color: var(--color-meta); overflow-wrap: anywhere; }
+.cite-capsule__segments { display: flex; gap: 3px; height: 10px; margin-top: 12px; }
+.cite-capsule__segments i { flex: 1; border-radius: 1px; background: #eeeeef; transition: background-color 160ms ease-out; }
+.cite-capsule__segments i[data-on="true"] { background: var(--dict-accent); }
+.cite-capsule__footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px; font-size: 12px; line-height: 16px; color: var(--color-muted); }
+.cite-capsule__footer button { flex: none; min-height: 44px; padding: 0 2px; font-size: 14px; font-weight: 500; color: var(--color-ink); }
+.cite-capsule__footer button:hover { color: var(--dict-accent); }
+.cite-capsule__footer button:active { scale: 0.98; }
+@media (prefers-reduced-motion: reduce) {
+  .cite-capsule__segments i { transition: none; transition-delay: 0s !important; }
+}
+
+.orbit-field { position: absolute; inset: 0; z-index: 1; isolation: isolate; pointer-events: none; }
+.orbit-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 168px;
+  padding: 14px 16px 12px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  touch-action: manipulation;
+  user-select: none;
+  will-change: transform, opacity, filter;
+}
+.orbit-card__word { font-family: var(--font-serif); font-size: 26px; line-height: 1.05; letter-spacing: -0.01em; color: var(--color-ink); }
+.orbit-card__syl { margin-top: 3px; font-size: 11px; line-height: 14px; letter-spacing: 0.02em; color: var(--color-muted); }
+.orbit-card__def {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: 8px 0 10px;
+  font-family: var(--font-serif);
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--color-meta);
+}
+.orbit-card__src { display: flex; align-items: center; gap: 6px; font-size: 10.5px; line-height: 14px; letter-spacing: 0.02em; color: var(--color-muted); }
+.orbit-card__src i { display: block; flex: none; width: 6px; height: 6px; border-radius: 50%; }
+
+@media (max-width: 767px) {
+  .home-hero__center { padding: 24px 20px 112px; }
+  .hero-title { font-size: clamp(30px, 9.4vw, 56px); }
+  .hero-search { padding: 6px; gap: 6px; }
+  .hero-search__field { height: 52px; padding: 0 12px 0 16px; }
+  .hero-search__placeholder { font-size: 17px; }
+  .hero-orb { width: 52px; height: 52px; }
+  .orbit-card { width: 128px; padding: 10px 12px; border-radius: 14px; }
+  .orbit-card__word { font-size: 24px; }
+  .orbit-card__def { display: none; }
+  .orbit-card__src { margin-top: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-orb__dots { animation: none; }
+  .hero-title__line, .hero-rot__word { transition: none; }
+}
+
+/* The same segmented control, for sort order. */
+.seg-control { display: inline-flex; padding: 2px; border-radius: 8px; background: #f7f7f7; }
+.seg-control button { height: 32px; padding: 0 12px; border-radius: 6px; font-family: var(--font-sf); font-size: 13px; font-weight: 500; color: var(--color-muted); transition: color 160ms var(--ease-out); }
+.seg-control button:hover { color: var(--color-ink); }
+.seg-control button[aria-pressed="true"] { color: var(--color-ink); background: #ffffff; box-shadow: inset 0 0 0 1px var(--color-hairline); }
+.seg-control button:focus-visible { outline-offset: 1px; }
+
+/* Leitura / Estrutura: a segmented control. Weight stays the same, so the labels don't change width. */
+.mode-toggle {
+  position: relative;
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 8px;
+  background: #f7f7f7;
+}
+.mode-toggle button {
+  position: relative;
+  z-index: 1;
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 6px;
+  font-family: var(--font-sf);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-muted);
+  transition: color 200ms var(--ease-out), scale 100ms var(--ease-out);
+}
+.mode-toggle button::before { content: ""; position: absolute; inset: -6px 0; }
+.mode-toggle button:hover { color: var(--color-ink); }
+.mode-toggle button:active { scale: 0.97; }
+.mode-toggle button[aria-pressed="true"] { color: var(--color-ink); }
+.mode-toggle button:focus-visible { outline-offset: 1px; }
+.mode-toggle__thumb {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 6px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--color-hairline);
 }

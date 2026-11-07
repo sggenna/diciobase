@@ -1,12 +1,22 @@
 import { defineConfig, type HtmlTagDescriptor, type Plugin } from "vite"
 import react from "@vitejs/plugin-react"
 import tailwindcss from "@tailwindcss/vite"
+import { readFileSync } from "node:fs"
 import path from "node:path"
+import {
+  FIXED_PAGES,
+  injectHead,
+  missingMeta,
+  renderHead,
+  siteMeta,
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+} from "./server/src/site/head"
 
 const siteConfiguration = {
-  title: "Diciobase",
-  description:
-    "Explore diverse Portuguese definitions from various Brazilian dictionaries with a user-friendly interface designed for seamless navigation and smooth interactions.",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  language: "pt-BR",
   robots: {
     index: false,
   },
@@ -14,6 +24,8 @@ const siteConfiguration = {
     addBypassLinks: false,
   },
 }
+
+const API_TARGET = `http://127.0.0.1:${process.env.API_PORT || 3001}`
 
 // Vite config — https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -31,6 +43,7 @@ export default defineConfig(({ mode }) => {
       react(),
       tailwindcss(),
       figmaSiteConfiguration(siteConfiguration),
+      pagePreviewTags(),
       figmaErrorOverlayReplay(),
       figmaReactRefreshBoundaryFallback(),
       figmaMakeKitPlugin({ storiesGlob: "/src/**/*.stories.{ts,tsx,js,jsx}" }),
@@ -46,6 +59,11 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       watch: {
         ignored: ["**/.figma/**"],
+      },
+      // Same-origin /api in dev, so the session cookie is first-party and no CORS is involved.
+      proxy: {
+        "/api": { target: API_TARGET },
+        "/og": { target: API_TARGET },
       },
     },
     preview: {
@@ -113,8 +131,12 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
   const headEnd = config.customScripts?.headEnd ?? ""
   const bodyStart = config.customScripts?.bodyStart ?? ""
   const bodyEnd = config.customScripts?.bodyEnd ?? ""
+  // Not indexed yet, but word pages and their images stay crawlable: link previews
+  // (Slack among them) honour robots.txt, and a blanket Disallow would blank them.
   const robotsTxt =
-    config.robots?.index === false ? "User-agent: *\nDisallow: /\n" : ""
+    config.robots?.index === false
+      ? "User-agent: *\nAllow: /palavra/\nAllow: /og/\nDisallow: /\n"
+      : ""
 
   return {
     name: "figma-site-configuration",
@@ -268,6 +290,49 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
           tags,
         }
       },
+    },
+  }
+}
+
+/**
+ * In dev, gives pages the same preview tags as production (server/src/routes/site.ts),
+ * so a local fetch or unfurl check of /palavra/saudade shows the real thing.
+ */
+function pagePreviewTags(): Plugin {
+  return {
+    name: "diciobase-page-preview-tags",
+    apply: "serve",
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        const url = req.url ?? "/"
+        const pathname = url.split("?")[0]!
+        const word = /^\/palavra\/([^/]+)\/?$/.exec(pathname)?.[1]
+        if (req.method !== "GET" || (!word && !FIXED_PAGES.includes(pathname)))
+          return next()
+
+        try {
+          let meta = siteMeta(pathname)
+          let status = 200
+          if (word) {
+            // The API is optional in dev: without it the page still loads, with the generic tags.
+            const api = await fetch(`${API_TARGET}/api/words/${word}/preview`).catch(() => null)
+            const body = api?.ok ? ((await api.json()) as { found: boolean; meta: typeof meta | null }) : null
+            if (body?.meta) meta = body.meta
+            else if (body && !body.found) {
+              meta = missingMeta()
+              status = 404
+            }
+          }
+          const raw = readFileSync(path.resolve(__dirname, "index.html"), "utf8")
+          const html = await server.transformIndexHtml(url, raw, req.originalUrl)
+          const origin = `http://${req.headers.host}`
+          res.statusCode = status
+          res.setHeader("Content-Type", "text/html; charset=utf-8")
+          res.end(injectHead(html, renderHead(meta, origin)))
+        } catch (err) {
+          next(err as Error)
+        }
+      })
     },
   }
 }

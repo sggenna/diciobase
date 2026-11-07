@@ -1,12 +1,11 @@
 import { useState } from "react"
 import type * as React from "react"
-import { imgLogoHero } from "@/lib/assets"
+import { useSuggest } from "@/components/ui/Suggest"
 
 export function AppNav({
   onHome,
   onFavorites,
   onProfile,
-  onTutorial,
   onSearch,
   searchValue,
   onSearchChange,
@@ -18,7 +17,6 @@ export function AppNav({
   onHome: () => void
   onFavorites: () => void
   onProfile: () => void
-  onTutorial?: () => void
   onSearch: (q: string) => void
   searchValue: string
   onSearchChange: (v: string) => void
@@ -28,6 +26,7 @@ export function AppNav({
   avatarSrc?: string
 }) {
   const [focused, setFocused] = useState(false)
+  const suggest = useSuggest(searchValue, (w) => onSearch(w))
   function submit(e: React.FormEvent) {
     e.preventDefault()
     const q = searchValue.trim().toLowerCase()
@@ -44,18 +43,23 @@ export function AppNav({
         borderBottom: "1px solid rgba(0,0,0,0.06)",
       }}
     >
-      <div className="max-w-[1400px] mx-auto px-8 h-[52px] flex items-center gap-5">
+      <div className="max-w-[1056px] mx-auto px-6 h-[52px] flex items-center gap-6">
         <button
           onClick={onHome}
-          className="shrink-0 h-6 w-auto transition-opacity hover:opacity-60"
+          aria-label="Diciobase"
+          className="hit-area relative shrink-0 text-ink transition-opacity hover:opacity-60"
+          style={{ fontFamily: "var(--font-serif)", fontSize: 21, fontWeight: 500, letterSpacing: "-0.02em", lineHeight: "24px" }}
         >
-          <img src={imgLogoHero} alt="Diciobase" className="h-full w-auto" />
+          {/* Set like a headword at the top of an entry, with its syllables marked. */}
+          <span aria-hidden="true">
+            di<span className="wordmark-dot">·</span>cio<span className="wordmark-dot">·</span>ba<span className="wordmark-dot">·</span>se
+          </span>
         </button>
         {!hideSearch && (
-          <form onSubmit={submit} className="flex-1 max-w-[480px]">
+          <form onSubmit={submit} className="flex-1 max-w-[240px] ml-auto">
             <div className="relative">
               <svg
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[14px] h-[14px] text-muted"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-[14px] h-[14px] text-muted"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -66,60 +70,48 @@ export function AppNav({
                 <path d="m21 21-4.35-4.35" />
               </svg>
               <input
+                {...suggest.inputProps}
                 value={searchValue}
                 onChange={(e) => onSearchChange(e.target.value)}
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
-                placeholder="Pesquise uma palavra…"
-                className="w-full h-[36px] pl-9 pr-4 rounded-sm bg-surface text-[13px] text-ink placeholder-muted outline-none transition-colors duration-200"
+                onFocus={() => {
+                  setFocused(true)
+                  suggest.inputProps.onFocus()
+                }}
+                onBlur={() => {
+                  setFocused(false)
+                  suggest.inputProps.onBlur()
+                }}
+                placeholder="Pesquisar"
+                aria-label="Pesquisar palavra"
+                className="w-full h-9 pl-9 pr-4 rounded-full border border-hairline bg-white text-[14px] text-ink placeholder-muted outline-none transition-[border-color] duration-200"
                 style={{
-                  boxShadow: focused
-                    ? "0 0 0 1px rgba(0,0,0,0.14), 0 6px 18px rgba(0,0,0,0.08)"
-                    : "none",
-                  background: focused ? "#fff" : undefined,
+                  borderColor: focused ? "var(--color-field-focus)" : undefined,
                 }}
               />
+              {suggest.list}
             </div>
           </form>
         )}
-        <div className="flex items-center gap-5 ml-auto">
-          {onTutorial && (
-            <button
-              onClick={onTutorial}
-              className="text-[13px] text-ink hover:opacity-60 transition-opacity hidden sm:inline"
-            >
-              Como funciona
-            </button>
-          )}
+        <div className={`flex items-center gap-6 ${hideSearch ? "ml-auto" : ""}`}>
           <button
+            data-tip="nav-salvos"
             onClick={onFavorites}
-            className="h-[34px] px-1 text-[13px] text-ink hover:opacity-60 transition-opacity flex items-center gap-1.5"
+            className="h-9 px-1 text-[14px] font-medium text-ink hover:opacity-60 transition-opacity flex items-center"
           >
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-            </svg>
-            <span className="hidden sm:inline">Salvos</span>
+            Salvos
           </button>
           <button
             onClick={onProfile}
             aria-label="Conta"
-            className="w-[30px] h-[30px] rounded-full flex items-center justify-center transition-opacity hover:opacity-60"
-            style={{ background: isLoggedIn ? "var(--color-ink)" : "transparent" }}
+            className="relative size-10 rounded-full flex items-center justify-center bg-transparent border border-hairline hover:border-[#c7c7cc] active:scale-[0.94] transition-[border-color,scale] duration-150"
           >
             {isLoggedIn ? (
               avatarSrc ? (
-                <img src={avatarSrc} alt="" className="size-full rounded-full object-cover" />
+                <img src={avatarSrc} alt="" className="img-edge size-full rounded-full object-cover" />
               ) : (
-                <span className="text-[13px] font-semibold text-on-ink">{initial}</span>
+                <span className="uppercase text-meta" style={{ fontSize: 15, fontWeight: 500, lineHeight: "20px" }}>
+                  {initial}
+                </span>
               )
             ) : (
               <svg

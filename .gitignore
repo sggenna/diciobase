@@ -3,7 +3,15 @@ node_modules/
 dist/
 build/
 .cache/
-.env*
+# Secrets: never commit real environment files (templates are allowed)
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+*.pem
+*.key
 .vite/
 vite.config.*.timestamp-*
 *.tsbuildinfo
@@ -19,3 +27,13 @@ logs/
 # beside it.
 /.plugins/
 /.opencode-skills/
+
+# Backend: downloaded third-party datasets and generated artifacts
+server/data/raw/
+server/data/generated/
+
+# Local test login: never commit
+.claude/test-account.json
+
+# Vercel CLI link
+.vercel

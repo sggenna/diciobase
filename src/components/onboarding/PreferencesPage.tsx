@@ -2,7 +2,7 @@ import { useState } from "react"
 import { imgLogoHero } from "@/lib/assets"
 import { PREF_OPTIONS } from "@/lib/data"
 
-export function PreferencesPage({ onContinue }: { onContinue: () => void }) {
+export function PreferencesPage({ onContinue }: { onContinue: (interests: string[]) => void }) {
   const [selected, setSelected] = useState<Set<string>>(new Set())
 
   function toggle(opt: string) {
@@ -16,13 +16,13 @@ export function PreferencesPage({ onContinue }: { onContinue: () => void }) {
 
   return (
     <div
-      className="min-h-screen bg-white flex flex-col"
+      className="min-h-dvh bg-white flex flex-col"
       style={{ fontFamily: "var(--font-sf)" }}
     >
       <header className="px-5 md:px-8 h-[52px] flex items-center justify-between shrink-0">
         <img src={imgLogoHero} alt="Diciobase" className="h-5 w-auto" />
         <button
-          onClick={onContinue}
+          onClick={() => onContinue([])}
           className="text-[14px] text-label-secondary hover:text-ink transition-colors"
         >
           Pular
@@ -48,7 +48,7 @@ export function PreferencesPage({ onContinue }: { onContinue: () => void }) {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2.5">
+          <div className="flex flex-wrap gap-2">
             {PREF_OPTIONS.map((opt) => {
               const on = selected.has(opt)
               return (
@@ -56,7 +56,7 @@ export function PreferencesPage({ onContinue }: { onContinue: () => void }) {
                   key={opt}
                   onClick={() => toggle(opt)}
                   aria-pressed={on}
-                  className="px-4 py-2.5 rounded-full text-[15px] font-medium transition-[background-color,color,box-shadow,scale] duration-200 active:scale-[0.97]"
+                  className="h-11 px-4 rounded-full text-[15px] font-medium transition-[background-color,color,box-shadow,scale] duration-200 active:scale-[0.97]"
                   style={{
                     background: on ? "var(--color-ink)" : "var(--color-surface)",
                     color: on ? "var(--color-on-ink)" : "var(--color-ink)",
@@ -69,8 +69,8 @@ export function PreferencesPage({ onContinue }: { onContinue: () => void }) {
           </div>
 
           <button
-            onClick={onContinue}
-            className="w-full h-[52px] rounded-full bg-ink text-[16px] font-medium text-on-ink hover:bg-[#333] transition-[background-color,scale] active:scale-[0.97]"
+            onClick={() => onContinue([...selected])}
+            className="w-full h-12 rounded-full bg-ink text-[15px] font-medium text-on-ink hover:bg-ink-hover transition-[background-color,scale] active:scale-[0.97]"
           >
             Continuar
           </button>

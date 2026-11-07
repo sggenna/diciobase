@@ -1,0 +1,11 @@
+# Only the site is built here. The build reads one file from the server: its page-title constants.
+server/*
+!server/src
+server/src/*
+!server/src/site
+server/src/site/*
+!server/src/site/head.ts
+.claude
+stageshow
+scripts
+dist

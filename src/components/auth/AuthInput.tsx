@@ -6,6 +6,7 @@ export const AuthInput = forwardRef<
     label: string
     placeholder: string
     type?: string
+    autoComplete?: string
     value: string
     onChange: (v: string) => void
     hint?: string
@@ -13,7 +14,7 @@ export const AuthInput = forwardRef<
     error?: string
   }
 >(function AuthInput(
-  { label, placeholder, type = "text", value, onChange, hint, hintAction, error },
+  { label, placeholder, type = "text", autoComplete, value, onChange, hint, hintAction, error },
   ref,
 ) {
   const [focused, setFocused] = useState(false)
@@ -36,7 +37,7 @@ export const AuthInput = forwardRef<
           <button
             type="button"
             onClick={hintAction}
-            className="text-[13px] text-label-secondary underline underline-offset-2 hover:text-ink transition-colors"
+            className="hit-area relative text-[13px] text-label-secondary underline underline-offset-2 hover:text-ink transition-colors"
           >
             {hint}
           </button>
@@ -47,6 +48,7 @@ export const AuthInput = forwardRef<
           ref={ref}
           id={id}
           type={inputType}
+          autoComplete={autoComplete}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
@@ -54,13 +56,14 @@ export const AuthInput = forwardRef<
           onBlur={() => setFocused(false)}
           aria-invalid={!!error}
           aria-describedby={error ? errorId : undefined}
-          className="w-full h-[52px] px-4 rounded-xl bg-surface text-[17px] text-ink placeholder-muted outline-none transition-shadow duration-200"
+          className="w-full h-12 px-6 rounded-full bg-white text-[16px] md:text-[15px] text-ink placeholder-muted outline-none transition-shadow duration-200"
+          // Inset so the field's edge lands exactly where the buttons' border does.
           style={{
             boxShadow: error
-              ? "0 0 0 2px var(--color-danger)"
+              ? "inset 0 0 0 2px var(--color-danger)"
               : focused
-                ? "0 0 0 2px var(--color-ink)"
-                : "0 0 0 1px rgba(0,0,0,0.06)",
+                ? "inset 0 0 0 1px var(--color-field-focus)"
+                : "inset 0 0 0 1px var(--color-hairline)",
           }}
         />
         {isPassword && (
@@ -68,7 +71,7 @@ export const AuthInput = forwardRef<
             type="button"
             onClick={() => setShowPwd((s) => !s)}
             aria-label={showPwd ? "Ocultar senha" : "Mostrar senha"}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-ink transition-colors"
+            className="hit-area absolute right-6 top-1/2 -translate-y-1/2 text-muted hover:text-ink transition-colors"
           >
             {showPwd ? (
               <svg

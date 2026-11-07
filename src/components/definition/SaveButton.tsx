@@ -42,6 +42,7 @@ export function SaveButton({
       aria-label={saved ? "Remover dos salvos" : "Salvar palavra"}
       className="save-button"
       data-saved={saved || undefined}
+      data-icon-only={!showLabel || undefined}
       data-pop={popping || undefined}
       style={
         {

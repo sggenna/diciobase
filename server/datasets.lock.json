@@ -1,0 +1,58 @@
+{
+  "br-ispell/E-2.5": {
+    "sha256": "27d4f2027120bfb4daf0c10c4bd2e9c06e363b0987d088059337e4add9e938a8",
+    "bytes": 319701
+  },
+  "br-ispell/LICENSE": {
+    "sha256": "f9c375a1be4a41f7b70301dd83c91cb89e41567478859b77eef375a52d782505",
+    "bytes": 18091
+  },
+  "dicionario-aberto/xmls.zip": {
+    "sha256": "f7e8ca35715a22a5e9e7fdd9c795d367e3e41182d5366b257fe7d78b15412a38",
+    "bytes": 5153760
+  },
+  "dicsin/readme.txt": {
+    "sha256": "a71802600d0f4e22f654ca90126cd3e14425dcec72fccf6bca106ba4a0433f1d",
+    "bytes": 442
+  },
+  "dicsin/th_pt_BR.dat": {
+    "sha256": "ae661024a6d6bf14a3a8d92f79c0c3e5c126bfe68423de47f0a0a819ea0e427e",
+    "bytes": 15296516
+  },
+  "openwordnet-pt/LICENSE": {
+    "sha256": "575877531d567fcd30848c489e5216381d61121422a2a2337163847ad2da5c6d",
+    "bytes": 485
+  },
+  "openwordnet-pt/relations.ttl": {
+    "sha256": "d6d53b49681a73d395db4022d49b7d4c4ff729e0cd8385be348961b636d8b50d",
+    "bytes": 14514176
+  },
+  "openwordnet-pt/synsets.ttl": {
+    "sha256": "e0050a04bb1c43a6c259d7c096a98d6c9f9c0d1343485733c18ddc17fd5e33e8",
+    "bytes": 17429266
+  },
+  "openwordnet-pt/words.ttl": {
+    "sha256": "8aad718f57f041511eee31a33d96c289a6d7ac5f1e52980069b7075b71784ad4",
+    "bytes": 11299630
+  },
+  "openwordnet-pt/wordsenses.ttl": {
+    "sha256": "537222fc22c8f116ccb35c375e76d4d0150cb024bf5e6bbcb4724e4e1315f6f1",
+    "bytes": 14625571
+  },
+  "stopwords-pt/LICENSE": {
+    "sha256": "27403c9741017239dc227eab9d6118c7c0569b199b42a853bd4ffbca898b1007",
+    "bytes": 1076
+  },
+  "stopwords-pt/stopwords-pt.txt": {
+    "sha256": "cf89f34dd7474cf1cddf49f4295f4221f25be2ab108d7e59f0bcf17fc5939f92",
+    "bytes": 3609
+  },
+  "vero/pt_BR.dic": {
+    "sha256": "677482cc3a6224b04017c382e199ef6449125080cc339dfca9c7e009ee2f1e48",
+    "bytes": 4329891
+  },
+  "wikcionario/pt.jsonl": {
+    "sha256": "be31ec5900a1517d0696028b5a0fb22d76010d67e877d25338d9a8b0921db837",
+    "bytes": 343475098
+  }
+}

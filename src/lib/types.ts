@@ -1,7 +1,9 @@
+import type { Label } from "@/lib/labels"
+
 export interface Sense {
   num: string
   text: string
-  labels?: string[]
+  labels?: Label[]
   subsenses?: { num: string; text: string }[]
   examples?: string[]
 }
@@ -22,10 +24,13 @@ export interface WordData {
   word: string
   partOfSpeech: string
   phonetic: string
+  /** Where `phonetic` was recorded: the dictionary, and the region when it gives one. */
+  phoneticSource?: string
   gender?: string
   dicts: DictEntry[]
   synonyms: string[]
-  facts: { label: string; value: string }[]
+  /** Each fact names where it came from: a source's name, or "calculado" for a value derived from the spelling. */
+  facts: { label: string; value: string; source?: string }[]
 }
 
 export type MobileTab = "pesquisar" | "salvos" | "perfil"

@@ -1,5 +1,5 @@
 .pronounce-button {
-  --pb-h: 34px;
+  --pb-h: 32px;
   --pb-bg: var(--color-surface);
   --pb-bg-hover: var(--color-surface-hover);
   --pb-ink: var(--color-ink);
@@ -10,7 +10,7 @@
   align-items: center;
   gap: 8px;
   height: var(--pb-h);
-  padding: 0 14px;
+  padding: 0 16px;
   border-radius: var(--radius-sm);
   border: none;
   background: var(--pb-bg);
@@ -26,6 +26,11 @@
 
 .pronounce-button:hover:not(:disabled) {
   background: var(--pb-bg-hover);
+}
+
+.pronounce-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.14);
 }
 
 .pronounce-button:active:not(:disabled) {

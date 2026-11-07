@@ -40,11 +40,23 @@ function order(s: PageSlot, isMobile: boolean) {
   return isMobile ? mobileOrder(s) : (DESKTOP_ORDER[s.type] ?? 0)
 }
 
+/**
+ * The move between two pages. The browser's Back and Forward can walk the
+ * drill-down either way, so they flip it: Back into a word is still a pop.
+ */
 export function motionBetween(
   from: PageSlot,
   to: PageSlot,
   isMobile: boolean,
+  travel: "new" | "back" | "forward" = "new",
 ): PageMotion {
+  const m = plainMotion(from, to, isMobile)
+  if (travel === "back" && m.kind === "push") return { kind: "pop", dir: -1 }
+  if (travel === "forward" && m.kind === "pop") return { kind: "push", dir: 1 }
+  return m
+}
+
+function plainMotion(from: PageSlot, to: PageSlot, isMobile: boolean): PageMotion {
   const fromWord = isWord(from.type)
   const toWord = isWord(to.type)
 
@@ -55,6 +67,9 @@ export function motionBetween(
     return { kind: "push", dir: 1 }
   }
   if (to.type === "preferences") return { kind: "push", dir: 1 }
+  if (from.type === "preferences" && to.type === "home") {
+    return { kind: "arrive", dir: 0 }
+  }
   if (from.onboarding && from.type === "tutorial" && to.type === "home") {
     return { kind: "arrive", dir: 0 }
   }
@@ -116,20 +131,4 @@ export const pageVariants = {
       transition: { duration: kind === "push" || kind === "pop" ? 0.13 : 0.1, ease: LEAVE },
     }
   },
-}
-
-// Moving between dictionaries: content slides the way the tabs are ordered,
-// so the new source arrives from the side the user just pointed at.
-export const dictVariants = {
-  enter: (dir: number) => ({ opacity: 0, x: dir * 28 }),
-  center: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.34, ease: ENTER },
-  },
-  exit: (dir: number) => ({
-    opacity: 0,
-    x: dir * -18,
-    transition: { duration: 0.12, ease: LEAVE },
-  }),
 }

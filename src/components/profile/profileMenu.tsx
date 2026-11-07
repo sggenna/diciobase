@@ -1,4 +1,4 @@
-import { DICT_COLOR } from "@/lib/data"
+import { DICT_COLOR, DICT_META } from "@/lib/data"
 
 export const TERMS_SECTIONS = [
   {
@@ -7,7 +7,7 @@ export const TERMS_SECTIONS = [
   },
   {
     title: "2. Uso do Serviço",
-    body: "O DICIOBASE é um serviço de consulta lexicográfica que agrega conteúdo dos dicionários Aurélio, Houaiss e Michaelis. O conteúdo é disponibilizado para fins educacionais e de pesquisa pessoal.",
+    body: "O DICIOBASE é um serviço de consulta lexicográfica que reúne dicionários abertos do português: Wikcionário, Dicionário Aberto e OpenWordnet-PT, entre outras bases. Cada definição mostra a fonte, a edição e a licença de onde veio.",
   },
   {
     title: "3. Conta do Usuário",
@@ -15,7 +15,7 @@ export const TERMS_SECTIONS = [
   },
   {
     title: "4. Propriedade Intelectual",
-    body: "Todo o conteúdo lexicográfico pertence aos respectivos editores dos dicionários. O código, design e interface do DICIOBASE são propriedade da equipe DICIOBASE.",
+    body: "O conteúdo lexicográfico segue a licença de cada fonte (CC BY-SA 4.0, CC BY-SA 2.5 PT, CC BY 4.0 e outras, listadas em cada verbete) e mantém a atribuição aos seus autores. O código, design e interface do DICIOBASE são propriedade da equipe DICIOBASE.",
   },
   {
     title: "5. Privacidade",
@@ -27,23 +27,28 @@ export const TERMS_SECTIONS = [
   },
 ]
 
+export function TermsContent() {
+  return (
+    <div className="flex flex-col gap-6">
+      {TERMS_SECTIONS.map((sec) => (
+        <div key={sec.title}>
+          <p className="text-ink font-semibold mb-1" style={{ fontSize: 16 }}>
+            {sec.title}
+          </p>
+          <p style={{ fontSize: 15, lineHeight: 1.65, color: "var(--color-label-secondary)" }}>
+            {sec.body}
+          </p>
+        </div>
+      ))}
+      <p className="text-muted" style={{ fontSize: 12 }}>
+        Última atualização: Setembro de 2026
+      </p>
+    </div>
+  )
+}
+
 export const DICT_LIST = [
-  {
-    id: "aurelio" as const,
-    name: "Aurélio",
-    tag: "Versão 2026",
-    c: DICT_COLOR.aurelio,
-  },
-  {
-    id: "houaiss" as const,
-    name: "Houaiss",
-    tag: "Edição Integral",
-    c: DICT_COLOR.houaiss,
-  },
-  {
-    id: "michaelis" as const,
-    name: "Michaelis",
-    tag: "Dicionário Escolar",
-    c: DICT_COLOR.michaelis,
-  },
+  { id: "wikcionario" as const, name: "Wikcionário", tag: DICT_META.wikcionario!.edition, c: DICT_COLOR.wikcionario },
+  { id: "dicionario-aberto" as const, name: "Dicionário Aberto", tag: "Cândido de Figueiredo, 1913", c: DICT_COLOR["dicionario-aberto"] },
+  { id: "wordnet" as const, name: "OpenWordnet-PT", tag: DICT_META.wordnet!.edition, c: DICT_COLOR.wordnet },
 ]

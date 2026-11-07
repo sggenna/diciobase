@@ -1,5 +1,5 @@
 import type * as React from "react"
-import { motion } from "motion/react"
+import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { MobileTab } from "@/lib/types"
 
 const tabs: { id: MobileTab; label: string; icon: React.ReactNode }[] = [
@@ -30,6 +30,10 @@ const tabs: { id: MobileTab; label: string; icon: React.ReactNode }[] = [
   },
 ]
 
+/**
+ * A floating pill: icons only, with the current page open to show its name. It takes up the same 64px the
+ * old bar did, so pages, toasts and the Home orbit keep their room.
+ */
 export function MobileBottomNav({
   active,
   onChange,
@@ -37,58 +41,71 @@ export function MobileBottomNav({
   active: MobileTab
   onChange: (t: MobileTab) => void
 }) {
+  const reduced = useReducedMotion()
+  const open = reduced ? { duration: 0.15 } : ({ type: "spring", duration: 0.34, bounce: 0.15 } as const)
   return (
-    <nav
-      aria-label="Navegação"
-      className="fixed left-0 right-0 bottom-0 z-50 flex px-3"
-      style={{
-        fontFamily: "var(--font-sf)",
-        height: "calc(64px + env(safe-area-inset-bottom, 0px))",
-        paddingBottom: "env(safe-area-inset-bottom, 0px)",
-        background: "rgba(249,249,251,0.88)",
-        backdropFilter: "saturate(180%) blur(20px)",
-        WebkitBackdropFilter: "saturate(180%) blur(20px)",
-        borderTop: "1px solid rgba(0,0,0,0.08)",
-      }}
+    <div
+      className="fixed inset-x-0 z-50 flex justify-center pointer-events-none"
+      style={{ bottom: "calc(12px + env(safe-area-inset-bottom, 0px))" }}
     >
-      {tabs.map((tab) => {
-        const isActive = tab.id === active
-        return (
-          <button
-            key={tab.id}
-            onClick={() => onChange(tab.id)}
-            aria-current={isActive ? "page" : undefined}
-            className="relative flex-1 flex flex-col items-center justify-center gap-[3px] pt-1 transition-[color,scale] duration-200 active:scale-[0.94]"
-            style={{
-              color: isActive ? "var(--color-ink)" : "#8e8e93",
-              fontSize: 10,
-              fontWeight: 500,
-            }}
-          >
-            {isActive && (
-              <motion.span
-                layoutId="tab-dot"
-                className="absolute top-0 h-[2px] w-8 rounded-full bg-ink"
-                transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
-              />
-            )}
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill={isActive && tab.id === "salvos" ? "currentColor" : "none"}
-              stroke="currentColor"
-              strokeWidth={isActive ? 2 : 1.7}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+      <nav
+        aria-label="Navegação"
+        className="pointer-events-auto flex gap-1 p-1 rounded-2xl"
+        style={{
+          fontFamily: "var(--font-sf)",
+          background: "rgba(255,255,255,0.88)",
+          backdropFilter: "saturate(180%) blur(20px)",
+          WebkitBackdropFilter: "saturate(180%) blur(20px)",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.08), 0 2px 3px -1px rgba(0,0,0,0.1), 0 0 0 1px rgba(25,28,33,0.08)",
+        }}
+      >
+        {tabs.map((tab) => {
+          const isActive = tab.id === active
+          return (
+            <motion.button
+              key={tab.id}
+              layout={!reduced}
+              transition={open}
+              data-tip={tab.id === "salvos" ? "nav-salvos" : undefined}
+              onClick={() => onChange(tab.id)}
+              aria-current={isActive ? "page" : undefined}
+              aria-label={tab.label}
+              className="relative flex items-center justify-center h-11 min-w-12 px-3 rounded-xl transition-colors duration-200 active:scale-[0.96]"
+              style={{ color: isActive ? "var(--color-ink)" : "var(--color-muted)", fontSize: 14, fontWeight: 500, lineHeight: "20px" }}
             >
-              {tab.icon}
-            </svg>
-            {tab.label}
-          </button>
-        )
-      })}
-    </nav>
+              {isActive && <motion.span layoutId="tab-pill" transition={open} className="absolute inset-0 rounded-xl" style={{ background: "#f2f2f4" }} />}
+              <svg
+                className="relative shrink-0"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill={isActive && tab.id === "salvos" ? "currentColor" : "none"}
+                stroke="currentColor"
+                strokeWidth={isActive ? 2 : 1.7}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                {tab.icon}
+              </svg>
+              <AnimatePresence initial={false}>
+                {isActive && (
+                  <motion.span
+                    aria-hidden="true"
+                    className="relative overflow-hidden whitespace-nowrap"
+                    initial={{ width: 0, opacity: 0, marginLeft: 0 }}
+                    animate={{ width: "auto", opacity: 1, marginLeft: 8 }}
+                    exit={{ width: 0, opacity: 0, marginLeft: 0 }}
+                    transition={open}
+                  >
+                    {tab.label}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          )
+        })}
+      </nav>
+    </div>
   )
 }

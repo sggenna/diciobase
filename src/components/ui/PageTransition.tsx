@@ -1,6 +1,7 @@
 import type * as React from "react"
 import { AnimatePresence, motion } from "motion/react"
 import { type PageMotion, pageVariants } from "@/lib/pageMotion"
+import { takeScrollTarget } from "@/lib/router"
 
 export function PageTransition({
   pageKey,
@@ -17,7 +18,12 @@ export function PageTransition({
         mode="wait"
         initial={false}
         custom={pageMotion}
-        onExitComplete={() => window.scrollTo({ top: 0 })}
+        onExitComplete={() => {
+          const y = takeScrollTarget()
+          // Coming back with Back/Forward: land where the page was left, once it has mounted and has its height.
+          if (y > 0) requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: y, behavior: "instant" })))
+          else window.scrollTo({ top: 0 })
+        }}
       >
         <motion.div
           key={pageKey}

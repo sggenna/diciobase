@@ -33,6 +33,26 @@
     scale var(--dur-press) var(--ease-out);
 }
 
+.save-button[data-icon-only] {
+  width: var(--sb-h);
+  padding: 0;
+  justify-content: center;
+}
+
+.save-button:hover:not([data-saved]) {
+  background: #fff;
+  border-color: var(--color-ink);
+}
+
+.save-button[data-saved]:hover {
+  background: var(--color-ink-hover);
+}
+
+.save-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.14);
+}
+
 .save-button:active {
   scale: var(--press-scale);
 }

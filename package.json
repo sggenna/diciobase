@@ -7,14 +7,26 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "format": "oxfmt"
+    "format": "oxfmt",
+    "server:test": "pnpm --dir server test",
+    "server:install": "pnpm --dir server install",
+    "db:setup": "pnpm --dir server db:setup",
+    "db:migrate": "pnpm --dir server db:migrate",
+    "db:import": "pnpm --dir server db:import",
+    "datasets:fetch": "pnpm --dir server datasets:fetch",
+    "db:local": "pnpm --dir server db:local",
+    "db:local:stop": "pnpm --dir server db:local:stop",
+    "db:setup:local": "pnpm --dir server db:setup:local",
+    "dev:api": "pnpm --dir server dev"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "d3-geo": "^3.1.1",
     "motion": "^13.4.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "three": "^0.186.1"
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
@@ -22,7 +34,8 @@
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@types/three": "^0.186.0",
+    "@types/topojson-client": "^3.1.5",
+    "@types/topojson-specification": "^1.0.5",
     "@vitejs/plugin-react": "^6.0.0",
     "oxfmt": "^0.2.0",
     "tailwindcss": "^4.0.0",

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { AnimatePresence } from "motion/react"
 import { AuthModal } from "@/components/auth/AuthModal"
 import { DefinitionPage } from "@/components/definition/DefinitionPage"
@@ -7,43 +7,39 @@ import { HomePage } from "@/components/home/HomePage"
 import { AppNav } from "@/components/layout/AppNav"
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav"
 import { NotFoundPage } from "@/components/notfound/NotFoundPage"
-import { PreferencesPage } from "@/components/onboarding/PreferencesPage"
 import { TutorialPage } from "@/components/onboarding/TutorialPage"
 import { ProfilePage } from "@/components/profile/ProfilePage"
-import { DB } from "@/lib/data"
 import { PageTransition } from "@/components/ui/PageTransition"
+import { TipHost, TipsProvider, useTips } from "@/components/ui/Tips"
+import { WordLoading } from "@/components/ui/WordLoading"
 import { ToastProvider, useToast } from "@/components/ui/Toast"
 import { type PageMotion, type PageSlot, motionBetween } from "@/lib/pageMotion"
 import { useIsMobile, useMobileProfileState } from "@/lib/hooks"
+import { useRoute, wordKey } from "@/lib/router"
+import { SessionProvider, useSession } from "@/lib/session"
+import { useWordData } from "@/lib/words"
 import { MobileTab } from "@/lib/types"
 
-type View =
-  | { type: "login" }
-  | { type: "signup" }
-  | { type: "preferences" }
-  | { type: "tutorial" }
-  | { type: "home" }
-  | { type: "definition"; word: string }
-  | { type: "favorites" }
-  | { type: "notfound"; word: string }
-  | { type: "profile" }
-
 const NAV_HEIGHT = 53
+const SITE_TITLE = "Diciobase: os dicionários do português em uma só busca"
 
 function AppInner() {
   const isMobile = useIsMobile()
   const { toast } = useToast()
   const profile = useMobileProfileState()
-  const [view, setView] = useState<View>({ type: "home" })
+  const session = useSession()
+  const tips = useTips()
+  const { route, navigate } = useRoute()
+  const view = route.view
   const [navSearch, setNavSearch] = useState("")
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const isLoggedIn = session.status === "authed"
+  const [attempt, setAttempt] = useState(0)
+  const lookup = useWordData(view.type === "definition" ? view.word : null, attempt)
   const [authModal, setAuthModal] = useState<"login" | "signup" | null>(null)
+  const [authWord, setAuthWord] = useState<string | null>(null)
   const [postAuthCb, setPostAuthCb] = useState<(() => void) | null>(null)
 
-  const pageKey =
-    view.type === "definition" || view.type === "notfound"
-      ? `${view.type}:${view.word}`
-      : view.type
+  const pageKey = view.type === "definition" ? `definition:${view.word}` : view.type
   const slot: PageSlot = { type: view.type }
   const [pageNav, setPageNav] = useState<{
     key: string
@@ -51,52 +47,53 @@ function AppInner() {
     motion: PageMotion
   }>({ key: pageKey, slot, motion: { kind: "side", dir: 1 } })
   if (pageNav.key !== pageKey) {
-    const nextSlot: PageSlot = {
-      ...slot,
-      onboarding:
-        view.type === "preferences" ||
-        (view.type === "tutorial" &&
-          (pageNav.slot.type === "preferences" || !!pageNav.slot.onboarding)),
-    }
+    const nextSlot: PageSlot = slot
     setPageNav({
       key: pageKey,
       slot: nextSlot,
-      motion: motionBetween(pageNav.slot, nextSlot, isMobile),
+      motion: motionBetween(pageNav.slot, nextSlot, isMobile, route.travel),
     })
   }
 
-  function openAuth(then?: () => void) {
+  // Opened by saving a word: it says which word, and defaults to creating an account.
+  function openAuth(then?: () => void, word?: string) {
     setPostAuthCb(then ? () => then : null)
-    setAuthModal("login")
+    setAuthWord(word ?? null)
+    setAuthModal(word ? "signup" : "login")
   }
-  function handleAuth() {
-    setIsLoggedIn(true)
+  async function submitAuth(
+    mode: "login" | "signup",
+    v: { name: string; email: string; password: string },
+  ) {
+    if (mode === "signup") await session.register(v.name, v.email, v.password)
+    else await session.login(v.email, v.password)
     setAuthModal(null)
-    if (postAuthCb) {
-      postAuthCb()
-      setPostAuthCb(null)
+    const then = postAuthCb
+    setPostAuthCb(null)
+    if (then) {
+      then()
       return
     }
     toast({
       id: "auth",
-      title: "Login realizado",
-      description: "Sua conta está pronta para usar.",
+      title: mode === "signup" ? "Conta criada" : "Login realizado",
+      description: mode === "signup" ? "Bem-vindo ao Diciobase." : "Sua conta está pronta para usar.",
     })
-    setView({ type: "preferences" })
   }
 
   function goSearch(word: string) {
-    const key = word.toLowerCase()
-    if (DB[key]) setView({ type: "definition", word: key })
-    else setView({ type: "notfound", word })
+    const key = wordKey(word)
+    if (!key) return
+    navigate({ type: "definition", word: key })
+    session.recordSearch(key)
   }
 
   function goHome() {
-    setView({ type: "home" })
+    navigate({ type: "home" })
     setNavSearch("")
   }
-  function logout() {
-    setIsLoggedIn(false)
+  async function logout() {
+    await session.logout().catch(() => undefined)
     goHome()
     toast({
       id: "auth",
@@ -106,7 +103,7 @@ function AppInner() {
     })
   }
   function goFav() {
-    setView({ type: "favorites" })
+    navigate({ type: "favorites" })
   }
 
   function goProfile() {
@@ -114,17 +111,54 @@ function AppInner() {
       openAuth()
       return
     }
-    setView({ type: "profile" })
+    navigate({ type: "profile" })
   }
 
-  const inMainApp = ["home", "definition", "favorites", "notfound", "profile"].includes(
-    view.type,
-  )
+  // /perfil opened by link or by Back with no session: ask to sign in, unless the person just signed out here.
+  const prevStatus = useRef(session.status)
+  useEffect(() => {
+    const was = prevStatus.current
+    prevStatus.current = session.status
+    if (view.type !== "profile" || session.status !== "anon") return
+    navigate({ type: "home" }, { replace: true })
+    if (was !== "authed") openAuth(() => navigate({ type: "profile" }))
+  }, [view.type, session.status, navigate])
+
+  // An open sign-in dialog belongs to the page it was opened on; Back or Forward leaves that page.
+  useEffect(() => {
+    if (route.travel !== "new") {
+      setAuthModal(null)
+      setPostAuthCb(null)
+    }
+  }, [route])
+
+  const wordTitle = view.type === "definition" ? (lookup.status === "ready" ? lookup.data.word : view.word) : null
+  useEffect(() => {
+    document.title = wordTitle
+      ? `Diciobase | ${wordTitle.charAt(0).toLocaleUpperCase("pt-BR")}${wordTitle.slice(1)}`
+      : view.type === "favorites"
+        ? "Salvos · Diciobase"
+        : view.type === "profile"
+          ? "Perfil · Diciobase"
+          : view.type === "tutorial"
+            ? "Como funciona · Diciobase"
+            : SITE_TITLE
+  }, [wordTitle, view.type])
+
+  // The landing page has its own big search; the nav's only appears once that one is scrolled away.
+  const [heroSearchVisible, setHeroSearchVisible] = useState(true)
+  const inMainApp = ["home", "definition", "favorites", "profile"].includes(view.type)
   const showAppNav = !isMobile && (inMainApp || view.type === "tutorial")
   const showBottomNav = isMobile && inMainApp
   useEffect(() => {
     document.documentElement.dataset.tabbar = showBottomNav ? "1" : ""
   }, [showBottomNav])
+
+  // The account's own "tips off" choice follows the user to any device.
+  const serverTips = session.settings?.tips
+  useEffect(() => {
+    if (serverTips === false && tips.enabled) tips.setEnabled(false)
+  }, [serverTips, tips])
   const activeTab: MobileTab =
     view.type === "favorites" ? "salvos" : view.type === "profile" ? "perfil" : "pesquisar"
 
@@ -132,12 +166,11 @@ function AppInner() {
     <>
       {showAppNav && (
         <AppNav
-          initial={profile.name[0]}
+          initial={session.user?.name?.[0] ?? "?"}
           avatarSrc={profile.avatarSrc}
           onHome={goHome}
           onFavorites={goFav}
           onProfile={goProfile}
-          onTutorial={() => setView({ type: "tutorial" })}
           onSearch={(word) => {
             setNavSearch("")
             goSearch(word)
@@ -146,7 +179,7 @@ function AppInner() {
           onSearchChange={setNavSearch}
           isLoggedIn={isLoggedIn}
           hideSearch={
-            view.type === "home" ||
+            (view.type === "home" && heroSearchVisible) ||
             view.type === "favorites" ||
             view.type === "tutorial" ||
             view.type === "profile"
@@ -155,37 +188,54 @@ function AppInner() {
       )}
       <div style={{ paddingTop: showAppNav ? NAV_HEIGHT : 0 }}>
         <PageTransition pageKey={pageKey} motion={pageNav.motion}>
-          {view.type === "preferences" && (
-            <PreferencesPage onContinue={() => setView({ type: "tutorial" })} />
-          )}
           {view.type === "tutorial" && (
-            <TutorialPage onFinish={() => setView({ type: "home" })} />
+            <TutorialPage onFinish={() => navigate({ type: "home" })} />
           )}
           {view.type === "home" && (
             <div style={{ marginTop: showAppNav ? -NAV_HEIGHT : 0 }}>
-              <HomePage onSearch={goSearch} />
+              <HomePage onSearch={goSearch} onHeroSearchVisible={setHeroSearchVisible} />
             </div>
           )}
-          {view.type === "definition" && (
-            <DefinitionPage
-              wordData={DB[view.word]}
-              onSearch={goSearch}
-              onBack={goHome}
-              isLoggedIn={isLoggedIn}
-              onOpenAuth={(then) => openAuth(then)}
-            />
-          )}
+          {view.type === "definition" &&
+            (lookup.status === "ready" ? (
+              <DefinitionPage
+                wordData={lookup.data}
+                typed={view.word}
+                onSearch={goSearch}
+                onBack={goHome}
+                isLoggedIn={isLoggedIn}
+                onOpenAuth={openAuth}
+              />
+            ) : lookup.status === "loading" ? (
+              <WordLoading word={view.word} />
+            ) : (
+              <NotFoundPage
+                key={view.word}
+                word={view.word}
+                unavailable={lookup.status === "error"}
+                onBack={goHome}
+                onSearch={goSearch}
+                onRetry={() => setAttempt((n) => n + 1)}
+              />
+            ))}
           {view.type === "favorites" && (
-            <FavoritesPage onSearch={goSearch} onGoHome={goHome} />
+            <FavoritesPage onSearch={goSearch} onGoHome={goHome} onOpenAuth={() => openAuth()} />
           )}
-          {view.type === "notfound" && (
-            <NotFoundPage word={view.word} onBack={goHome} />
-          )}
-          {view.type === "profile" && (
+          {view.type === "profile" && session.status === "authed" && (
             <ProfilePage
               onLogout={logout}
+              onDeleted={() => {
+                goHome()
+                toast({
+                  id: "auth",
+                  title: "Conta excluída",
+                  description: "Seus dados foram removidos do Diciobase.",
+                  variant: "info",
+                })
+              }}
               state={profile}
-              onTutorial={() => setView({ type: "tutorial" })}
+              onTutorial={() => navigate({ type: "tutorial" })}
+              onExplore={goHome}
             />
           )}
         </PageTransition>
@@ -202,12 +252,24 @@ function AppInner() {
         />
       )}
 
+      {(view.type === "home" ||
+        view.type === "definition" ||
+        view.type === "favorites" ||
+        view.type === "profile") && (
+        <TipHost
+          key={pageKey}
+          screen={view.type}
+          paused={!!authModal || (view.type === "profile" && profile.panel !== "main")}
+        />
+      )}
+
       <AnimatePresence>
         {authModal && (
           <AuthModal
             key="auth"
             defaultMode={authModal}
-            onAuth={handleAuth}
+            word={authWord ?? undefined}
+            onSubmit={submitAuth}
             onClose={() => {
               setAuthModal(null)
               setPostAuthCb(null)
@@ -222,7 +284,11 @@ function AppInner() {
 export default function App() {
   return (
     <ToastProvider>
-      <AppInner />
+      <TipsProvider>
+        <SessionProvider>
+          <AppInner />
+        </SessionProvider>
+      </TipsProvider>
     </ToastProvider>
   )
 }

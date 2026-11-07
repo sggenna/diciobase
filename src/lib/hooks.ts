@@ -12,31 +12,30 @@ export function useIsMobile() {
   return mobile
 }
 
+/** Desktop layout (Tailwind's lg): the word page moves its etymology into the side column there. */
+export function useIsWide() {
+  const [wide, setWide] = useState(() => window.innerWidth >= 1024)
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)")
+    const h = (e: MediaQueryListEvent) => setWide(e.matches)
+    mq.addEventListener("change", h)
+    return () => mq.removeEventListener("change", h)
+  }, [])
+  return wide
+}
+
 export function useMobileProfileState() {
   const [panel, setPanel] = useState<ProfilePanel>("main")
-  const [name, setName] = useState("Maria Silva")
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
-  const [notifs, setNotifs] = useState(true)
-  const [dictToggles, setDictToggles] = useState({
-    aurelio: true,
-    houaiss: true,
-    michaelis: false,
-  })
   const [pwCurrent, setPwCurrent] = useState("")
   const [pwNew, setPwNew] = useState("")
   const [pwConfirm, setPwConfirm] = useState("")
-  const [nameEdit, setNameEdit] = useState(name)
+  const [nameEdit, setNameEdit] = useState("")
   return {
     panel,
     setPanel,
-    name,
-    setName,
     avatarSrc,
     setAvatarSrc,
-    notifs,
-    setNotifs,
-    dictToggles,
-    setDictToggles,
     pwCurrent,
     setPwCurrent,
     pwNew,
