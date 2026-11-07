@@ -12,6 +12,7 @@ import { entryParts } from '@/lib/microstructure'
 import { buildPresence } from '@/lib/senseMatch'
 import type { DictEntry } from '@/lib/types'
 import { Stage } from './kit/stage'
+import { Camera } from './kit/motion/Camera'
 import type { Act } from './kit/act'
 import { Home } from './HeroTour'
 import { SAUDADE } from './saudade'
@@ -286,6 +287,38 @@ function EstruturaAfter() {
   )
 }
 
+/* ---- The compare view, rebuilt: researchers' side-by-side habit, put on screen ---- */
+
+function Compare() {
+  const presence = useMemo(() => buildPresence(SAUDADE.dicts), [])
+  const cols = SAUDADE.dicts.slice(0, 2).map((d) => ({ ...d, etymology: undefined, senses: d.senses.slice(0, 3) }))
+  return (
+    <Stage width={760} height={380} className="dbf dbf--fade">
+      {() => (
+        <div className="dbf-scene">
+          <Scope>
+            <div className="dbf-compare-head">
+              <span className="dbf-compare-word">saudade</span>
+              <span className="dbf-compare-pill">Comparar · 2</span>
+            </div>
+            <div className="dbf-compare">
+              {cols.map((d) => (
+                <section key={d.id} className="dbf-col" style={{ '--dict-accent': DICT_ACCENT[d.id] } as CSSProperties}>
+                  <h4>
+                    <i style={{ background: DICT_ACCENT[d.id] }} />
+                    {d.shortName} <span>· {SAUDADE.dicts.find((x) => x.id === d.id)!.senses.length}</span>
+                  </h4>
+                  <DictEntryView entry={d} onSearch={noop} presence={presence} names={names} />
+                </section>
+              ))}
+            </div>
+          </Scope>
+        </div>
+      )}
+    </Stage>
+  )
+}
+
 /* ---- Não consta ---- */
 
 function Missing() {
@@ -460,25 +493,29 @@ function Saved({ say }: { say: { current: (saved: boolean) => void } }) {
 /* ---- The orbit home ---- */
 
 type O = { focused: boolean }
+const ORBIT_CROP = { x: 166, y: 104, width: 1108, height: 692 }
 
 function Orbit() {
   const script = async (a: Act<O>) => {
-    await a.wait(2600)
+    await a.wait(3800)
     await a.move({ at: 'field', x: 0.72, y: 0.62 }, { duration: 800 })
     await a.wait(70)
     await a.click()
     await a.set({ focused: true })
-    await a.wait(2800)
+    await a.wait(2000)
     void a.move('rest', { duration: 800 })
     await a.set({ focused: false })
     await a.wait(900)
   }
   return (
-    <Stage<O> width={1440} height={900} initial={{ focused: false }} poster={{ focused: false }} script={script} play="loop" cursor={{ at: { x: 980, y: 660 }, idle: false }} className="dbt">
+    <Stage<O> width={1440} height={900} initial={{ focused: false }} poster={{ focused: false }} script={script} play="loop" cursor={{ at: { x: 980, y: 660 }, idle: false }} className="dbt dbf-orbit">
       {(s) => (
         <div className="dbt-panel" data-screen="home" style={{ '--gutter': '0px', '--headword': '72px' } as CSSProperties}>
           <div className="dbt-sheet" inert>
-            <Home q="" focused={s.focused} wide covered={false} insetTop={0} />
+            {/* Closer than the whole page: at the case study's size, the cards around the search are the point */}
+            <Camera focus={ORBIT_CROP} pad={0} max={2} feather={0} duration={0}>
+              <Home q="" focused={s.focused} wide covered={false} insetTop={0} />
+            </Camera>
           </div>
           <span data-target="rest" style={{ position: 'absolute', left: 980, top: 660 }} />
         </div>
@@ -494,6 +531,7 @@ const SCENES: Record<string, () => ReactNode> = {
   'estrutura-before': EstruturaBefore,
   'estrutura-after': EstruturaAfter,
   missing: Missing,
+  compare: Compare,
   'signup-before': SignupBefore,
   'signup-after': SignupAfter,
   orbit: Orbit,

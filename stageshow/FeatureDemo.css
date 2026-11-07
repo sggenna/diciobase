@@ -183,3 +183,88 @@
   justify-content: center;
   padding: 0 170px;
 }
+
+/* Compare */
+.dbf-compare-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.dbf-compare-word {
+  font-family: var(--font-serif);
+  font-size: 36px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--color-ink);
+}
+
+.dbf-compare-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.dbf-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.dbf-col {
+  min-width: 0;
+  padding: 16px 20px 0 0;
+}
+
+.dbf-col + .dbf-col {
+  padding: 16px 0 0 20px;
+  border-left: 1px solid var(--color-hairline);
+}
+
+.dbf-col h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.dbf-col h4 i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dbf-col h4 span {
+  color: var(--color-muted);
+  font-weight: 400;
+}
+
+.dbf-col [class*="sm:w-[480px]"] {
+  width: auto;
+  flex: 1;
+}
+
+.dbf-col [class*="sm:w-10"] {
+  width: 16px;
+}
+
+.dbf-col p {
+  font-size: 15px !important;
+  line-height: 23px !important;
+}
+
+/* Orbit: the home page's depth blur reads at full size, but at the case study's size it melts the cards away */
+.dbf-orbit .orbit-card {
+  filter: none !important;
+  border-color: rgba(0, 0, 0, 0.14);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 10px 28px rgba(0, 0, 0, 0.1);
+}
