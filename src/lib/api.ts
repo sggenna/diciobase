@@ -1,6 +1,11 @@
+/// <reference types="vite/client" />
 // Thin client for the Express API (server/). Requests go to same-origin /api
 // (Vite proxies it in development), so the session cookie is first-party and
-// is never readable from JavaScript.
+// is never readable from JavaScript. A build with VITE_STATIC=1 has no server
+// at all and swaps in staticApi: published dictionary files, saved words on this device.
+import { staticApi } from "@/lib/staticApi"
+
+export const STATIC_SITE = import.meta.env.VITE_STATIC === "1"
 
 export class ApiError extends Error {
   constructor(
@@ -139,7 +144,7 @@ async function request<T>(method: string, path: string, body?: unknown, opts: Op
 
 const enc = encodeURIComponent
 
-export const api = {
+const serverApi = {
   auth: {
     me: () => request<{ user: ApiUser }>("GET", "/auth/me", undefined, { auth: true }),
     login: (email: string, password: string) =>
@@ -169,3 +174,5 @@ export const api = {
       request<{ results: string[] }>("GET", `/words/search?q=${enc(q)}&limit=6`, undefined, { signal }),
   },
 }
+
+export const api: typeof serverApi = STATIC_SITE ? staticApi : serverApi

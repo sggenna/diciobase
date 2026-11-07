@@ -6,7 +6,6 @@
 // the server, so the card looks the same on any host.
 import { Resvg } from "@resvg/resvg-js"
 import { readFileSync } from "node:fs"
-import { createRequire } from "node:module"
 import satori from "satori"
 import { TtlCache } from "../cache.ts"
 import { OG_HEIGHT, OG_WIDTH, SITE_DESCRIPTION } from "./head.ts"
@@ -14,25 +13,25 @@ import type { WordCard } from "./wordCard.ts"
 
 type Font = { name: string; data: Buffer; weight: 400 | 500 | 600; style: "normal" | "italic" }
 
-const require = createRequire(import.meta.url)
+const FONTS = new URL("../../assets/fonts/", import.meta.url)
 let loaded: Font[] | null = null
 
 function fonts(): Font[] {
   if (loaded) return loaded
-  const face = (name: string, pkg: string, file: string, weight: Font["weight"], style: Font["style"]): Font[] =>
+  const face = (name: string, file: string, weight: Font["weight"], style: Font["style"]): Font[] =>
     ["latin", "latin-ext"].map((subset) => ({
       name,
       weight,
       style,
-      data: readFileSync(require.resolve(`@fontsource/${pkg}/files/${file}-${subset}-${weight}-${style}.woff`)),
+      data: readFileSync(new URL(`${file}-${subset}-${weight}-${style}.woff`, FONTS)),
     }))
   loaded = [
-    ...face("Serif", "source-serif-4", "source-serif-4", 400, "normal"),
-    ...face("Serif", "source-serif-4", "source-serif-4", 500, "normal"),
-    ...face("Serif", "source-serif-4", "source-serif-4", 600, "normal"),
-    ...face("Serif", "source-serif-4", "source-serif-4", 400, "italic"),
-    ...face("Sans", "inter", "inter", 400, "normal"),
-    ...face("Sans", "inter", "inter", 500, "normal"),
+    ...face("Serif", "source-serif-4", 400, "normal"),
+    ...face("Serif", "source-serif-4", 500, "normal"),
+    ...face("Serif", "source-serif-4", 600, "normal"),
+    ...face("Serif", "source-serif-4", 400, "italic"),
+    ...face("Sans", "inter", 400, "normal"),
+    ...face("Sans", "inter", 500, "normal"),
   ]
   return loaded
 }

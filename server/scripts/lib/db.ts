@@ -21,7 +21,9 @@ export const dbName = () => ident("DB_NAME")
 export const userHost = () => process.env.DB_USER_HOST || "localhost"
 
 export function sslOption() {
-  return process.env.DB_SSL === "true" ? { minVersion: "TLSv1.2" as const } : undefined
+  if (process.env.DB_SSL !== "true") return undefined
+  // A MySQL with a self-signed certificate (a container host's public proxy): encrypted, but the server isn't identified.
+  return { minVersion: "TLSv1.2" as const, rejectUnauthorized: process.env.DB_SSL_VERIFY !== "false" }
 }
 
 /** Owner connection used for migrations and dataset imports. */

@@ -84,7 +84,9 @@ Things to know:
 
 ## Word pages and link previews
 
-Every entry has an address (`/palavra/saudade`). Crawlers don't run JavaScript, so `src/routes/site.ts` serves the built `index.html` with that word's `<title>`, Open Graph and Twitter tags already in it, and `/og/palavra/saudade.png` renders the 1200x630 preview image (satori + resvg, in Source Serif 4 and Inter, both OFL, installed with the server). Images are cached in memory for 6 h and sent with a one-day `Cache-Control`. In development, Vite adds the same tags by asking the API (`/api/words/:word/preview`), so `curl localhost:8443/palavra/saudade` shows the real output.
+Every entry has an address (`/palavra/saudade`). Crawlers don't run JavaScript, so `src/routes/site.ts` serves the built `index.html` with that word's `<title>`, Open Graph and Twitter tags already in it, and `/og/palavra/saudade.png` renders the 1200x630 preview image (satori + resvg, in Source Serif 4 and Inter, both OFL, kept in `assets/fonts`). Images are cached in memory for 6 h and sent with a one-day `Cache-Control`. In development, Vite adds the same tags by asking the API (`/api/words/:word/preview`), so `curl localhost:8443/palavra/saudade` shows the real output.
+
+**The static site on Vercel.** The live site has no server or database, so it costs nothing to host. `pnpm export:static` publishes the dictionary to `public/data/` (git-ignored, about 70MB), a `VITE_STATIC=1` build reads those files (`src/lib/staticApi.ts`), and saved words stay in the visitor's browser. Login and synced data are off there. Preview bots are routed by `vercel.json` to two small functions in `api/`, which read the same files; people get the static page. Deploys go through the CLI (`vercel deploy`), because the data isn't in git. Everything below describes running this Express server instead, which brings accounts back.
 
 **What depends on the host:**
 

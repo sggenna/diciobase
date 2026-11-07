@@ -47,7 +47,9 @@ if (!parsed.success) {
 export const config = parsed.data
 export const isProd = config.NODE_ENV === "production"
 
-if (isProd && !config.DB_SSL && !["127.0.0.1", "localhost", "::1"].includes(config.DB_HOST)) {
+// A platform's private network (mysql.railway.internal) never leaves its own encrypted mesh, so it counts as local.
+const privateDbHost = ["127.0.0.1", "localhost", "::1"].includes(config.DB_HOST) || config.DB_HOST.endsWith(".internal")
+if (isProd && !config.DB_SSL && !privateDbHost) {
   console.error("Refusing to start: DB_SSL=true is required when MySQL is on another host in production.")
   process.exit(1)
 }

@@ -2,7 +2,67 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm build",
+  "buildCommand": "VITE_STATIC=1 pnpm build",
   "outputDirectory": "dist",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "git": {
+    "deploymentEnabled": false
+  },
+  "functions": {
+    "api/og.ts": {
+      "memory": 512,
+      "maxDuration": 15,
+      "includeFiles": "server/assets/fonts/*.woff"
+    },
+    "api/page.ts": {
+      "memory": 256,
+      "maxDuration": 10
+    }
+  },
+  "headers": [
+    {
+      "source": "/data/v1/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, immutable"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/og/default.png",
+      "destination": "/api/og"
+    },
+    {
+      "source": "/og/palavra/:file",
+      "destination": "/api/og?file=:file"
+    },
+    {
+      "source": "/palavra/:word",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(slackbot|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|telegrambot|whatsapp|applebot|skypeuripreview|embedly|iframely|pinterest|redditbot|googlebot|bingbot).*"
+        }
+      ],
+      "destination": "/api/page?word=:word"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(slackbot|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|telegrambot|whatsapp|applebot|skypeuripreview|embedly|iframely|pinterest|redditbot|googlebot|bingbot).*"
+        }
+      ],
+      "destination": "/api/page"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }

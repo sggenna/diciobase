@@ -16,6 +16,7 @@ import { ToastProvider, useToast } from "@/components/ui/Toast"
 import { type PageMotion, type PageSlot, motionBetween } from "@/lib/pageMotion"
 import { useIsMobile, useMobileProfileState } from "@/lib/hooks"
 import { useRoute, wordKey } from "@/lib/router"
+import { STATIC_SITE } from "@/lib/api"
 import { SessionProvider, useSession } from "@/lib/session"
 import { useWordData } from "@/lib/words"
 import { MobileTab } from "@/lib/types"
@@ -107,6 +108,7 @@ function AppInner() {
   }
 
   function goProfile() {
+    if (STATIC_SITE) return goHome()
     if (!isLoggedIn) {
       openAuth()
       return
@@ -119,6 +121,7 @@ function AppInner() {
   useEffect(() => {
     const was = prevStatus.current
     prevStatus.current = session.status
+    if (view.type === "profile" && STATIC_SITE) return navigate({ type: "home" }, { replace: true })
     if (view.type !== "profile" || session.status !== "anon") return
     navigate({ type: "home" }, { replace: true })
     if (was !== "authed") openAuth(() => navigate({ type: "profile" }))
@@ -178,6 +181,7 @@ function AppInner() {
           searchValue={navSearch}
           onSearchChange={setNavSearch}
           isLoggedIn={isLoggedIn}
+          showAccount={!STATIC_SITE}
           hideSearch={
             (view.type === "home" && heroSearchVisible) ||
             view.type === "favorites" ||
@@ -221,7 +225,7 @@ function AppInner() {
           {view.type === "favorites" && (
             <FavoritesPage onSearch={goSearch} onGoHome={goHome} onOpenAuth={() => openAuth()} />
           )}
-          {view.type === "profile" && session.status === "authed" && (
+          {view.type === "profile" && session.status === "authed" && !STATIC_SITE && (
             <ProfilePage
               onLogout={logout}
               onDeleted={() => {
@@ -244,6 +248,7 @@ function AppInner() {
       {showBottomNav && (
         <MobileBottomNav
           active={activeTab}
+          showAccount={!STATIC_SITE}
           onChange={(tab) => {
             if (tab === "salvos") goFav()
             else if (tab === "perfil") goProfile()

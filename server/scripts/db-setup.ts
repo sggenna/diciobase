@@ -76,7 +76,8 @@ const values = {
 
 const E = mysql.escapeId
 const S = mysql.escape
-const requireSsl = process.env.DB_SSL === "true" ? " REQUIRE SSL" : ""
+// Unverified TLS means this script is crossing a public proxy while the API uses a private network, so it can't be required.
+const requireSsl = process.env.DB_SSL === "true" && process.env.DB_SSL_VERIFY !== "false" ? " REQUIRE SSL" : ""
 
 await admin.query(`CREATE DATABASE IF NOT EXISTS ${E(dbName)} CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci`)
 for (const [user, pw] of [
@@ -92,6 +93,9 @@ for (const [user, pw] of [
 await admin.query(
   `GRANT ALL PRIVILEGES ON ${E(dbName)}.* TO ${S(migUser)}@${S(userHost)} WITH GRANT OPTION`,
 )
+// With binary logging on (the default on most hosted MySQL), only this lets the owner account create the RLS function.
+const [[logging]] = await admin.query<mysql.RowDataPacket[]>("SELECT @@log_bin AS on_")
+if (logging?.on_) await admin.query("SET PERSIST log_bin_trust_function_creators = 1")
 await admin.end()
 
 writeEnvValues(values, join(serverRoot, ".env.example"))

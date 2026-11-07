@@ -37,8 +37,11 @@ const tabs: { id: MobileTab; label: string; icon: React.ReactNode }[] = [
 export function MobileBottomNav({
   active,
   onChange,
+  showAccount = true,
 }: {
   active: MobileTab
+  /** Off on the static site, which has no accounts. */
+  showAccount?: boolean
   onChange: (t: MobileTab) => void
 }) {
   const reduced = useReducedMotion()
@@ -59,7 +62,7 @@ export function MobileBottomNav({
           boxShadow: "0 8px 24px rgba(0,0,0,0.08), 0 2px 3px -1px rgba(0,0,0,0.1), 0 0 0 1px rgba(25,28,33,0.08)",
         }}
       >
-        {tabs.map((tab) => {
+        {tabs.filter((tab) => showAccount || tab.id !== "perfil").map((tab) => {
           const isActive = tab.id === active
           return (
             <motion.button

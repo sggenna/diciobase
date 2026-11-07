@@ -20,11 +20,13 @@
     "dev:api": "pnpm --dir server dev"
   },
   "dependencies": {
+    "@resvg/resvg-js": "2.6.2",
     "@vercel/analytics": "^2.0.1",
     "d3-geo": "^3.1.1",
     "motion": "^13.4.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "satori": "0.63.2",
     "topojson-client": "^3.1.0",
     "world-atlas": "^2.0.2"
   },

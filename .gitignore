@@ -31,6 +31,8 @@ logs/
 # Backend: downloaded third-party datasets and generated artifacts
 server/data/raw/
 server/data/generated/
+# Published dictionary files, built by `pnpm --dir server export:static`
+public/data/
 
 # Local test login: never commit
 .claude/test-account.json

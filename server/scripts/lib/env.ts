@@ -1,9 +1,10 @@
 import { existsSync, readFileSync, writeFileSync, chmodSync } from "node:fs"
-import { dirname, join } from "node:path"
+import { dirname, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 
 export const serverRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..")
-export const envPath = join(serverRoot, ".env")
+// ENV_FILE points the scripts at another environment, so setting up production can't overwrite local secrets.
+export const envPath = process.env.ENV_FILE ? resolve(process.env.ENV_FILE) : join(serverRoot, ".env")
 
 /** Loads server/.env into process.env without overriding real environment variables. */
 export function loadEnv() {
