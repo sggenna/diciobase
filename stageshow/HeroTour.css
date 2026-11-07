@@ -1,0 +1,350 @@
+/* The tour's stage: the app's real screens, on a transparent background. index.css switches its layouts by the viewport; the
+   rules here pin them to the stage instead, so a tile on a small window and a wide hero show the same screens. */
+.dbt .ss-stage {
+  --ss-font: var(--font-sf);
+  overflow: hidden;
+  border-radius: 16px;
+  background: transparent;
+}
+
+.dbt-panel {
+  position: absolute;
+  inset: 0;
+}
+
+.dbt-sheet {
+  position: absolute;
+  inset: var(--gutter);
+  overflow: hidden;
+  border-radius: 16px;
+  background: #fff;
+}
+
+/* A white screen on a transparent stage needs an edge of its own, on a white page especially */
+.dbt-sheet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+
+/* ---- The one nav, over both screens: home has the big search, so it hides its own ---- */
+
+.dbt-nav {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 40;
+}
+
+.dbt-nav nav {
+  position: absolute;
+  background: #fff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.dbt-nav form {
+  transition: opacity 400ms ease;
+}
+
+.dbt-panel[data-screen="home"] .dbt-nav form {
+  opacity: 0;
+}
+
+/* The phone site has no top nav */
+.dbt [data-layout="compact"] .dbt-nav {
+  display: none;
+}
+
+/* ---- Home ---- */
+
+.dbt-home.home-hero {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+  /* Its content's z-index stays inside it, under the entries */
+  isolation: isolate;
+}
+
+/* Unpainted while an entry covers it */
+.dbt-home[data-covered] {
+  visibility: hidden;
+  transition: visibility 0s linear 700ms;
+}
+
+.dbt-home .home-hero__center {
+  padding: 52px 24px 12px;
+}
+
+.dbt-home .hero-title {
+  font-size: 60px;
+}
+
+.dbt-home .hero-search {
+  margin-top: 36px;
+  padding: 8px;
+  gap: 8px;
+}
+
+.dbt-home .hero-search__field {
+  height: 62px;
+  padding: 0 16px 0 22px;
+}
+
+.dbt-home .hero-search__field[data-focused] {
+  border-color: var(--color-field-focus);
+}
+
+.dbt-home .hero-orb {
+  width: 62px;
+  height: 62px;
+}
+
+.dbt-home .hero-search__placeholder {
+  font-size: 18px;
+}
+
+.dbt-typed {
+  font-size: 18px;
+  color: var(--color-ink);
+  white-space: pre;
+}
+
+.dbt-caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 1.15em;
+  margin-left: 1px;
+  vertical-align: -0.18em;
+  background: var(--color-ink);
+  animation: dbt-blink 1.05s steps(1) infinite;
+}
+
+@keyframes dbt-blink {
+  50% { opacity: 0; }
+}
+
+.dbt [data-layout="wide"] .dbt-home footer {
+  display: block;
+}
+
+.dbt [data-layout="wide"] .orbit-card {
+  width: 168px;
+  padding: 14px 16px 12px;
+  border-radius: 16px;
+}
+
+.dbt [data-layout="wide"] .orbit-card__word {
+  font-size: 26px;
+}
+
+.dbt [data-layout="wide"] .orbit-card__def {
+  display: -webkit-box;
+}
+
+.dbt [data-layout="wide"] .orbit-card__src {
+  margin-top: 0;
+}
+
+/* ---- Entries: both stay mounted over home, so changing screen is only ever a crossfade ---- */
+
+.dbt-entry {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #fff;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 620ms ease, visibility 0s linear 900ms;
+}
+
+.dbt-entry[data-on] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 620ms ease;
+}
+
+.dbt .ss-camera-view {
+  mask-image: none;
+}
+
+.dbt-soft {
+  --soft: 44px;
+  position: absolute;
+  inset: 52px 0 0;
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    linear-gradient(to right, #fff, transparent) left / var(--soft) 100% no-repeat,
+    linear-gradient(to left, #fff, transparent) right / var(--soft) 100% no-repeat,
+    linear-gradient(to top, #fff, transparent) bottom / 100% var(--soft) no-repeat;
+  transition: opacity 500ms ease;
+}
+
+.dbt-soft[data-on] {
+  opacity: 1;
+}
+
+/* Word to word: the next entry comes up quickly around the word rising out of the chip, and the old one goes once covered */
+.dbt-entry[data-name="nostalgia"][data-on] {
+  transition: opacity 300ms ease;
+}
+
+.dbt-panel[data-screen="nostalgia"] .dbt-entry[data-name="saudade"] {
+  transition: opacity 1ms linear 320ms, visibility 0s linear 340ms;
+}
+
+.dbt-panel[data-screen="home"] .dbt-entry {
+  transition: opacity 820ms ease, visibility 0s linear 840ms;
+}
+
+.dbt-column {
+  max-width: 1056px;
+  margin: 0 auto;
+  padding: 96px 24px 0;
+}
+
+.dbt-header {
+  padding-bottom: 32px;
+}
+
+.dbt-headword-box {
+  min-width: 0;
+}
+
+.dbt-headword {
+  font-size: var(--headword);
+  white-space: nowrap;
+  transform-origin: 0 50%;
+  transition: transform 1050ms cubic-bezier(0.3, 0, 0.1, 1);
+  will-change: transform;
+}
+
+.dbt-controls {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 48px;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.dbt-tabs {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.dbt-mode {
+  flex: none;
+  margin-left: auto;
+}
+
+.dbt-mode .mode-toggle {
+  isolation: isolate;
+}
+
+.dbt-mode .mode-toggle button {
+  z-index: auto;
+}
+
+.dbt [role="tab"][data-hover] {
+  color: var(--color-ink) !important;
+}
+
+.dbt-body {
+  display: grid;
+  grid-template-columns: minmax(0, 552px) 320px;
+  justify-content: space-between;
+  align-items: start;
+}
+
+.dbt-aside {
+  margin-top: 72px;
+}
+
+/* What the app does on a real hover, from the stage's */
+.dbt-entry[data-tip-on] [data-target="dots"] + [role="tooltip"] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.dbt button[data-target="chip"][data-hover] {
+  border-color: var(--color-ink);
+}
+
+/* ---- The phone's screens, in a narrow slot ---- */
+
+.dbt [data-layout="compact"] .dbt-home .hero-title {
+  font-size: 34px;
+}
+
+.dbt [data-layout="compact"] /* Unpainted while an entry covers it */
+.dbt-home[data-covered] {
+  visibility: hidden;
+  transition: visibility 0s linear 700ms;
+}
+
+.dbt-home .home-hero__center {
+  padding: 16px 16px 16px;
+}
+
+.dbt [data-layout="compact"] .dbt-home .hero-search {
+  padding: 6px;
+  gap: 6px;
+}
+
+.dbt [data-layout="compact"] .dbt-home .hero-search__field {
+  height: 52px;
+  padding: 0 12px 0 16px;
+}
+
+.dbt [data-layout="compact"] .dbt-home .hero-orb {
+  width: 52px;
+  height: 52px;
+}
+
+.dbt [data-layout="compact"] .dbt-column {
+  padding: 36px 18px 0;
+}
+
+.dbt [data-layout="compact"] .dbt-header {
+  padding-bottom: 16px;
+}
+
+.dbt [data-layout="compact"] .dbt-controls {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  height: auto;
+  padding-bottom: 8px;
+}
+
+.dbt [data-layout="compact"] .dbt-tabs {
+  flex: none;
+  height: 44px;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.dbt [data-layout="compact"] .dbt-mode {
+  margin-left: 0;
+  align-self: flex-start;
+}
+
+.dbt [data-layout="compact"] .dbt-body {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.dbt [data-layout="compact"] [class*="sm:w-[480px]"] {
+  width: auto;
+  flex: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dbt-caret {
+    animation: none;
+  }
+}

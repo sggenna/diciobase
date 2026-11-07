@@ -1,0 +1,185 @@
+/* The feature visuals: one feature each, on white, sized for the case study's media column. */
+.dbf .ss-stage {
+  --ss-font: var(--font-sf);
+  overflow: hidden;
+  background: #fff;
+}
+
+.dbf .ss-cursor {
+  z-index: 1000;
+}
+
+.dbf-scene {
+  position: absolute;
+  inset: 0;
+}
+
+.dbf-page {
+  position: absolute;
+  inset: 0;
+  padding: 24px 36px 0;
+  background: #fff;
+}
+
+/* A crop that runs on past its foot dissolves rather than cuts */
+.dbf--fade .dbf-page {
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent);
+}
+
+.dbf--modal .dbf-page {
+  mask-image: none;
+}
+
+.dbf-word {
+  font-family: var(--font-serif);
+  font-size: 56px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--color-ink);
+}
+
+.dbf-tabs {
+  height: 48px;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.dbf-tabs--mini {
+  margin-top: 16px;
+}
+
+.dbf-body {
+  margin-top: 28px;
+}
+
+/* Search */
+.dbf-search {
+  display: flex;
+  justify-content: center;
+  padding-top: 28px;
+}
+
+.dbf-search .hero-search {
+  align-self: flex-start;
+  width: 640px;
+  margin-top: 0;
+  padding: 8px;
+  gap: 8px;
+}
+
+.dbf-search .hero-search__field {
+  height: 62px;
+  padding: 0 16px 0 22px;
+}
+
+.dbf-search .hero-search__field[data-focused] {
+  border-color: var(--color-field-focus);
+}
+
+.dbf-search .hero-orb {
+  width: 62px;
+  height: 62px;
+}
+
+.dbf-search .hero-search__placeholder {
+  font-size: 18px;
+}
+
+.dbf-list {
+  opacity: 0;
+  translate: 0 -4px;
+  transition: opacity 160ms ease, translate 200ms ease;
+}
+
+.dbf-list[data-on] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* Dots: room above for the tooltip */
+.dbf-dots {
+  padding-top: 68px;
+}
+
+.dbf-dots[data-tip-on] [data-target="dots"] + [role="tooltip"] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* Estrutura */
+.dbf-before {
+  padding: 36px 40px 0;
+  background: #fff;
+}
+
+.dbf-class {
+  margin-top: 16px;
+  font-size: 16px;
+  line-height: 26px;
+}
+
+.dbf-sense {
+  margin-top: 16px;
+  font-size: 17px;
+  line-height: 29px;
+  color: var(--color-ink);
+}
+
+.dbf-mark {
+  padding: 2px 3px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--part) 20%, #fff);
+  color: var(--part);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.dbf-after .dbf-page {
+  padding: 36px 24px 0 116px;
+}
+
+/* The wide layout's margin labels, whatever the frame's width (index.css hangs them above below 1280px) */
+.dbf-after .part {
+  --rule-x: -16px;
+}
+
+.dbf-after .part[data-part="exemplos"] {
+  --rule-x: -48px;
+}
+
+.dbf-after .part__labels,
+.dbf-after .part[data-part="classe"] > .part__labels {
+  top: var(--label-top, 5px);
+  bottom: auto;
+  left: auto;
+  right: calc(100% + 24px);
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 0;
+}
+
+.dbf-after [class*="sm:w-[480px]"] {
+  width: 480px;
+}
+
+.dbf-after .seq-order {
+  display: none;
+}
+
+.dbf-classe {
+  margin-top: 16px;
+}
+
+/* Sign-up */
+.dbf-mini {
+  padding-top: 8px;
+}
+
+.dbf-oldpage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 170px;
+}

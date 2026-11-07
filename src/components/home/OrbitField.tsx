@@ -41,10 +41,16 @@ export function OrbitField({
   container,
   focused,
   onOpen,
+  insetTop,
+  paused = false,
 }: {
   container: React.RefObject<HTMLElement | null>
   focused: boolean
   onOpen: (word: string) => void
+  /** Set when the field fills a frame rather than the window (a demo): the room its own nav takes, read in place of the page's. */
+  insetTop?: number
+  /** Holds the cards where they are, for a field something else is covering. */
+  paused?: boolean
 }) {
   const cards = useMemo<Card[]>(
     () =>
@@ -55,6 +61,8 @@ export function OrbitField({
   )
   const els = useRef<(HTMLDivElement | null)[]>([])
   const focusRef = useRef(focused)
+  const pausedRef = useRef(paused)
+  pausedRef.current = paused
   const invalidate = useRef<() => void>(() => undefined)
   const hover = useRef<number[]>(cards.map(() => 0))
   const hoverTarget = useRef<number[]>(cards.map(() => 0))
@@ -109,13 +117,16 @@ export function OrbitField({
     }
 
     function measure() {
-      const box = root!.getBoundingClientRect()
-      const rel = (r: DOMRect): Rect => ({ x0: r.left - box.left, y0: r.top - box.top, x1: r.right - box.left, y1: r.bottom - box.top })
+      const rect = root!.getBoundingClientRect()
+      // A frame can be scaled, and the cards are placed in its own pixels.
+      const k = insetTop === undefined ? 1 : rect.width / (root!.offsetWidth || rect.width)
+      const box = { left: rect.left, top: rect.top, width: rect.width / k, height: rect.height / k }
+      const rel = (r: DOMRect): Rect => ({ x0: (r.left - box.left) / k, y0: (r.top - box.top) / k, x1: (r.right - box.left) / k, y1: (r.bottom - box.top) / k })
       const obstacles = [...root!.querySelectorAll("[data-orbit-obstacle]")].map((o) => rel(o.getBoundingClientRect()))
       // The navs are fixed, so they're read against the window; a footer belongs to the page.
-      let top = 0
+      let top = insetTop ?? 0
       let bottom = box.height
-      for (const nav of document.querySelectorAll("nav")) {
+      for (const nav of insetTop === undefined ? document.querySelectorAll("nav") : []) {
         const r = nav.getBoundingClientRect()
         if (r.height === 0) continue
         if (r.top <= 1) top = Math.max(top, r.bottom)
@@ -129,7 +140,7 @@ export function OrbitField({
     function solve() {
       const { box, obstacles, top, bottom } = measure()
       // A page that scrolls would carry cards under the fixed nav, so a screen that short shows none.
-      const scrolls = root!.scrollHeight > window.innerHeight + 1
+      const scrolls = insetTop === undefined && root!.scrollHeight > window.innerHeight + 1
       const dicts = Object.keys(HERO_CARDS)
       layout = scrolls
         ? null
@@ -152,7 +163,7 @@ export function OrbitField({
       })
       paintPositions(phase)
       paintLooks(performance.now())
-      if (import.meta.env.DEV) void devCheck()
+      if (import.meta.env.DEV && insetTop === undefined) void devCheck()
     }
 
     // Development only: walk the real elements through the loop and say so if anything ever touches.
@@ -210,6 +221,7 @@ export function OrbitField({
       frame = 0
       const dt = Math.min((now - last) / 1000, 0.1)
       last = now
+      if (pausedRef.current) return request()
       const focusTarget = focusRef.current ? 1 : 0
       focus += (focusTarget - focus) * (1 - Math.exp(-dt * 6))
       if (Math.abs(focusTarget - focus) < 0.001) focus = focusTarget
@@ -268,7 +280,7 @@ export function OrbitField({
       document.removeEventListener("visibilitychange", onVisibility)
       invalidate.current = () => undefined
     }
-  }, [cards, container])
+  }, [cards, container, insetTop])
 
   return (
     <div aria-hidden="true" className="orbit-field">

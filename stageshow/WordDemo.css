@@ -1,0 +1,506 @@
+/* Diciobase's word page, at its own tokens: white page, ink #111, the
+   system sans for interface, the serif for words and definitions, one
+   accent per dictionary. */
+.dcb {
+  --ink: #111111;
+  --muted: #515154;
+  --surface: #f5f5f7;
+  --border: #e0ddd6;
+  --border-strong: #c8c4bc;
+  --serif: ui-serif, 'New York', 'Iowan Old Style', Charter, Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Corner bleed: one gutter top and left, off the right and the bottom */
+  & .ss-stage {
+    --gutter: 32px;
+    --ss-font: var(--sans);
+    overflow: hidden;
+    border-radius: 14px;
+    background: #ececf0;
+  }
+
+  & .ss-stage[data-layout='compact'] {
+    --gutter: 16px;
+  }
+
+  & .dcb-window {
+    position: absolute;
+    top: var(--gutter);
+    left: var(--gutter);
+    width: 780px;
+    height: 420px;
+    box-shadow: var(--ss-shadow-hero);
+    /* Fade crop: the page dissolves at its foot over the later senses */
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 76px), transparent);
+  }
+
+  & .ss-stage[data-layout='compact'] .dcb-window {
+    width: 400px;
+    height: 342px;
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 56px), transparent);
+  }
+
+  & .dcb-page {
+    display: grid;
+    grid-template-columns: 540px 240px;
+    grid-template-rows: auto 1fr;
+    column-gap: 32px;
+    height: 100%;
+    padding: 0 32px;
+    background: #fff;
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  & .ss-stage[data-layout='compact'] .dcb-page {
+    grid-template-columns: 302px;
+    padding: 0 20px;
+  }
+
+  & .dcb-head {
+    grid-area: 1 / 1;
+  }
+
+  & .dcb-main {
+    grid-area: 2 / 1;
+    min-width: 0;
+  }
+
+  /* ---- Head: headword, syllables and pronunciation, class, actions ---- */
+
+  & .dcb-head {
+    display: flex;
+    align-items: flex-end;
+    gap: 40px;
+    padding: 28px 0 24px;
+  }
+
+  & .ss-stage[data-layout='compact'] .dcb-head {
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 0 12px;
+  }
+
+  & .dcb-cabeca {
+    min-width: 0;
+  }
+
+  & .dcb-word {
+    font-family: var(--serif);
+    font-size: 46px;
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+  }
+
+  & .ss-stage[data-layout='compact'] .dcb-word {
+    font-size: 36px;
+  }
+
+  & .dcb-sub {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    white-space: nowrap;
+  }
+
+  & .dcb-syll {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--muted);
+  }
+
+  & .dcb-syll b {
+    color: var(--ink);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--dict-accent);
+    transition: text-decoration-color 300ms var(--ease);
+  }
+
+  & .dcb-kind {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  & .dcb-pronounce {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 8px;
+    background: var(--surface);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  & .ss-stage[data-layout='compact'] .dcb-pronounce {
+    width: 32px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--ink);
+    color: #fff;
+  }
+
+  & .dcb-bars {
+    flex: none;
+    fill: currentColor;
+  }
+
+  & .dcb-class {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  & .dcb-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    align-self: flex-start;
+  }
+
+  & .dcb-round {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    background: #fff;
+    color: var(--ink);
+  }
+
+  & .dcb-save {
+    background: var(--surface);
+  }
+
+  & .dcb-save svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+  }
+
+  & .ss-stage[data-layout='compact'] .dcb-round {
+    width: 40px;
+    height: 40px;
+  }
+
+  & .ss-stage[data-layout='compact'] .dcb-round:not(.dcb-save) {
+    display: none;
+  }
+
+  /* ---- Controls: dictionary tabs, reading mode ---- */
+
+  & .dcb-controls {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  & .dcb-tabs {
+    display: flex;
+    gap: 32px;
+    height: 100%;
+    font-size: 15px;
+  }
+
+  & .ss-stage[data-layout='compact'] .dcb-controls {
+    height: 44px;
+  }
+
+  & .ss-stage[data-layout='compact'] .dcb-tabs {
+    gap: 28px;
+  }
+
+  & .ss-stage[data-layout='compact'] .dcb-heading {
+    display: none;
+  }
+
+  /* Room above the first sense for its tooltip, clear of the tabs */
+  & .ss-stage[data-layout='compact'] .dcb-entries {
+    margin-top: 32px;
+  }
+
+  & .ss-stage[data-layout='compact'] .dcb-sub {
+    margin-top: 6px;
+  }
+
+  & .dcb-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 100%;
+    color: var(--muted);
+    white-space: nowrap;
+    will-change: transform;
+    transition: color 200ms var(--ease), transform 100ms var(--ease);
+  }
+
+  & .dcb-tab[data-hover] {
+    color: var(--ink);
+  }
+
+  & .dcb-tab[data-pressed] {
+    transform: scale(0.98);
+  }
+
+  & .dcb-tab[data-active] {
+    color: var(--ink);
+  }
+
+  /* A dictionary's mark: its letter on its colour, so the letter, not the hue, ties a sense to its source */
+  & .dcb-mark,
+  & .dcb-also i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    flex: none;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  & .dcb-computed {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  /* Weight changes without the label changing width */
+  & .dcb-tab-label {
+    display: grid;
+  }
+
+  & .dcb-tab-label > span {
+    grid-area: 1 / 1;
+  }
+
+  & .dcb-tab-bold {
+    visibility: hidden;
+    font-weight: 600;
+  }
+
+  & .dcb-tab-text {
+    font-weight: 500;
+  }
+
+  & .dcb-tab[data-active] .dcb-tab-text {
+    font-weight: 600;
+  }
+
+  & .dcb-underline {
+    z-index: 2;
+    border-radius: 999px;
+    transition: background-color 300ms var(--ease);
+  }
+
+  & .dcb-mode {
+    display: inline-flex;
+    margin-left: auto;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--surface);
+  }
+
+  & .dcb-mode span {
+    display: flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  & .dcb-mode span[data-on] {
+    background: var(--ink);
+    color: #fff;
+  }
+
+  /* ---- The entry: every dictionary's in one cell, crossfaded as the product does ---- */
+
+  & .dcb-ipa {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--muted);
+  }
+
+  & .dcb-historic {
+    margin-left: 8px;
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+
+  & .dcb-historic::before {
+    content: '· ';
+  }
+
+  & .dcb-historic[data-show] {
+    opacity: 1;
+    transition: opacity 300ms var(--ease) 110ms;
+  }
+
+  & .dcb-heading {
+    margin-top: 24px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--muted);
+  }
+
+  & .dcb-entries {
+    display: grid;
+    margin-top: 8px;
+  }
+
+  & .dcb-entry {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    opacity: 0;
+    transform: translateY(-4px);
+    will-change: transform;
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+
+  /* The outgoing entry clears before the new one rises in, so the two never read as one */
+  & .dcb-entry[data-on] {
+    opacity: 1;
+    transform: none;
+    transition: opacity 300ms var(--ease) 110ms, transform 360ms var(--ease) 110ms;
+  }
+
+  & .dcb-sense {
+    display: flex;
+    gap: 16px;
+  }
+
+  & .dcb-num {
+    flex: none;
+    width: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 32px;
+    color: var(--entry-accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  & .dcb-sense-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  & .dcb-label {
+    margin-top: 4px;
+    /* The definition's 32px line box carries its own air above the ink */
+    margin-bottom: -8px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--surface);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--muted);
+  }
+
+  & .dcb-def {
+    font-family: var(--serif);
+    font-size: 20px;
+    line-height: 32px;
+    letter-spacing: -0.003em;
+  }
+
+  & .ss-stage[data-layout='compact'] .dcb-def {
+    font-size: 18px;
+    line-height: 28px;
+  }
+
+  & .dcb-example {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 17px;
+    line-height: 24px;
+    color: var(--muted);
+  }
+
+  & .ss-stage[data-layout='compact'] .dcb-example {
+    font-size: 16px;
+  }
+
+  /* Also in: one dot per other dictionary that carries this sense */
+  & .dcb-also {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-self: flex-start;
+    align-items: center;
+    gap: 4px;
+    height: 32px;
+    padding: 0 4px;
+  }
+
+
+  & .dcb-tip {
+    position: absolute;
+    right: 0;
+    bottom: 100%;
+    margin-bottom: 4px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: saturate(180%) blur(16px);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 8px 24px -8px rgba(0, 0, 0, 0.18);
+    opacity: 0;
+    transform: translateY(2px);
+    will-change: transform;
+    transition: opacity 150ms ease, transform 150ms ease;
+  }
+
+  & .dcb-tip[data-show] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ---- The aside, off the crop: only its edge shows ---- */
+
+  & .dcb-aside {
+    grid-area: 2 / 2;
+  }
+
+  & .dcb-facts {
+    padding: 24px;
+    border-radius: 16px;
+    background: var(--surface);
+  }
+}

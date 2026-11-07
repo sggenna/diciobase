@@ -29,12 +29,20 @@ function Syllables({ word }: { word: string }) {
  * "Encontre o sentido de sau·da·de". The line reserves room for its longest word, so the headline's box
  * never changes size: the fit to each word is a slide of the whole line, a transform and not a layout.
  */
-function Headline({ index }: { index: number }) {
+export function Headline({ index }: { index: number }) {
   const measures = useRef<(HTMLSpanElement | null)[]>([])
   const [widths, setWidths] = useState<number[]>([])
 
   useLayoutEffect(() => {
-    const read = () => setWidths(measures.current.map((m) => m?.getBoundingClientRect().width ?? 0))
+    // In its own pixels, so a scaled frame (the portfolio's demo) reserves the same room.
+    const read = () =>
+      setWidths(
+        measures.current.map((m) => {
+          const title = m?.closest<HTMLElement>(".hero-title")
+          const k = title?.offsetWidth ? title.getBoundingClientRect().width / title.offsetWidth : 1
+          return (m?.getBoundingClientRect().width ?? 0) / k
+        }),
+      )
     read()
     void document.fonts?.ready.then(read)
     window.addEventListener("resize", read)

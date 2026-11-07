@@ -1,0 +1,528 @@
+/* The demo's stage: a near-black panel, the app's own styles (src/index.css) inside it, and only three kinds of rule
+   here. The product's Estrutura timings, slowed to storytelling pace. The app's viewport-driven layout, pinned to the
+   stage's size, so the demo looks the same in a 500px tile on a 1440px page as in the page itself. And the morph. */
+.dbx {
+  --panel: #141414;
+  --travel: cubic-bezier(0.45, 0, 0.1, 1);
+  --settle: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --open: 1150ms;
+  --mark-gap: 70ms;
+  --mark-dur: 850ms;
+  --strip-dur: 1250ms;
+  --zoom: 1500ms;
+  --fade: 800ms;
+}
+
+.dbx--card {
+  --open: 880ms;
+  --mark-gap: 50ms;
+  --mark-dur: 650ms;
+  --strip-dur: 900ms;
+  --zoom: 1100ms;
+  --fade: 600ms;
+}
+
+.dbx .ss-stage {
+  --ss-font: var(--font-sf);
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--panel);
+}
+
+.dbx .dbx-panel {
+  position: absolute;
+  inset: 0;
+}
+
+/* The hand leaves the frame with the toggle as the camera pushes in, and is back with it on the way out. */
+.dbx .ss-cursor {
+  transition: opacity 450ms ease calc(var(--open) * 0.85);
+}
+
+.dbx .ss-stage:has(.dbx-panel[data-zoomed]) .ss-cursor {
+  opacity: 0;
+  transition: opacity 350ms ease;
+}
+
+/* ---- The search bar, centered: the home page's, on black ---- */
+
+.dbx-search {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 260ms ease;
+}
+
+.dbx-panel[data-open]:not([data-gone]) .dbx-search {
+  opacity: 0;
+}
+
+/* One thing at a time, not a double exposure: the sheet clears, then the bar comes up on black */
+.dbx-panel[data-gone] .dbx-search {
+  transition: opacity calc(var(--fade) * 0.5) ease calc(var(--fade) * 0.45);
+}
+
+.dbx-search .hero-search {
+  width: var(--pill-w, 640px);
+  margin-top: 0;
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dbx--card [data-layout="wide"] .dbx-search .hero-search {
+  --pill-w: 560px;
+}
+
+.dbx-search .hero-search__field {
+  height: 62px;
+  padding: 0 16px 0 22px;
+}
+
+.dbx-search .hero-search__field[data-focused] {
+  border-color: var(--color-field-focus);
+}
+
+.dbx-search .hero-orb {
+  width: 62px;
+  height: 62px;
+}
+
+.dbx-slot {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  margin-left: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.dbx-typed {
+  font-size: 18px;
+  color: var(--color-ink);
+  white-space: pre;
+}
+
+.dbx-placeholder {
+  transition: opacity 110ms ease;
+}
+
+.dbx-placeholder[data-hidden] {
+  opacity: 0;
+}
+
+.dbx-caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 1.15em;
+  margin-left: 1px;
+  vertical-align: -0.18em;
+  background: var(--color-ink);
+  animation: dbx-blink 1.05s steps(1) infinite;
+}
+
+@keyframes dbx-blink {
+  50% { opacity: 0; }
+}
+
+.dbx-kbd {
+  flex: none;
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-hairline);
+  color: var(--color-meta);
+  font-family: var(--font-sf);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Comes up once the sheet's black gutters have left the crop, and goes before they return */
+.dbx-soft {
+  --soft: 44px;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    linear-gradient(to right, #fff, transparent) left / var(--soft) 100% no-repeat,
+    linear-gradient(to left, #fff, transparent) right / var(--soft) 100% no-repeat,
+    linear-gradient(to bottom, #fff, transparent) top / 100% var(--soft) no-repeat,
+    linear-gradient(to top, #fff, transparent) bottom / 100% var(--soft) no-repeat;
+  transition: opacity 160ms ease;
+}
+
+.dbx--card .dbx-soft {
+  --soft: 30px;
+}
+
+.dbx [data-layout="compact"] .dbx-soft {
+  --soft: 18px;
+}
+
+.dbx-panel[data-zoomed] .dbx-soft {
+  opacity: 1;
+  transition: opacity 320ms ease calc(var(--zoom) * 0.5);
+}
+
+/* ---- The sheet: the page at its final size, opened by its clip ---- */
+
+.dbx-sheet {
+  position: absolute;
+  top: var(--gutter);
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 0;
+  overflow: hidden;
+  background: #fff;
+  opacity: 0;
+  transition:
+    clip-path var(--open) var(--travel),
+    opacity 140ms ease;
+  will-change: clip-path;
+}
+
+.dbx-panel[data-open] .dbx-sheet {
+  opacity: 1;
+}
+
+.dbx-panel[data-gone] .dbx-sheet {
+  opacity: 0;
+  transition: opacity calc(var(--fade) * 0.6) ease;
+}
+
+/* Inside the sheet's corner, so its radius and the black behind it stay off the crop */
+.dbx-zoom {
+  position: absolute;
+  top: 20px;
+  left: 6px;
+  width: var(--zoom-w);
+  height: var(--zoom-h);
+  pointer-events: none;
+}
+
+.dbx-page {
+  --page-left: 160px;
+  --page-right: 48px;
+  --page-top: 44px;
+  height: 100%;
+  padding: var(--page-top) var(--page-right) 0 var(--page-left);
+  background: #fff;
+}
+
+.dbx--card .dbx-page {
+  --page-left: 108px;
+  --page-right: 24px;
+  --page-top: 22px;
+}
+
+.dbx [data-layout="compact"] .dbx-page {
+  --page-left: 22px;
+  --page-right: 18px;
+  --page-top: 44px;
+}
+
+.dbx [data-layout="compact"] .dbx-zoom {
+  top: 16px;
+  left: 8px;
+}
+
+.dbx-header {
+  padding-bottom: 32px;
+}
+
+.dbx--card .dbx-header {
+  padding-bottom: 14px;
+}
+
+.dbx-headword-box {
+  min-width: 0;
+}
+
+.dbx-headword {
+  font-size: var(--headword);
+  white-space: nowrap;
+  transform-origin: 0 50%;
+  /* The word's transform runs on the compositor and the sheet's clip does not, so the sheet gets a lead: under load
+     the word must never reach an edge that hasn't opened yet */
+  transition: transform calc(var(--open) - 110ms) var(--travel) 110ms;
+  will-change: transform;
+}
+
+/* What the sheet holds arrives after the sheet has room for it, top to bottom */
+.dbx-in {
+  will-change: opacity, translate;
+  opacity: 0;
+  translate: 0 8px;
+  transition: opacity 200ms ease, translate 200ms ease;
+}
+
+.dbx-panel[data-open] .dbx-in {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity 620ms ease calc(var(--open) * 0.42 + var(--i, 0) * 70ms),
+    translate 760ms var(--settle) calc(var(--open) * 0.42 + var(--i, 0) * 70ms);
+}
+
+.dbx-controls {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 48px;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.dbx-tabs {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.dbx-mode {
+  flex: none;
+  margin-left: auto;
+}
+
+.dbx-mode[data-hover] button:last-child {
+  color: var(--color-ink);
+}
+
+/* At this pace the thumb's path is watched: it passes under the label it leaves, not over it */
+.dbx-mode .mode-toggle {
+  isolation: isolate;
+}
+
+.dbx-mode .mode-toggle button {
+  z-index: auto;
+}
+
+.dbx--card .dbx-controls {
+  gap: 10px;
+}
+
+.dbx-body {
+  display: grid;
+  grid-template-columns: minmax(0, 552px);
+  justify-content: space-between;
+  align-items: start;
+}
+
+.dbx--hero [data-layout="wide"] .dbx-body {
+  grid-template-columns: minmax(0, 552px) 320px;
+}
+
+/* In the card the push-in has less width to crop: the definitions end inside it */
+.dbx--card [data-layout="wide"] .part[data-part="acepcoes"] > [class*="sm:w-[480px]"] {
+  width: 416px;
+}
+
+.dbx--card [data-layout="wide"] .part[data-part="acepcoes"] > [class*="sm:w-10"] {
+  width: 24px;
+}
+
+.dbx-aside {
+  margin-top: 72px;
+}
+
+/* ---- Estrutura at storytelling pace ---- */
+
+.dbx .part[data-mode="estrutura"] > .part__rule {
+  transition: transform var(--mark-dur) var(--settle) calc(160ms + var(--part-i, 0) * var(--mark-gap));
+}
+
+.dbx .part__labels {
+  translate: -18px 0;
+}
+
+.dbx .part[data-mode="estrutura"] > .part__labels {
+  transition:
+    opacity var(--mark-dur) ease calc(160ms + var(--part-i, 0) * var(--mark-gap)),
+    translate var(--mark-dur) var(--settle) calc(160ms + var(--part-i, 0) * var(--mark-gap));
+}
+
+/* The order strip fills in left to right, the way a reader meets the parts */
+.dbx .seq-nav {
+  opacity: 1;
+  transition: none;
+}
+
+.dbx .seq {
+  clip-path: inset(-1px 100% -1px -1px round 8px);
+  transition: clip-path 160ms ease;
+}
+
+.dbx .seq-nav[data-on] .seq {
+  clip-path: inset(-1px -1px -1px -1px round 8px);
+  transition: clip-path var(--strip-dur) var(--travel) 240ms;
+}
+
+.dbx .seq-order {
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.dbx .seq-nav[data-on] .seq-order {
+  opacity: 1;
+  transition: opacity 700ms ease 200ms;
+}
+
+/* ---- The wide layout, whatever the viewport (index.css switches these at 1279px and 639px) ---- */
+
+.dbx [data-layout="wide"] .part {
+  --rule-x: -16px;
+}
+
+.dbx [data-layout="wide"] .part[data-part="exemplos"] {
+  --rule-x: -48px;
+}
+
+.dbx [data-layout="wide"] .part__labels {
+  top: var(--label-top, 5px);
+  bottom: auto;
+  left: auto;
+  right: calc(100% + 24px);
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 0;
+}
+
+.dbx [data-layout="wide"] .part[data-part="exemplos"] > .part__labels {
+  right: calc(100% + 56px);
+}
+
+.dbx--hero [data-layout="wide"] .seq-order {
+  display: block;
+}
+
+.dbx--card .seq-order {
+  display: none;
+}
+
+.dbx [data-layout="wide"] .seq {
+  width: auto;
+  min-width: 0;
+}
+
+.dbx [data-layout="wide"] .seq > li {
+  flex: 1 1 0;
+}
+
+.dbx [data-layout="wide"] .seq-chip {
+  padding: 0 4px 0 12px;
+}
+
+.dbx [data-layout="wide"] [class*="has(.ex)"] {
+  gap: 8px;
+}
+
+/* ---- The phone layout, in a narrow slot on any screen ---- */
+
+.dbx [data-layout="compact"] .dbx-search .hero-search {
+  --pill-w: 326px;
+  padding: 7px;
+}
+
+.dbx [data-layout="compact"] .dbx-search .hero-search__field {
+  height: 54px;
+  padding: 0 14px 0 16px;
+}
+
+.dbx [data-layout="compact"] .dbx-search .hero-orb {
+  width: 54px;
+  height: 54px;
+}
+
+.dbx [data-layout="compact"] .dbx-kbd {
+  display: none;
+}
+
+.dbx [data-layout="compact"] .dbx-slot {
+  margin-left: 12px;
+}
+
+.dbx [data-layout="compact"] .part {
+  --rule-x: -12px;
+}
+
+.dbx [data-layout="compact"] .part[data-part="exemplos"] {
+  --rule-x: -36px;
+}
+
+.dbx [data-layout="compact"] .part__labels {
+  top: auto;
+  bottom: calc(100% + 2px);
+  left: 0;
+  right: auto;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.dbx [data-layout="compact"] .part[data-part="classe"] > .part__labels {
+  left: 100%;
+  top: 4px;
+  bottom: auto;
+  padding-left: 12px;
+}
+
+.dbx [data-layout="compact"] .dbx-header {
+  padding-bottom: 16px;
+}
+
+.dbx [data-layout="compact"] .dbx-controls {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  height: auto;
+  padding-bottom: 8px;
+}
+
+.dbx [data-layout="compact"] .dbx-tabs {
+  flex: none;
+  height: 44px;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.dbx [data-layout="compact"] .dbx-mode {
+  margin-left: 0;
+  align-self: flex-start;
+}
+
+.dbx [data-layout="compact"] .seq {
+  width: max-content;
+}
+
+.dbx [data-layout="compact"] .seq > li {
+  flex: none;
+}
+
+.dbx [data-layout="compact"] .seq-chip {
+  padding: 0 12px 0 16px;
+}
+
+.dbx [data-layout="compact"] .seq-nav {
+  overflow: hidden;
+}
+
+.dbx [data-layout="compact"] .seq-order {
+  display: none;
+}
+
+.dbx [data-layout="compact"] [class*="sm:w-[480px]"] {
+  width: auto;
+  flex: 1;
+}
+
+.dbx [data-layout="compact"] [class*="has(.ex)"] {
+  gap: 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dbx-caret {
+    animation: none;
+  }
+}

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:demos": "vite build --config stageshow/embed/vite.config.ts",
     "preview": "vite preview",
     "format": "oxfmt",
     "server:test": "pnpm --dir server test",
