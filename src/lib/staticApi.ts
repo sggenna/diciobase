@@ -1,5 +1,5 @@
 // The site without a server: the same shape as the API client, reading the dictionary from published
-// files (server/scripts/export-static.ts). There are no accounts here, so saved words stay on this device.
+// files (server/scripts/export-static.ts). There are no accounts here, so saved words and preferences stay on this device.
 import { ApiError, type ApiEntry, type ApiRecording, type MeResponse, type SavedWord, type Settings } from "@/lib/api"
 import { entryFile, normKey, suggestFile } from "@/lib/staticKeys"
 import { commonsUrl, lookUp } from "../../server/src/commonsAudio.ts"
@@ -82,12 +82,31 @@ async function savedRow(word: string): Promise<SavedWord> {
 
 // What the session logic expects of a signed-in reader: saving works straight away, with nothing to sign in to.
 const GUEST = { id: 0, email: "", name: "" }
+const SETTINGS_KEY = "diciobase:settings"
 const SETTINGS: Settings = {
   notifications: false,
   tips: true,
   interests: [],
   dicts: { wikcionario: true, "dicionario-aberto": true, wordnet: true },
 }
+
+function readSettings(): Settings {
+  try {
+    const stored = JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? "{}") as Partial<Settings>
+    return { ...SETTINGS, ...stored, dicts: { ...SETTINGS.dicts, ...stored.dicts } }
+  } catch {
+    return SETTINGS
+  }
+}
+
+function writeSettings(patch: Partial<Settings>) {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify({ ...readSettings(), ...patch }))
+  } catch {
+    // With storage blocked the choice still holds until the tab closes; it isn't worth an error.
+  }
+}
+
 const noAccounts = (): never => {
   throw new ApiError(404, "no_accounts")
 }
@@ -102,11 +121,14 @@ export const staticApi = {
   me: {
     get: async (): Promise<MeResponse> => ({
       user: { ...GUEST, createdAt: new Date().toISOString(), lastLoginAt: null },
-      settings: SETTINGS,
+      settings: readSettings(),
       stats: { saved: readSaved().length, searches: 0 },
     }),
     rename: async (_name: string) => noAccounts(),
-    settings: async (_patch: Partial<Pick<Settings, "notifications" | "tips" | "interests" | "dicts">>) => ({ ok: true as const }),
+    settings: async (patch: Partial<Pick<Settings, "notifications" | "tips" | "interests" | "dicts">>) => {
+      writeSettings(patch)
+      return { ok: true as const }
+    },
     saved: async () => ({ saved: readSaved() }),
     save: async (word: string) => {
       const row = await savedRow(word)

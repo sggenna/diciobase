@@ -10,7 +10,6 @@ export function AppNav({
   searchValue,
   onSearchChange,
   isLoggedIn,
-  showAccount = true,
   hideSearch,
   initial = "M",
   avatarSrc,
@@ -22,8 +21,6 @@ export function AppNav({
   searchValue: string
   onSearchChange: (v: string) => void
   isLoggedIn?: boolean
-  /** Off on the static site, which has no accounts. */
-  showAccount?: boolean
   hideSearch?: boolean
   initial?: string
   avatarSrc?: string
@@ -103,10 +100,9 @@ export function AppNav({
           >
             Salvos
           </button>
-          {showAccount && (
           <button
             onClick={onProfile}
-            aria-label="Conta"
+            aria-label="Perfil"
             className="relative size-10 rounded-full flex items-center justify-center bg-transparent border border-hairline hover:border-[#c7c7cc] active:scale-[0.94] transition-[border-color,scale] duration-150"
           >
             {isLoggedIn ? (
@@ -132,7 +128,6 @@ export function AppNav({
               </svg>
             )}
           </button>
-          )}
         </div>
       </div>
     </nav>

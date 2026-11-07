@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { DICT_LIST, TermsContent } from "@/components/profile/profileMenu"
 import { useTips } from "@/components/ui/Tips"
 import { useToast } from "@/components/ui/Toast"
-import { ApiError, type DictToggles } from "@/lib/api"
+import { ApiError, STATIC_SITE, type DictToggles } from "@/lib/api"
 import { useSession } from "@/lib/session"
 import type { useMobileProfileState } from "@/lib/hooks"
 
@@ -406,16 +406,24 @@ export function ProfilePage({
   )
 
   // A new account has nothing to count yet: "0 palavras, 0 pesquisas" reads as broken, so it gets a first step instead.
-  const fresh = session.saved.length === 0 && session.searches === 0
+  // The static site keeps no search history, so its only number is the saved words.
+  const fresh = session.saved.length === 0 && (STATIC_SITE || session.searches === 0)
+  const stats = STATIC_SITE
+    ? [{ value: String(session.saved.length), label: "Palavras salvas" }]
+    : [
+        { value: String(session.saved.length), label: "Palavras salvas" },
+        { value: String(session.searches), label: "Pesquisas" },
+        { value: memberSince(session.createdAt), label: "Membro desde" },
+      ]
   const renderStats = (className: string, desktopBorder?: boolean) =>
     fresh ? (
       <div
         data-tip="profile-stats"
-        className={`${className.replace(/grid-cols-3|grid/g, "")} flex flex-col items-center text-center md:items-start md:text-left gap-4`}
+        className={`${className.replace("md:grid", "md:flex").replace("grid-cols-3", "").replace(/^grid\b/, "flex")} flex-col items-center text-center md:items-start md:text-left gap-4`}
         style={desktopBorder ? { borderTop: "1px solid var(--color-hairline)" } : undefined}
       >
         <p className="text-meta" style={{ fontFamily: "var(--font-sf)", fontSize: 17, lineHeight: "27px" }}>
-          Suas palavras salvas e pesquisas aparecem aqui.
+          {STATIC_SITE ? "Suas palavras salvas aparecem aqui." : "Suas palavras salvas e pesquisas aparecem aqui."}
         </p>
         <button
           onClick={onExplore}
@@ -428,14 +436,10 @@ export function ProfilePage({
     ) : (
     <div
       data-tip="profile-stats"
-      className={className}
+      className={STATIC_SITE ? className.replace("grid-cols-3", "grid-cols-1") : className}
       style={desktopBorder ? { borderTop: "1px solid var(--color-hairline)" } : undefined}
     >
-      {[
-        { value: String(session.saved.length), label: "Palavras salvas" },
-        { value: String(session.searches), label: "Pesquisas" },
-        { value: memberSince(session.createdAt), label: "Membro desde" },
-      ].map((stat) => (
+      {stats.map((stat) => (
         <div
           key={stat.label}
           className="flex flex-col items-center text-center md:items-start md:text-left gap-1"
@@ -487,7 +491,12 @@ export function ProfilePage({
 
             <div className="flex flex-col gap-8 mt-6 max-w-[552px] mx-auto md:max-w-none md:mx-0 md:mt-10 md:grid md:gap-8 md:items-start md:grid-cols-[minmax(0,320px)_minmax(0,552px)] md:justify-between">
               <section className="flex flex-col items-center text-center md:items-start md:text-left">
-
+                {STATIC_SITE ? (
+                  <p className="text-meta" style={{ fontSize: 15, lineHeight: "24px" }}>
+                    Sem conta e sem login. Suas preferências e palavras salvas ficam guardadas neste navegador.
+                  </p>
+                ) : (
+                  <>
                 <div className="relative size-[88px]">
                   {fluidAvatar}
                   <button
@@ -527,6 +536,8 @@ export function ProfilePage({
                 >
                   Editar perfil
                 </button>
+                  </>
+                )}
                 {renderStats("hidden md:grid self-stretch grid-cols-3 gap-4 mt-8 pt-4", true)}
               </section>
 
@@ -536,9 +547,9 @@ export function ProfilePage({
 
               <section className="flex flex-col gap-8">
                 <div>
-                  <p className="sec-label mb-3">Conta</p>
+                  <p className="sec-label mb-3">{STATIC_SITE ? "Preferências" : "Conta"}</p>
                   <div className={CARD}>
-                    <Row
+                    {!STATIC_SITE && <Row
                       title="Notificações"
                       sub={notifications ? "Ativadas" : "Desativadas"}
                       trailing={
@@ -559,19 +570,20 @@ export function ProfilePage({
                           label="Notificações"
                         />
                       }
-                    />
+                    />}
                     <Row
                       tip="profile-dicts"
                       title="Dicionários ativos"
                       sub="Gerenciar fontes"
                       value={String(activeDicts)}
                       onClick={() => setPanel("dicts")}
+                      last={STATIC_SITE}
                     />
-                    <Row
+                    {!STATIC_SITE && <Row
                       title="Alterar senha"
                       onClick={() => setPanel("change-password")}
                       last
-                    />
+                    />}
                   </div>
                 </div>
 
@@ -614,20 +626,24 @@ export function ProfilePage({
                   </div>
                 </div>
 
-                <button
-                  onClick={onLogout}
-                  className="h-12 rounded-full border border-hairline font-medium transition-colors hover:border-danger"
-                  style={{ fontSize: 15, color: "var(--color-danger)" }}
-                >
-                  Sair da conta
-                </button>
-                <button
-                  onClick={() => setPanel("delete-account")}
-                  className="self-center hover:underline underline-offset-2"
-                  style={{ fontSize: 14, color: "var(--color-label-secondary)" }}
-                >
-                  Excluir conta
-                </button>
+                {!STATIC_SITE && (
+                  <>
+                    <button
+                      onClick={onLogout}
+                      className="h-12 rounded-full border border-hairline font-medium transition-colors hover:border-danger"
+                      style={{ fontSize: 15, color: "var(--color-danger)" }}
+                    >
+                      Sair da conta
+                    </button>
+                    <button
+                      onClick={() => setPanel("delete-account")}
+                      className="self-center hover:underline underline-offset-2"
+                      style={{ fontSize: 14, color: "var(--color-label-secondary)" }}
+                    >
+                      Excluir conta
+                    </button>
+                  </>
+                )}
               </section>
             </div>
           </>

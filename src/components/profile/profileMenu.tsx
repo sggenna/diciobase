@@ -1,4 +1,14 @@
+import { STATIC_SITE } from "@/lib/api"
 import { DICT_COLOR, DICT_META } from "@/lib/data"
+
+const ACCOUNT_TERMS = {
+  title: "3. Conta do Usuário",
+  body: "Você é responsável por manter a confidencialidade de sua senha e por todas as atividades realizadas em sua conta. Notifique-nos imediatamente sobre qualquer uso não autorizado.",
+}
+const LOCAL_DATA_TERMS = {
+  title: "3. Dados neste navegador",
+  body: "O DICIOBASE não tem contas. Suas palavras salvas e preferências ficam apenas neste navegador e são apagadas se você limpar os dados do site.",
+}
 
 export const TERMS_SECTIONS = [
   {
@@ -9,10 +19,7 @@ export const TERMS_SECTIONS = [
     title: "2. Uso do Serviço",
     body: "O DICIOBASE é um serviço de consulta lexicográfica que reúne dicionários abertos do português: Wikcionário, Dicionário Aberto e OpenWordnet-PT, entre outras bases. Cada definição mostra a fonte, a edição e a licença de onde veio.",
   },
-  {
-    title: "3. Conta do Usuário",
-    body: "Você é responsável por manter a confidencialidade de sua senha e por todas as atividades realizadas em sua conta. Notifique-nos imediatamente sobre qualquer uso não autorizado.",
-  },
+  STATIC_SITE ? LOCAL_DATA_TERMS : ACCOUNT_TERMS,
   {
     title: "4. Propriedade Intelectual",
     body: "O conteúdo lexicográfico segue a licença de cada fonte (CC BY-SA 4.0, CC BY-SA 2.5 PT, CC BY 4.0 e outras, listadas em cada verbete) e mantém a atribuição aos seus autores. O código, design e interface do DICIOBASE são propriedade da equipe DICIOBASE.",
@@ -41,7 +48,7 @@ export function TermsContent() {
         </div>
       ))}
       <p className="text-muted" style={{ fontSize: 12 }}>
-        Última atualização: Setembro de 2026
+        Última atualização: {STATIC_SITE ? "Novembro" : "Setembro"} de 2026
       </p>
     </div>
   )

@@ -108,7 +108,6 @@ function AppInner() {
   }
 
   function goProfile() {
-    if (STATIC_SITE) return goHome()
     if (!isLoggedIn) {
       openAuth()
       return
@@ -121,7 +120,6 @@ function AppInner() {
   useEffect(() => {
     const was = prevStatus.current
     prevStatus.current = session.status
-    if (view.type === "profile" && STATIC_SITE) return navigate({ type: "home" }, { replace: true })
     if (view.type !== "profile" || session.status !== "anon") return
     navigate({ type: "home" }, { replace: true })
     if (was !== "authed") openAuth(() => navigate({ type: "profile" }))
@@ -180,8 +178,8 @@ function AppInner() {
           }}
           searchValue={navSearch}
           onSearchChange={setNavSearch}
-          isLoggedIn={isLoggedIn}
-          showAccount={!STATIC_SITE}
+          // The static site's reader has no name to show an initial of, so the nav keeps the person icon.
+          isLoggedIn={isLoggedIn && !STATIC_SITE}
           hideSearch={
             (view.type === "home" && heroSearchVisible) ||
             view.type === "favorites" ||
@@ -225,7 +223,7 @@ function AppInner() {
           {view.type === "favorites" && (
             <FavoritesPage onSearch={goSearch} onGoHome={goHome} onOpenAuth={() => openAuth()} />
           )}
-          {view.type === "profile" && session.status === "authed" && !STATIC_SITE && (
+          {view.type === "profile" && session.status === "authed" && (
             <ProfilePage
               onLogout={logout}
               onDeleted={() => {
@@ -248,7 +246,6 @@ function AppInner() {
       {showBottomNav && (
         <MobileBottomNav
           active={activeTab}
-          showAccount={!STATIC_SITE}
           onChange={(tab) => {
             if (tab === "salvos") goFav()
             else if (tab === "perfil") goProfile()

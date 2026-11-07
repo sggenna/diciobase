@@ -1,5 +1,6 @@
 // Contextual guidance copy. Tips attach to elements through `data-tip="<id>"`,
 // so pages only mark what a tip is about; wording and ordering live here.
+import { STATIC_SITE } from "@/lib/api"
 
 export type TipId =
   | "home-search"
@@ -74,7 +75,9 @@ export const TIPS: Record<TipId, Tip> = {
   },
   "profile-stats": {
     title: "Seu resumo",
-    body: "Quantas palavras você salvou, quantas pesquisas fez e desde quando está no Diciobase.",
+    body: STATIC_SITE
+      ? "Quantas palavras você salvou neste navegador."
+      : "Quantas palavras você salvou, quantas pesquisas fez e desde quando está no Diciobase.",
     placement: "bottom",
   },
   "profile-dicts": {
