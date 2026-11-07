@@ -68,6 +68,10 @@ export function DefinitionPage({
     const on = wordData.dicts.filter((d) => toggles?.[d.id as keyof typeof toggles] !== false)
     return on.length ? on : wordData.dicts
   }, [wordData.dicts, toggles])
+  const withEntry = useMemo(() => {
+    const has = dicts.filter((d) => !d.missing)
+    return has.length ? has : dicts
+  }, [dicts])
   const [activeId, setActiveId] = useState(dicts[0]!.id)
   const [mode, setMode] = useState<ViewMode>(loadMode)
   const [hover, setHover] = useState<PartKind | null>(null)
@@ -195,7 +199,7 @@ export function DefinitionPage({
   const otherSynonyms = wordData.synonyms.filter((w) => !ownSynonyms.has(w.toLowerCase()))
   const sourceOf = (w: string) => wordData.dicts.find((d) => d.synonyms?.includes(w) || d.related?.includes(w))?.id ?? (wordData.dicts.some((d) => d.id === "wordnet") ? "wordnet" : undefined)
   const hasRemissoes = ownSynonyms.size > 0
-  const historic = DICT_META[activeId]?.historic
+  const historic = !activeEntry.missing && DICT_META[activeId]?.historic
   const fade = {
     initial: { opacity: 0 },
     animate: { opacity: 1, transition: t300 },
@@ -238,7 +242,7 @@ export function DefinitionPage({
                     <span data-tip="def-save" className="inline-flex">
                       <SaveButton saved={saved} onToggle={handleSave} showLabel={false} height={40} radius="9999px" bg="#ffffff" border="var(--color-hairline)" />
                     </span>
-                    <CitationCapsule word={wordData.word} dicts={dicts} activeId={activeEntry.id} />
+                    <CitationCapsule word={wordData.word} dicts={withEntry} activeId={activeEntry.missing ? withEntry[0]!.id : activeEntry.id} />
                     <button
                       type="button"
                       aria-label="Compartilhar"
@@ -387,7 +391,7 @@ function VoiceCredit({ source }: { source: PronounceSource }) {
 }
 
 /** ter·re·no, with the stressed syllable bold and underlined: plain inline text, so letters keep their natural spacing. */
-function SyllableLine({ syllables, stress }: { syllables: string[]; stress?: number }) {
+export function SyllableLine({ syllables, stress }: { syllables: string[]; stress?: number }) {
   const label = `Separação silábica: ${syllables.join("-")}${stress !== undefined ? `. Sílaba tônica: ${syllables[stress]}` : ""}`
   return (
     <span aria-label={label} role="text">

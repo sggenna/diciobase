@@ -70,11 +70,19 @@ function wordnetTab(e: ApiEntry): DictEntry {
   }
 }
 
+const ALL_TABS = [
+  { id: "wikcionario", name: "Wikcionário", shortName: SHORT_NAME.wikcionario! },
+  { id: "dicionario-aberto", name: "Dicionário Aberto", shortName: SHORT_NAME["dicionario-aberto"]! },
+  { id: "wordnet", name: "OpenWordnet-PT", shortName: "OpenWordnet" },
+]
+
 /** Every open-data tab we have for a word, best first. */
 function openTabs(e: ApiEntry): DictEntry[] {
   const tabs = e.dictionaries.filter((d) => d.entries.some((x) => x.senses.length)).map(proseTab)
   if (e.senses.length || e.synonyms.length || !tabs.length) tabs.push(wordnetTab(e))
-  return tabs
+  // Every dictionary keeps its tab: when one doesn't have the word, saying so is part of the answer.
+  const absent = ALL_TABS.filter((d) => !tabs.some((t) => t.id === d.id)).map((d) => ({ ...d, tag: "", senses: [], missing: true }))
+  return [...tabs, ...absent]
 }
 
 /**

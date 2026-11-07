@@ -31,6 +31,15 @@ export function DictEntryView({
   presence?: Map<string, string[]>
   names?: Record<string, string>
 }) {
+  // The interface speaking, not the dictionary, so it isn't in serif.
+  if (entry.missing) {
+    return (
+      <p className="text-meta" style={{ fontSize: 16, lineHeight: "24px" }}>
+        Não consta no {entry.shortName}
+      </p>
+    )
+  }
+
   const blocks: Record<string, ReactNode> = {}
   // Dots point at the *other* dictionaries that carry a sense; the current one is implied.
   const othersFor = (num: string) => presence?.get(`${entry.id}|${num}`)?.filter((id) => id !== entry.id) ?? []

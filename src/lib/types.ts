@@ -18,6 +18,8 @@ export interface DictEntry {
   notes?: string[]
   synonyms?: string[]
   related?: string[]
+  /** This dictionary doesn't have the word. Its tab stays, because a source not having something is information too. */
+  missing?: boolean
 }
 
 export interface WordData {
