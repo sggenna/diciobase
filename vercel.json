@@ -50,17 +50,6 @@
       "destination": "/api/page?word=:word"
     },
     {
-      "source": "/",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": "(?i).*(slackbot|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|telegrambot|whatsapp|applebot|skypeuripreview|embedly|iframely|pinterest|redditbot|googlebot|bingbot).*"
-        }
-      ],
-      "destination": "/api/page"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

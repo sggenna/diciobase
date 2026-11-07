@@ -17,6 +17,10 @@ const siteConfiguration = {
   title: SITE_TITLE,
   description: SITE_DESCRIPTION,
   language: "pt-BR",
+  // Absolute, as previews require. Vercel serves index.html for / before any rewrite, so its tags live in the page.
+  openGraph: {
+    image: `${process.env.SITE_URL ?? "https://diciobase.vercel.app"}/og/default.png`,
+  },
   robots: {
     index: false,
   },
